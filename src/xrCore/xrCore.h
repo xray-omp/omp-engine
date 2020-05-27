@@ -191,6 +191,7 @@
 #include <map>
 
 #ifndef _EDITOR
+#	define _SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS
 #	include <hash_map>
 #	include <hash_set>
 #endif
