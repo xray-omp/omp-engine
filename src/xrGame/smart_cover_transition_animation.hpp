@@ -8,7 +8,7 @@
 #ifndef SMART_COVER_TRANSITION_ANIMATION_HPP_INCLUDED
 #define SMART_COVER_TRANSITION_ANIMATION_HPP_INCLUDED
 
-#include "debug_make_final.hpp"
+#include <boost/noncopyable.hpp>
 #include "ai_monster_space.h"
 
 namespace smart_cover {

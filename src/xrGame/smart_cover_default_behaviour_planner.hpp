@@ -11,13 +11,12 @@
 #include <boost/noncopyable.hpp>
 #include "smart_cover_detail.h"
 #include "action_planner_action.h"
-#include "debug_make_final.hpp"
 
 namespace smart_cover {
 
 class animation_planner;
 
-class default_behaviour_planner : 
+class default_behaviour_planner final: 
 	public CActionPlannerAction<animation_planner>,
 	private boost::noncopyable
 {
