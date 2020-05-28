@@ -75,8 +75,7 @@ public:
 }; // class loophole_action_no_sight
 
 class loophole_lookout :
-	public loophole_action,
-	private debug::make_final<loophole_lookout>
+	public loophole_action
 {
 private:
 	typedef loophole_action							inherited;
@@ -89,8 +88,7 @@ public:
 };
 
 class loophole_fire :
-	public loophole_action,
-	private debug::make_final<loophole_fire>
+	public loophole_action
 {
 private:
 	typedef loophole_action							inherited;
@@ -111,8 +109,7 @@ public:
 };
 
 class loophole_reload :
-	public loophole_action_no_sight,
-	private debug::make_final<loophole_reload>
+	public loophole_action_no_sight
 {
 private:
 	typedef loophole_action_no_sight				inherited;

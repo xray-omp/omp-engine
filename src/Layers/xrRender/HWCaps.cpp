@@ -71,8 +71,8 @@ u32 GetNVGpuNum()
 
 u32 GetATIGpuNum()
 {
-	int iGpuNum = AtiMultiGPUAdapters();
-	//int iGpuNum = 1;
+	//int iGpuNum = AtiMultiGPUAdapters();
+	int iGpuNum = 1;
 
 	if (iGpuNum>1)
 	{

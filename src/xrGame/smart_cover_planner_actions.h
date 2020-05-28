@@ -45,8 +45,7 @@ public:
 ////////////////////////////////////////////////////////////////////////////
 
 class change_loophole :	
-	public action_base,
-	private debug::make_final<change_loophole>
+	public action_base
 {
 private:
 	typedef action_base								inherited;
@@ -65,8 +64,7 @@ public:
 ////////////////////////////////////////////////////////////////////////////
 
 class non_animated_change_loophole:
-	public action_base,
-	private debug::make_final<non_animated_change_loophole>
+	public action_base
 {
 private:
 	typedef action_base								inherited;
@@ -86,8 +84,7 @@ public:
 ////////////////////////////////////////////////////////////////////////////
 
 class exit :
-	public action_base,
-	private debug::make_final<exit>
+	public action_base
 {
 private:
 	typedef action_base								inherited;
