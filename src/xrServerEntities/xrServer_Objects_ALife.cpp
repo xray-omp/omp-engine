@@ -556,14 +556,23 @@ bool CSE_ALifeObject::used_ai_locations		() const
 	return						(!!m_flags.is(flUsedAI_Locations));
 }
 
+#include "game_base_space.h"
+#include "Level.h"
+
 bool CSE_ALifeObject::can_switch_online		() const
 {
-	return						(match_configuration() && !!m_flags.is(flSwitchOnline));
+	if (GameID() == eGameIDSingle)
+		return						(match_configuration() && !!m_flags.is(flSwitchOnline));
+	else
+		return true;
 }
 
 bool CSE_ALifeObject::can_switch_offline	() const
 {
-	return						(!match_configuration() || !!m_flags.is(flSwitchOffline));
+	if (GameID() == eGameIDSingle)
+		return						(!match_configuration() || !!m_flags.is(flSwitchOffline));
+	else
+		return false;
 }
 
 bool CSE_ALifeObject::can_save				() const
