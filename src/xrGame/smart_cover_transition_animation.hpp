@@ -16,7 +16,6 @@ namespace smart_cover {
 namespace transitions {
 
 class animation_action :
-	private debug::make_final<animation_action>,
 	private boost::noncopyable 
 {
 private:
