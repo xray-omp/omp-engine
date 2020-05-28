@@ -122,32 +122,16 @@ CLevel::CLevel():IPureClient	(Device.GetTimerGlobal())
 	//physics_step_time_callback	= (PhysicsStepTimeCallback*) &PhisStepsCallback;
 	m_seniority_hierarchy_holder= xr_new<CSeniorityHierarchyHolder>();
 
-	if(!g_dedicated_server)
-	{
-		m_level_sound_manager		= xr_new<CLevelSoundManager>();
-		m_space_restriction_manager = xr_new<CSpaceRestrictionManager>();
-		m_client_spawn_manager		= xr_new<CClientSpawnManager>();
-		m_autosave_manager			= xr_new<CAutosaveManager>();
+	m_level_sound_manager		= xr_new<CLevelSoundManager>();
+	m_space_restriction_manager = xr_new<CSpaceRestrictionManager>();
+	m_client_spawn_manager		= xr_new<CClientSpawnManager>();
+	m_autosave_manager			= xr_new<CAutosaveManager>();
 
 	#ifdef DEBUG
 		m_debug_renderer			= xr_new<CDebugRenderer>();
 		m_level_debug				= xr_new<CLevelDebug>();
 		m_bEnvPaused				= false;
 	#endif
-
-	}else
-	{
-		m_level_sound_manager		= NULL;
-		m_client_spawn_manager		= NULL;
-		m_autosave_manager			= NULL;
-		m_space_restriction_manager = NULL;
-	#ifdef DEBUG
-		m_debug_renderer			= NULL;
-		m_level_debug				= NULL;
-	#endif
-	}
-
-
 	
 	m_ph_commander						= xr_new<CPHCommander>();
 	m_ph_commander_scripts				= xr_new<CPHCommander>();
@@ -224,6 +208,9 @@ CLevel::CLevel():IPureClient	(Device.GetTimerGlobal())
 	m_trained_stream				= NULL;
 	m_lzo_working_memory			= NULL;
 	m_lzo_working_buffer			= NULL;
+    m_game_graph					= 0;
+	m_chunk 						= 0;
+	spawn  							= 0;
 }
 
 extern CAI_Space *g_ai_space;
@@ -341,6 +328,9 @@ CLevel::~CLevel()
 		StopSaveDemo();
 	}
 	deinit_compression();
+	xr_delete					(m_game_graph);
+	m_chunk->close				();
+	FS.r_close					(spawn);
 }
 
 shared_str	CLevel::name		() const

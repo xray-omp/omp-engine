@@ -8,6 +8,9 @@
 
 class		CItemMgr;
 class		xrClientData;
+class       CALifeSimulator;
+class		xrServer;
+
 #define		VOTE_LENGTH_TIME		1
 #define		VOTE_QUOTA				0.51f
 
@@ -33,6 +36,7 @@ class game_sv_mp :public game_sv_GameState
 	typedef game_sv_GameState inherited;
 
 protected:
+	CALifeSimulator					*m_alife_simulator;
 	//список трупов для удаления
 	DEF_DEQUE(CORPSE_LIST, u16);
 
@@ -209,5 +213,17 @@ public:
 	virtual		void				Player_ExperienceFin	(game_PlayerState* ps);
 	virtual		void				Player_AddMoney			(game_PlayerState* ps, s32 MoneyAmount);
 				void				SpawnPlayer				(ClientID id, LPCSTR N);
+
+	IC			xrServer			&server					() const
+	{
+		VERIFY						(m_server);
+		return						(*m_server);
+	}
+
+	IC			CALifeSimulator		&alife					() const
+	{
+		VERIFY						(m_alife_simulator);
+		return						(*m_alife_simulator);
+	}
 };
 
