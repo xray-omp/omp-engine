@@ -11,7 +11,6 @@
 #include "smart_cover_detail.h"
 #include <boost/noncopyable.hpp>
 #include "stalker_combat_action_base.h"
-#include "debug_make_final.hpp"
 
 class CAI_Stalker;
 

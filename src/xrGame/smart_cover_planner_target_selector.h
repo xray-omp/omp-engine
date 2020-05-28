@@ -12,7 +12,6 @@
 #include "smart_cover_detail.h"
 #include "action_planner_action.h"
 #include "script_callback_ex.h"
-#include "debug_make_final.hpp"
 #include <boost/noncopyable.hpp>
 
 namespace smart_cover {
