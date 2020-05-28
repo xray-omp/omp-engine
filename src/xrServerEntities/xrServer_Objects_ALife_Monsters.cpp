@@ -978,7 +978,11 @@ u32	 CSE_ALifeCreatureAbstract::ef_detector_type() const
 void CSE_ALifeCreatureAbstract::on_death		(CSE_Abstract *killer)
 {
 	VERIFY						(!m_game_death_time);
-	m_game_death_time			= ai().get_alife() ? alife().time_manager().game_time() : Level().GetGameTime();
+	if (GameID() == eGameIDSingle)
+		m_game_death_time = ai().get_alife() ? alife().time_manager().game_time() : Level().GetGameTime();
+	else
+		m_game_death_time = Level().GetGameTime();
+
 	fHealth						= -1.f;
 }
 #endif // XRGAME_EXPORTS

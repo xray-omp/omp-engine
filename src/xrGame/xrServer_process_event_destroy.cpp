@@ -1,12 +1,14 @@
 #include "stdafx.h"
 #include "xrServer.h"
 #include "game_sv_single.h"
+#include "game_sv_mp.h"
 #include "alife_simulator.h"
 #include "xrserver_objects.h"
 #include "game_base.h"
 #include "game_cl_base.h"
 #include "ai_space.h"
 #include "alife_object_registry.h"
+#include "Level.h"
 
 xr_string xrServer::ent_name_safe(u16 eid)
 {
@@ -95,10 +97,21 @@ void xrServer::Process_event_destroy	(NET_Packet& P, ClientID sender, u32 time, 
 
 	// Everything OK, so perform entity-destroy
 	if (e_dest->m_bALifeControl && ai().get_alife()) {
-		game_sv_Single				*_game = smart_cast<game_sv_Single*>(game);
-		VERIFY						(_game);
-		if (ai().alife().objects().object(id_dest,true))
-			_game->alife().release	(e_dest,false);
+			game_sv_Single*				_gameS = smart_cast<game_sv_Single*>(game);
+
+			game_sv_mp*					_gameM = smart_cast<game_sv_mp*>(game);
+		
+		//VERIFY						(_game);
+			if (ai().alife().objects().object(id_dest,true)){
+				if (IsGameTypeSingle())
+				{
+					_gameS->alife().release	(e_dest,false);
+				}
+				else
+				{
+					_gameM->alife().release	(e_dest, false);
+				}
+			}
 	}
 
 	if (game)
