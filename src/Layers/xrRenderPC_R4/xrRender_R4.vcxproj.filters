@@ -738,7 +738,7 @@
     <ClInclude Include="..\xrRenderDX10\3DFluid\dx103DFluidRenderer.h">
       <Filter>3DFluid</Filter>
     </ClInclude>
-    <ClInclude Include="..\xrRender\Debug\dxPixEventWrapper.h">
+    <ClInclude Include="..\xrRender\dxPixEventWrapper.h">
       <Filter>Debug</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1343,7 +1343,7 @@
     <ClCompile Include="..\xrRenderDX10\3DFluid\dx103DFluidRenderer.cpp">
       <Filter>3DFluid</Filter>
     </ClCompile>
-    <ClCompile Include="..\xrRender\Debug\dxPixEventWrapper.cpp">
+    <ClCompile Include="..\xrRender\dxPixEventWrapper.cpp">
       <Filter>Debug</Filter>
     </ClCompile>
   </ItemGroup>

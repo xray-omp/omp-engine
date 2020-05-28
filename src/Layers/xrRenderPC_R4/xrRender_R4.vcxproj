@@ -263,7 +263,6 @@
     <ClInclude Include="..\xrRender\Blender_tree.h" />
     <ClInclude Include="..\xrRender\ColorMapManager.h" />
     <ClInclude Include="..\xrRender\D3DUtils.h" />
-    <ClInclude Include="..\xrRender\Debug\dxPixEventWrapper.h" />
     <ClInclude Include="..\xrRender\DetailManager.h" />
     <ClInclude Include="..\xrRender\DetailModel.h" />
     <ClInclude Include="..\xrRender\du_box.h" />
@@ -279,6 +278,7 @@
     <ClInclude Include="..\xrRender\dxLensFlareRender.h" />
     <ClInclude Include="..\xrRender\dxObjectSpaceRender.h" />
     <ClInclude Include="..\xrRender\dxParticleCustom.h" />
+    <ClInclude Include="..\xrRender\dxPixEventWrapper.h" />
     <ClInclude Include="..\xrRender\dxRainRender.h" />
     <ClInclude Include="..\xrRender\dxRenderDeviceRender.h" />
     <ClInclude Include="..\xrRender\dxRenderFactory.h" />
@@ -433,7 +433,6 @@
     <ClCompile Include="..\xrRender\Blender_tree.cpp" />
     <ClCompile Include="..\xrRender\ColorMapManager.cpp" />
     <ClCompile Include="..\xrRender\D3DUtils.cpp" />
-    <ClCompile Include="..\xrRender\Debug\dxPixEventWrapper.cpp" />
     <ClCompile Include="..\xrRender\DetailManager.cpp" />
     <ClCompile Include="..\xrRender\DetailManager_CACHE.cpp" />
     <ClCompile Include="..\xrRender\DetailManager_Decompress.cpp" />
@@ -460,6 +459,7 @@
     <ClCompile Include="..\xrRender\dxLensFlareRender.cpp" />
     <ClCompile Include="..\xrRender\dxObjectSpaceRender.cpp" />
     <ClCompile Include="..\xrRender\dxParticleCustom.cpp" />
+    <ClCompile Include="..\xrRender\dxPixEventWrapper.cpp" />
     <ClCompile Include="..\xrRender\dxRainRender.cpp" />
     <ClCompile Include="..\xrRender\dxRenderDeviceRender.cpp" />
     <ClCompile Include="..\xrRender\dxRenderFactory.cpp" />
