@@ -704,6 +704,10 @@ bool has_active_tutotial()
 	return (g_tutorial!=NULL);
 }
 
+bool is_server()
+{
+	return OnServer();
+}
 
 
 #pragma optimize("s",on)
@@ -804,7 +808,9 @@ void CLevel::script_register(lua_State *L)
 		
 		def("vertex_id",						&vertex_id),
 
-		def("game_id",							&GameID)
+		def("game_id",							&GameID),
+
+		def("is_server",						&is_server)
 	],
 	
 	module(L,"actor_stats")
