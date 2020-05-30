@@ -11015,6 +11015,9 @@
     <ClCompile Include="physics_world_scripted.cpp">
       <Filter>Physics\scripts</Filter>
     </ClCompile>
+    <ClCompile Include="ai\stalker\ai_stalker_net.cpp">
+      <Filter>AI\AMonsters\humans\stalker</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="ai\monsters\chimera\chimera_attack_state.h">

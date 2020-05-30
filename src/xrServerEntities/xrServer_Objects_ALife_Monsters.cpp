@@ -2123,22 +2123,79 @@ void CSE_ALifeHumanStalker::STATE_Read		(NET_Packet &tNetPacket, u16 size)
 
 void CSE_ALifeHumanStalker::UPDATE_Write	(NET_Packet &tNetPacket)
 {
-	inherited1::UPDATE_Write	(tNetPacket);
-	inherited2::UPDATE_Write	(tNetPacket);
-	tNetPacket.w_stringZ		(m_start_dialog);
+	if (g_pGamePersistent->GameType() == eGameIDSingle)
+	{
+		inherited1::UPDATE_Write(tNetPacket);
+		inherited2::UPDATE_Write(tNetPacket);
+		tNetPacket.w_stringZ(m_start_dialog);
+	}
+	else
+	{
+		tNetPacket.w_float(get_health());
+		tNetPacket.w_vec3(o_Position);
+		tNetPacket.w_angle8(o_torso.pitch);
+		tNetPacket.w_angle8(o_torso.roll);
+		tNetPacket.w_angle8(o_torso.yaw);
+		tNetPacket.w_angle8(f_head_dir_pitch);
+		tNetPacket.w_angle8(f_head_dir_yaw);
+		tNetPacket.w_u16(u_active_slot);
+		tNetPacket.w_u16(u_torso_anm_idx);
+		tNetPacket.w_u8(u_torso_anm_slot);
+		tNetPacket.w_u16(u_legs_anm_idx);
+		tNetPacket.w_u8(u_legs_anm_slot);
+		tNetPacket.w_u16(u_head_anm_idx);
+		tNetPacket.w_u8(u_head_anm_slot);
+		tNetPacket.w_u16(u_script_anm_idx);
+		tNetPacket.w_u8(u_script_anm_slot);
+	}
 }
 
 void CSE_ALifeHumanStalker::UPDATE_Read		(NET_Packet &tNetPacket)
 {
-	inherited1::UPDATE_Read		(tNetPacket);
-	inherited2::UPDATE_Read		(tNetPacket);
-	tNetPacket.r_stringZ		(m_start_dialog);
+	if (g_pGamePersistent->GameType() == eGameIDSingle)
+	{
+		inherited1::UPDATE_Read(tNetPacket);
+		inherited2::UPDATE_Read(tNetPacket);
+		tNetPacket.r_stringZ(m_start_dialog);
+	}
+	else
+	{
+		tNetPacket.r_float(f_health);
+		tNetPacket.r_vec3(o_Position);
+		tNetPacket.r_angle8(o_torso.pitch);
+		tNetPacket.r_angle8(o_torso.roll);
+		tNetPacket.r_angle8(o_torso.yaw);
+		tNetPacket.r_angle8(f_head_dir_pitch);
+		tNetPacket.r_angle8(f_head_dir_yaw);
+		tNetPacket.r_u16(u_active_slot);
+		tNetPacket.r_u16(u_torso_anm_idx);
+		tNetPacket.r_u8(u_torso_anm_slot);
+		tNetPacket.r_u16(u_legs_anm_idx);
+		tNetPacket.r_u8(u_legs_anm_slot);
+		tNetPacket.r_u16(u_head_anm_idx);
+		tNetPacket.r_u8(u_head_anm_slot);
+		tNetPacket.r_u16(u_script_anm_idx);
+		tNetPacket.r_u8(u_script_anm_slot);
+		set_health(f_health);
+	}
 }
 
 void CSE_ALifeHumanStalker::load			(NET_Packet &tNetPacket)
 {
 	inherited1::load			(tNetPacket);
 	inherited2::load			(tNetPacket);
+}
+
+BOOL CSE_ALifeHumanStalker::Net_Relevant()
+{
+	if (g_pGamePersistent->GameType() == eGameIDSingle)
+	{
+		return inherited1::Net_Relevant();
+	}
+	else
+	{
+		return g_Alive();
+	}
 }
 
 #ifndef XRGAME_EXPORTS
