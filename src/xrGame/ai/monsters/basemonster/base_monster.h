@@ -102,6 +102,11 @@ public:
 	virtual void			net_Import						(NET_Packet& P);
 	virtual void			net_Relcase						(CObject *O);
 
+	//NET MP simple Sync
+
+	u16				u_last_motion_idx;
+	u16				u_last_motion_slot;
+
 	//save/load server serialization
 	virtual void			save							(NET_Packet &output_packet) {inherited::save(output_packet);}
 	virtual void			load							(IReader &input_packet)		{inherited::load(input_packet);}

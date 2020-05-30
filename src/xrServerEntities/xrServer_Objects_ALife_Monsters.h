@@ -443,6 +443,10 @@ add_to_type_list(CSE_ALifeMonsterZombie)
 SERVER_ENTITY_DECLARE_BEGIN2(CSE_ALifeMonsterBase,CSE_ALifeMonsterAbstract,CSE_PHSkeleton)
 	u16								m_spec_object_id;
 
+	float							f_health;
+	u16								u_motion_idx;
+	u16								u_motion_slot;
+
 									CSE_ALifeMonsterBase	(LPCSTR caSection);				// constructor for variable initialization
 	virtual							~CSE_ALifeMonsterBase	();
 	virtual	void					load					(NET_Packet &tNetPacket);
@@ -454,6 +458,7 @@ SERVER_ENTITY_DECLARE_BEGIN2(CSE_ALifeMonsterBase,CSE_ALifeMonsterAbstract,CSE_P
 	virtual	void					add_online				(const bool &update_registries);
 	virtual	void					add_offline				(const xr_vector<ALife::_OBJECT_ID> &saved_children, const bool &update_registries);
 #endif // XRGAME_EXPORTS
+	virtual BOOL					Net_Relevant();
 SERVER_ENTITY_DECLARE_END
 add_to_type_list(CSE_ALifeMonsterBase)
 #define script_type_list save_type_list(CSE_ALifeMonsterBase)

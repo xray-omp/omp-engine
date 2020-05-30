@@ -7,6 +7,9 @@
 #include "../../../hit.h"
 #include "../../../PHDestroyable.h"
 #include "../../../CharacterPhysicsSupport.h"
+#include "../control_animation_base.h"
+
+
 void CBaseMonster::net_Save			(NET_Packet& P)
 {
 	inherited::net_Save(P);
@@ -21,87 +24,134 @@ BOOL CBaseMonster::net_SaveRelevant	()
 void CBaseMonster::net_Export(NET_Packet& P) 
 {
 	R_ASSERT				(Local());
+	if (IsGameTypeSingle()) //Single net_export
+	{
+		// export last known packet
+		R_ASSERT(!NET.empty());
+		net_update& N = NET.back();
+		P.w_float(GetfHealth());
+		P.w_u32(N.dwTimeStamp);
+		P.w_u8(0);
+		P.w_vec3(N.p_pos);
+		P.w_float /*w_angle8*/(N.o_model);
+		P.w_float /*w_angle8*/(N.o_torso.yaw);
+		P.w_float /*w_angle8*/(N.o_torso.pitch);
+		P.w_float /*w_angle8*/(N.o_torso.roll);
+		P.w_u8(u8(g_Team()));
+		P.w_u8(u8(g_Squad()));
+		P.w_u8(u8(g_Group()));
 
-	// export last known packet
-	R_ASSERT				(!NET.empty());
-	net_update& N			= NET.back();
-	P.w_float				(GetfHealth());
-	P.w_u32					(N.dwTimeStamp);
-	P.w_u8					(0);
-	P.w_vec3				(N.p_pos);
-	P.w_float /*w_angle8*/				(N.o_model);
-	P.w_float /*w_angle8*/				(N.o_torso.yaw);
-	P.w_float /*w_angle8*/				(N.o_torso.pitch);
-	P.w_float /*w_angle8*/				(N.o_torso.roll);
-	P.w_u8					(u8(g_Team()));
-	P.w_u8					(u8(g_Squad()));
-	P.w_u8					(u8(g_Group()));
-
-	GameGraph::_GRAPH_ID		l_game_vertex_id = ai_location().game_vertex_id();
-	P.w						(&l_game_vertex_id,			sizeof(l_game_vertex_id));
-	P.w						(&l_game_vertex_id,			sizeof(l_game_vertex_id));
-//	P.w						(&m_fGoingSpeed,			sizeof(m_fGoingSpeed));
-//	P.w						(&m_fGoingSpeed,			sizeof(m_fGoingSpeed));
-	float					f1 = 0;
-	if (ai().game_graph().valid_vertex_id(l_game_vertex_id)) {
-		f1					= Position().distance_to	(ai().game_graph().vertex(l_game_vertex_id)->level_point());
-		P.w					(&f1,						sizeof(f1));
-		f1					= Position().distance_to	(ai().game_graph().vertex(l_game_vertex_id)->level_point());
-		P.w					(&f1,						sizeof(f1));
+		GameGraph::_GRAPH_ID		l_game_vertex_id = ai_location().game_vertex_id();
+		P.w(&l_game_vertex_id, sizeof(l_game_vertex_id));
+		P.w(&l_game_vertex_id, sizeof(l_game_vertex_id));
+		//	P.w						(&m_fGoingSpeed,			sizeof(m_fGoingSpeed));
+		//	P.w						(&m_fGoingSpeed,			sizeof(m_fGoingSpeed));
+		float					f1 = 0;
+		if (ai().game_graph().valid_vertex_id(l_game_vertex_id)) {
+			f1 = Position().distance_to(ai().game_graph().vertex(l_game_vertex_id)->level_point());
+			P.w(&f1, sizeof(f1));
+			f1 = Position().distance_to(ai().game_graph().vertex(l_game_vertex_id)->level_point());
+			P.w(&f1, sizeof(f1));
+		}
+		else {
+			P.w(&f1, sizeof(f1));
+			P.w(&f1, sizeof(f1));
+		}
 	}
-	else {
-		P.w					(&f1,						sizeof(f1));
-		P.w					(&f1,						sizeof(f1));
+	else // MP net_export
+	{
+		IKinematicsAnimated* ik_anim_obj = smart_cast<IKinematicsAnimated*>(Visual());
+		P.w_float(GetfHealth());
+		P.w_vec3(Position());
+		P.w_angle8(movement().m_body.current.yaw);
+		P.w_u16(ik_anim_obj->ID_Cycle_Safe(m_anim_base->cur_anim_info().name).idx);
+		P.w_u16(ik_anim_obj->ID_Cycle_Safe(m_anim_base->cur_anim_info().name).slot);
 	}
-
 }
 
 void CBaseMonster::net_Import(NET_Packet& P)
 {
 	R_ASSERT				(Remote());
-	net_update				N;
+	if (IsGameTypeSingle()) 
+	{
+		net_update				N;
 
-	u8 flags;
+		u8 flags;
 
-	float health;
-	P.r_float			(health);
-	SetfHealth			(health);
+		float health;
+		P.r_float(health);
+		SetfHealth(health);
 
-	P.r_u32					(N.dwTimeStamp);
-	P.r_u8					(flags);
-	P.r_vec3				(N.p_pos);
-	P.r_float /*r_angle8*/				(N.o_model);
-	P.r_float /*r_angle8*/				(N.o_torso.yaw);
-	P.r_float /*r_angle8*/				(N.o_torso.pitch);
-	P.r_float /*r_angle8*/				(N.o_torso.roll	);
-	id_Team					= P.r_u8();
-	id_Squad				= P.r_u8();
-	id_Group				= P.r_u8();
+		P.r_u32(N.dwTimeStamp);
+		P.r_u8(flags);
+		P.r_vec3(N.p_pos);
+		P.r_float /*r_angle8*/(N.o_model);
+		P.r_float /*r_angle8*/(N.o_torso.yaw);
+		P.r_float /*r_angle8*/(N.o_torso.pitch);
+		P.r_float /*r_angle8*/(N.o_torso.roll);
+		id_Team = P.r_u8();
+		id_Squad = P.r_u8();
+		id_Group = P.r_u8();
 
-	GameGraph::_GRAPH_ID		l_game_vertex_id = ai_location().game_vertex_id();
-	P.r						(&l_game_vertex_id,			sizeof(l_game_vertex_id));
-	P.r						(&l_game_vertex_id,			sizeof(l_game_vertex_id));
+		GameGraph::_GRAPH_ID		l_game_vertex_id = ai_location().game_vertex_id();
+		P.r(&l_game_vertex_id, sizeof(l_game_vertex_id));
+		P.r(&l_game_vertex_id, sizeof(l_game_vertex_id));
 
-	if (NET.empty() || (NET.back().dwTimeStamp<N.dwTimeStamp))	{
-		NET.push_back			(N);
-		NET_WasInterpolating	= TRUE;
+		if (NET.empty() || (NET.back().dwTimeStamp < N.dwTimeStamp)) {
+			NET.push_back(N);
+			NET_WasInterpolating = TRUE;
+		}
+
+		//	P.r						(&m_fGoingSpeed,			sizeof(m_fGoingSpeed));
+		//	P.r						(&m_fGoingSpeed,			sizeof(m_fGoingSpeed));
+		float					f1 = 0;
+		if (ai().game_graph().valid_vertex_id(l_game_vertex_id)) {
+			f1 = Position().distance_to(ai().game_graph().vertex(l_game_vertex_id)->level_point());
+			P.r(&f1, sizeof(f1));
+			f1 = Position().distance_to(ai().game_graph().vertex(l_game_vertex_id)->level_point());
+			P.r(&f1, sizeof(f1));
+		}
+		else {
+			P.r(&f1, sizeof(f1));
+			P.r(&f1, sizeof(f1));
+		}
+
+
+		setVisible(TRUE);
+		setEnabled(TRUE);
+	} 
+	else // MP net_export
+	{
+		float f_health;
+		Fvector fv_position;
+		float f_yaw;
+		u16 u_motion_idx;
+		u16 u_motion_slot;
+
+		P.r_float(f_health);
+		P.r_vec3(fv_position);
+		P.r_angle8(f_yaw);
+		P.r_u16(u_motion_idx);
+		P.r_u16(u_motion_slot);
+
+		SetfHealth(f_health);
+		XFORM().rotateY(f_yaw);
+		Position().set(fv_position);
+
+		MotionID motion;
+		IKinematicsAnimated* ik_anim_obj = smart_cast<IKinematicsAnimated*>(Visual());
+		if (u_last_motion_idx != u_motion_idx || u_last_motion_slot != u_motion_slot)
+		{
+			u_last_motion_idx = u_motion_idx;
+			u_last_motion_slot = u_motion_slot;
+			motion.idx = u_motion_idx;
+			motion.slot = u_motion_slot;
+			if (motion.valid())
+			{
+				CStepManager::on_animation_start(motion, ik_anim_obj->LL_PlayCycle(ik_anim_obj->LL_GetMotionDef(motion)->bone_or_part, motion, TRUE,
+					ik_anim_obj->LL_GetMotionDef(motion)->Accrue(), ik_anim_obj->LL_GetMotionDef(motion)->Falloff(),
+					ik_anim_obj->LL_GetMotionDef(motion)->Speed(), FALSE, 0, 0, 0));
+			}
+		}
 	}
-
-//	P.r						(&m_fGoingSpeed,			sizeof(m_fGoingSpeed));
-//	P.r						(&m_fGoingSpeed,			sizeof(m_fGoingSpeed));
-	float					f1 = 0;
-	if (ai().game_graph().valid_vertex_id(l_game_vertex_id)) {
-		f1					= Position().distance_to	(ai().game_graph().vertex(l_game_vertex_id)->level_point());
-		P.r					(&f1,						sizeof(f1));
-		f1					= Position().distance_to	(ai().game_graph().vertex(l_game_vertex_id)->level_point());
-		P.r					(&f1,						sizeof(f1));
-	}
-	else {
-		P.r					(&f1,						sizeof(f1));
-		P.r					(&f1,						sizeof(f1));
-	}
-
-
-	setVisible				(TRUE);
-	setEnabled				(TRUE);
 }

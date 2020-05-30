@@ -31,66 +31,68 @@ void CControlDirection::reinit()
 
 void CControlDirection::update_frame()
 {
-	pitch_correction			();	
+	if (IsGameTypeSingle() || OnServer()) {
+		pitch_correction();
 
-	SRotationEventData			event_data;
-	event_data.angle			= 0;
+		SRotationEventData			event_data;
+		event_data.angle = 0;
 
-	bool heading_similar		= false;
-	bool pitch_similar			= false;
+		bool heading_similar = false;
+		bool pitch_similar = false;
 
-	// difference
-	float diff = angle_difference(m_pitch.current_angle, m_data.pitch.target_angle) * 4.0f;
-	clamp(diff, PI_DIV_6, 5 * PI_DIV_6);
+		// difference
+		float diff = angle_difference(m_pitch.current_angle, m_data.pitch.target_angle) * 4.0f;
+		clamp(diff, PI_DIV_6, 5 * PI_DIV_6);
 
-	m_data.pitch.target_speed = m_pitch.current_speed = diff;
+		m_data.pitch.target_speed = m_pitch.current_speed = diff;
 
-	// поправка угловой скорости в соответствии с текущей и таргетовой линейной скоростями
-	// heading speed correction
-	if (!fis_zero(m_man->movement().velocity_current()) && !fis_zero(m_man->movement().velocity_target()) && m_data.linear_dependency)
-		m_heading.current_speed	= m_data.heading.target_speed * m_man->movement().velocity_current() / (m_man->movement().velocity_target() + EPS_L);
-	else 
-		velocity_lerp			(m_heading.current_speed, m_data.heading.target_speed, m_heading.current_acc, m_object->client_update_fdelta());
+		// поправка угловой скорости в соответствии с текущей и таргетовой линейной скоростями
+		// heading speed correction
+		if (!fis_zero(m_man->movement().velocity_current()) && !fis_zero(m_man->movement().velocity_target()) && m_data.linear_dependency)
+			m_heading.current_speed = m_data.heading.target_speed * m_man->movement().velocity_current() / (m_man->movement().velocity_target() + EPS_L);
+		else
+			velocity_lerp(m_heading.current_speed, m_data.heading.target_speed, m_heading.current_acc, m_object->client_update_fdelta());
 
-	m_heading.current_angle		= angle_normalize(m_heading.current_angle);
-	m_data.heading.target_angle	= angle_normalize(m_data.heading.target_angle);
-	
-	if (fsimilar(m_heading.current_angle, m_data.heading.target_angle)) heading_similar = true;
-	angle_lerp(m_heading.current_angle, m_data.heading.target_angle, m_heading.current_speed, m_object->client_update_fdelta());
-	if (!heading_similar && fsimilar(m_heading.current_angle, m_data.heading.target_angle)) {
-		event_data.angle |= SRotationEventData::eHeading;
+		m_heading.current_angle = angle_normalize(m_heading.current_angle);
+		m_data.heading.target_angle = angle_normalize(m_data.heading.target_angle);
+
+		if (fsimilar(m_heading.current_angle, m_data.heading.target_angle)) heading_similar = true;
+		angle_lerp(m_heading.current_angle, m_data.heading.target_angle, m_heading.current_speed, m_object->client_update_fdelta());
+		if (!heading_similar && fsimilar(m_heading.current_angle, m_data.heading.target_angle)) {
+			event_data.angle |= SRotationEventData::eHeading;
+		}
+
+		// update pitch
+		velocity_lerp(m_pitch.current_speed, m_data.pitch.target_speed, m_pitch.current_acc, m_object->client_update_fdelta());
+
+		m_pitch.current_angle = angle_normalize_signed(m_pitch.current_angle);
+		m_data.pitch.target_angle = angle_normalize_signed(m_data.pitch.target_angle);
+
+		if (fsimilar(m_pitch.current_angle, m_data.pitch.target_angle)) pitch_similar = true;
+		angle_lerp(m_pitch.current_angle, m_data.pitch.target_angle, m_pitch.current_speed, m_object->client_update_fdelta());
+		if (!pitch_similar && fsimilar(m_pitch.current_angle, m_data.pitch.target_angle)) {
+			event_data.angle |= SRotationEventData::ePitch;
+		}
+
+		// set
+		m_man->path_builder().m_body.speed = m_heading.current_speed;
+		m_man->path_builder().m_body.current.yaw = m_heading.current_angle;
+		m_man->path_builder().m_body.target.yaw = m_heading.current_angle;
+		m_man->path_builder().m_body.current.pitch = m_pitch.current_angle;
+		m_man->path_builder().m_body.target.pitch = m_pitch.current_angle;
+
+		// save object position
+		Fvector P = m_object->Position();
+		// set angles
+		if (!m_object->animation_movement_controlled())
+			m_object->XFORM().setHPB(-m_man->path_builder().m_body.current.yaw, -m_man->path_builder().m_body.current.pitch, 0);
+		// restore object position
+		m_object->Position() = P;
+
+
+		// if there is an event
+		if (event_data.angle)		m_man->notify(ControlCom::eventRotationEnd, &event_data);
 	}
-
-	// update pitch
-	velocity_lerp				(m_pitch.current_speed, m_data.pitch.target_speed, m_pitch.current_acc, m_object->client_update_fdelta());
-
-	m_pitch.current_angle		= angle_normalize_signed	(m_pitch.current_angle);
-	m_data.pitch.target_angle	= angle_normalize_signed	(m_data.pitch.target_angle);
-
-	if (fsimilar(m_pitch.current_angle, m_data.pitch.target_angle)) pitch_similar = true;
-	angle_lerp					(m_pitch.current_angle, m_data.pitch.target_angle, m_pitch.current_speed, m_object->client_update_fdelta());
-	if (!pitch_similar && fsimilar(m_pitch.current_angle, m_data.pitch.target_angle)) {
-		event_data.angle |= SRotationEventData::ePitch;
-	}
-
-	// set
-	m_man->path_builder().m_body.speed			= m_heading.current_speed;
-	m_man->path_builder().m_body.current.yaw	= m_heading.current_angle;
-	m_man->path_builder().m_body.target.yaw		= m_heading.current_angle;
-	m_man->path_builder().m_body.current.pitch	= m_pitch.current_angle;
-	m_man->path_builder().m_body.target.pitch	= m_pitch.current_angle;
-
-	// save object position
-	Fvector P					= m_object->Position();
-	// set angles
-	if(!m_object->animation_movement_controlled())
-		m_object->XFORM().setHPB	(-m_man->path_builder().m_body.current.yaw,-m_man->path_builder().m_body.current.pitch,0);
-	// restore object position
-	m_object->Position()		= P;
-
-	
-	// if there is an event
-	if (event_data.angle)		m_man->notify(ControlCom::eventRotationEnd, &event_data);
 }
 
 void CControlDirection::pitch_correction()

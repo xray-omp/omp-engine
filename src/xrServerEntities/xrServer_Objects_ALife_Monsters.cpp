@@ -1916,20 +1916,54 @@ void CSE_ALifeMonsterBase::STATE_Write	(NET_Packet	&tNetPacket)
 
 void CSE_ALifeMonsterBase::UPDATE_Read	(NET_Packet	&tNetPacket)
 {
-	inherited1::UPDATE_Read		(tNetPacket);
-	inherited2::UPDATE_Read		(tNetPacket);
+	if (g_pGamePersistent->GameType() == eGameIDSingle)
+	{
+		inherited1::UPDATE_Read(tNetPacket);
+		inherited2::UPDATE_Read(tNetPacket);
+	}
+	else
+	{
+		tNetPacket.r_float(f_health);
+		tNetPacket.r_vec3(o_Position);
+		tNetPacket.r_angle8(o_torso.yaw);
+		tNetPacket.r_u16(u_motion_idx);
+		tNetPacket.r_u16(u_motion_slot);
+	}
 }
 
 void CSE_ALifeMonsterBase::UPDATE_Write	(NET_Packet	&tNetPacket)
 {
-	inherited1::UPDATE_Write		(tNetPacket);
-	inherited2::UPDATE_Write		(tNetPacket);
+	if (g_pGamePersistent->GameType() == eGameIDSingle)
+	{
+		inherited1::UPDATE_Write(tNetPacket);
+		inherited2::UPDATE_Write(tNetPacket);
+	}
+	else
+	{
+		tNetPacket.w_float(get_health());
+		tNetPacket.w_vec3(o_Position);
+		tNetPacket.w_angle8(o_torso.yaw);
+		tNetPacket.w_u16(u_motion_idx);
+		tNetPacket.w_u16(u_motion_slot);
+	}
 }
 
 void CSE_ALifeMonsterBase::load(NET_Packet &tNetPacket)
 {
 	inherited1::load(tNetPacket);
 	inherited2::load(tNetPacket);
+}
+
+BOOL CSE_ALifeMonsterBase::Net_Relevant()
+{
+	if (g_pGamePersistent->GameType() == eGameIDSingle)
+	{
+		inherited1::Net_Relevant();
+	}
+	else
+	{
+		return g_Alive();
+	}
 }
 
 #ifndef XRGAME_EXPORTS
