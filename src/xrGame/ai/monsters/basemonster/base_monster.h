@@ -26,6 +26,8 @@
 
 #include "../monster_aura.h"
 
+#include "../../../../xrphysics/PHCharacter.h"
+
 class CCharacterPhysicsSupport;
 class CMonsterCorpseCoverEvaluator;
 class CCoverEvaluatorFarFromEnemy;
@@ -48,6 +50,8 @@ class CMonsterHome;
 // Lain: added
 class CMonsterSquad;
 class squad_grouping_behaviour;
+
+class CPHCharacter;
 
 #ifdef DEBUG
 namespace debug { class text_tree; }
