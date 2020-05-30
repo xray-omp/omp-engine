@@ -557,11 +557,11 @@ bool CSE_ALifeObject::used_ai_locations		() const
 }
 
 #include "game_base_space.h"
-#include "Level.h"
+#include "../xrEngine/IGame_Persistent.h"
 
 bool CSE_ALifeObject::can_switch_online		() const
 {
-	if (GameID() == eGameIDSingle)
+	if (g_pGamePersistent->GameType() == eGameIDSingle)
 		return						(match_configuration() && !!m_flags.is(flSwitchOnline));
 	else
 		return true;
@@ -569,7 +569,7 @@ bool CSE_ALifeObject::can_switch_online		() const
 
 bool CSE_ALifeObject::can_switch_offline	() const
 {
-	if (GameID() == eGameIDSingle)
+	if (g_pGamePersistent->GameType() == eGameIDSingle)
 		return						(!match_configuration() || !!m_flags.is(flSwitchOffline));
 	else
 		return false;
