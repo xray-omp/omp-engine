@@ -45,7 +45,7 @@ void xrServer::Process_event_destroy	(NET_Packet& P, ClientID sender, u32 time, 
 	xrClientData					*c_dest = e_dest->owner;				// клиент, чей юнит
 	R_ASSERT						(c_dest);
 	xrClientData					*c_from = ID_to_client(sender);	// клиент, кто прислал
-	R_ASSERT						(c_dest == c_from);							// assure client ownership of event
+
 	u16								parent_id = e_dest->ID_Parent;
 
 #ifdef MP_LOGGING
