@@ -1928,6 +1928,7 @@ void CSE_ALifeMonsterBase::UPDATE_Read	(NET_Packet	&tNetPacket)
 		tNetPacket.r_angle8(o_torso.yaw);
 		tNetPacket.r_u16(u_motion_idx);
 		tNetPacket.r_u16(u_motion_slot);
+		set_health(f_health);
 	}
 }
 
@@ -1958,7 +1959,7 @@ BOOL CSE_ALifeMonsterBase::Net_Relevant()
 {
 	if (g_pGamePersistent->GameType() == eGameIDSingle)
 	{
-		inherited1::Net_Relevant();
+		return inherited1::Net_Relevant();
 	}
 	else
 	{
