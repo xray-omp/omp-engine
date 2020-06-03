@@ -768,3 +768,9 @@ void CEnvironment::unload	()
 	m_pRender->OnUnload	();
 //	tonemap				= 0;
 }
+
+void CEnvironment::OnDisconnect()
+{
+	unload();
+	load();
+}

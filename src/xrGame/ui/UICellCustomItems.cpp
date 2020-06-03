@@ -374,7 +374,7 @@ void CUIWeaponCellItem::InitAddon(CUIStatic* s, LPCSTR section, Fvector2 addon_o
 		{
 			s->SetWndSize		(Fvector2().set(cell_size.y, cell_size.x) );
 			Fvector2 new_offset;
-			new_offset.x		= addon_offset.y*base_scale.x;
+			new_offset.x		= addon_offset.y*base_scale.y;
 			new_offset.y		= GetHeight() - addon_offset.x*base_scale.x - cell_size.x;
 			addon_offset		= new_offset;
 			addon_offset.x		*= UI().get_current_kx();
@@ -382,6 +382,14 @@ void CUIWeaponCellItem::InitAddon(CUIStatic* s, LPCSTR section, Fvector2 addon_o
 		{
 			s->SetWndSize		(cell_size);
 			addon_offset.mul	(base_scale);
+		}
+
+		// Pavel: Костыль. Работает при переносе из вертикального слота. 
+		if (Heading() && !b_rotate)
+		{
+			addon_offset.x *= UI().get_current_kx();
+			cell_size.x *= UI().get_current_kx();
+			s->SetWndSize(cell_size);
 		}
 
 		s->SetWndPos			(addon_offset);

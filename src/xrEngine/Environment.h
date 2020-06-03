@@ -315,6 +315,7 @@ public:
 
 	void					OnDeviceCreate		();
 	void					OnDeviceDestroy		();
+	void                    OnDisconnect		();
 
 	// editor-related
 #ifdef _EDITOR
