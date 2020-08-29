@@ -1012,9 +1012,9 @@ void CActor::UpdateCL	()
 			HUD().SetFirstBulletCrosshairDisp(pWeapon->GetFirstBulletDisp());
 #endif
 						
-			BOOL B = !((mstate_real & mcLookout) && DISABLE_HIDE_WEAPON_WHEN_LOOKOUT);
+			BOOL B = !((mstate_real & mcLookout) && DISABLE_RENDER_WEAPON_WHEN_LOOKOUT);
 			psHUD_Flags.set( HUD_WEAPON_RT, B);
-			B = !((mstate_real & mcLookout) && DISABLE_HIDE_WEAPON_CROSSHAIR_WHEN_LOOKOUT) && pWeapon->show_crosshair();
+			B = !((mstate_real & mcLookout) && DISABLE_RENDER_WEAPON_CROSSHAIR_WHEN_LOOKOUT) && pWeapon->show_crosshair();
 			psHUD_Flags.set( HUD_CROSSHAIR_RT2, B);			
 			psHUD_Flags.set( HUD_DRAW_RT, pWeapon->show_indicators() );
 		}
@@ -1423,7 +1423,7 @@ extern	BOOL	g_ShowAnimationInfo		;
 void CActor::OnHUDDraw	(CCustomHUD*)
 {
 	R_ASSERT						(IsFocused());
-	if(! ( (mstate_real & mcLookout) && DISABLE_HIDE_WEAPON_WHEN_LOOKOUT) )
+	if(! ( (mstate_real & mcLookout) && DISABLE_RENDER_WEAPON_WHEN_LOOKOUT) )
 		g_player_hud->render_hud		();
 
 

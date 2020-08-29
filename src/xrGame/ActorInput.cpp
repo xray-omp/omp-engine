@@ -33,6 +33,7 @@
 #include "clsid_game.h"
 #include "hudmanager.h"
 #include "Weapon.h"
+#include "../settings/omp_settings.h"
 
 extern u32 hud_adj_mode;
 
@@ -49,7 +50,7 @@ void CActor::IR_OnKeyboardPress(int cmd)
 	{
 	case kWPN_FIRE:
 		{
-			if( (mstate_wishful & mcLookout) && !IsGameTypeSingle() ) return;
+			if( (mstate_wishful & mcLookout) && DISABLE_WEAPON_FIRE_WHEN_LOOKOUT) return;
 
 			u16 slot = inventory().GetActiveSlot();
 			if(inventory().ActiveItem() && (slot==INV_SLOT_3 || slot==INV_SLOT_2) )
