@@ -2485,6 +2485,9 @@
     <Filter Include="Physics\scripts">
       <UniqueIdentifier>{69ebf4ce-a701-4d87-ae88-a77479be1f0c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UI\GameTypes\FreeMp">
+      <UniqueIdentifier>{6b2387dd-8f2f-47b8-a16b-8018d236136a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="mt_config.h">
@@ -7371,6 +7374,10 @@
     <ClInclude Include="physics_world_scripted.h">
       <Filter>Physics\scripts</Filter>
     </ClInclude>
+    </ClInclude>
+    <ClInclude Include="UIGameFMP.h">
+      <Filter>UI\GameTypes\FreeMp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="damage_manager.cpp">
@@ -11017,6 +11024,9 @@
     </ClCompile>
     <ClCompile Include="ai\stalker\ai_stalker_net.cpp">
       <Filter>AI\AMonsters\humans\stalker</Filter>
+    </ClCompile>
+    <ClCompile Include="UIGameFMP.cpp">
+      <Filter>UI\GameTypes\FreeMp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
