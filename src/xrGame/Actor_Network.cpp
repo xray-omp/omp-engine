@@ -56,6 +56,7 @@ u32			g_cl_InterpolationMaxPoints = 0;
 int			g_dwInputUpdateDelta		= 20;
 BOOL		net_cl_inputguaranteed		= FALSE;
 CActor*		g_actor						= NULL;
+CActor*		g_single_actor				= NULL;
 
 CActor*			Actor()	
 {	
@@ -518,12 +519,14 @@ BOOL CActor::net_Spawn		(CSE_Abstract* DC)
 		{
 			if (!smart_cast<CActorMP*>(this)) {
 				E->s_flags.set(M_SPAWN_OBJECT_LOCAL, TRUE);
+				E->s_flags.set(M_SPAWN_OBJECT_ASPLAYER, FALSE);
 				Msg("single_actor_spawn");
 				g_actor = this;
+				g_single_actor = this;
 			}
 		}
 
-		if (OnClient())
+		if (OnClient() || (OnServer() && !g_dedicated_server))
 		{
 			if (smart_cast<CActorMP*>(this)) {
 				if (TRUE == E->s_flags.test(M_SPAWN_OBJECT_LOCAL))
@@ -769,7 +772,18 @@ void CActor::net_Destroy	()
 	SetDefaultVisualOutfit(NULL);
 
 
-	if(g_actor == this) g_actor= NULL;
+	if (g_actor == this)
+	{
+		Msg("g_actor set to NULL");
+		g_actor = NULL;
+	}
+
+	if (g_single_actor == this)
+	{
+		Msg("g_single_actor set to NULL");
+		g_single_actor = NULL;
+	}
+
 
 	Engine.Sheduler.Unregister	(this);
 

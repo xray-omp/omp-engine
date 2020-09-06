@@ -49,6 +49,8 @@ int			g_sv_adm_menu_ping_limit		= 25;
 
 extern xr_token	round_end_result_str[];
 
+extern CActor* g_single_actor;
+
 #include "ui\UIBuyWndShared.h"
 
 game_sv_mp::game_sv_mp() :inherited()
@@ -525,7 +527,10 @@ void	game_sv_mp::RespawnPlayer			(ClientID id_who, bool NoSpectator)
 	CSE_ALifeCreatureActor	*pA	=	smart_cast<CSE_ALifeCreatureActor*>(pOwner);
 	CSE_Spectator			*pS =	smart_cast<CSE_Spectator*>(pOwner);
 
-	if (pA)
+	xrClientData* xrSVCData = (xrClientData*)m_server->GetServerClient();	
+	bool owner_is_server_actor = !!g_single_actor && (g_single_actor->ID() == pOwner->ID);
+	
+	if (pA && !owner_is_server_actor)
 	{
 		//------------------------------------------------------------			
 		AllowDeadBodyRemove(id_who, xrCData->ps->GameID);
@@ -534,7 +539,7 @@ void	game_sv_mp::RespawnPlayer			(ClientID id_who, bool NoSpectator)
 		//------------------------------------------------------------
 	};
 
-	if (pA && !NoSpectator)
+	if (pA && !NoSpectator && !owner_is_server_actor)
 	{
 		//------------------------------------------------------------
 		SpawnPlayer(id_who, "spectator");
@@ -616,8 +621,9 @@ void	game_sv_mp::SpawnPlayer(ClientID id, LPCSTR N)
 			}
 		};
 	
-	Msg		("* %s [%d] respawned as %s", get_name_id(id), E->ID, (0 == pA) ? "spectator" : "actor");
-	spawn_end				(E,id);
+	E = spawn_end				(E,id);
+
+	Msg("* %s [%d] respawned as %s", get_name_id(id), E->ID, (0 == pA) ? "spectator" : "actor");
 
 	ps_who->SetGameID(CL->owner->ID);
 
