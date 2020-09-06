@@ -11,6 +11,7 @@ enum ERPGameType{		// [0..255]
 	rpgtGameTeamDeathmatch,
 	rpgtGameArtefactHunt,
 	rpgtGameCaptureTheArtefact,
+	rpgtFreeMp,
 	rpgtGameCount,
 };
 
@@ -20,6 +21,7 @@ xr_token rpoint_game_type[]={
 	{ "TeamDeathmatch",		rpgtGameTeamDeathmatch		},
 	{ "ArtefactHunt",		rpgtGameArtefactHunt		},
 	{ "CaptureTheArtefact",	rpgtGameCaptureTheArtefact	},
+	{ "FreeMp",				rpgtFreeMp					},
 	{ 0,					0	}
 };
 
@@ -55,6 +57,12 @@ bool GameTypeChooser::LoadLTX(CInifile& ini, LPCSTR sect_name, bool bOldFormat)
             case rpgtGameCaptureTheArtefact:
                 m_GameType.set(eGameIDCaptureTheArtefact,TRUE);
                 break;
+			case rpgtGameCaptureTheArtefact:
+				m_GameType.set(eGameIDCaptureTheArtefact, TRUE);
+				break;
+			case rpgtFreeMp:
+				m_GameType.set(eGameIDFreeMp, TRUE);
+				break;
         }
     }else
         m_GameType.assign		(ini.r_u16	(sect_name, "game_type"));
@@ -82,8 +90,6 @@ void  GameTypeChooser::FillProp(LPCSTR pref, PropItemVec& items)
     PHelper().CreateFlag16  (items, PrepareKey(pref, "Game Type\\team deathmatch"),     	&m_GameType, eGameIDTeamDeathmatch);
     PHelper().CreateFlag16  (items, PrepareKey(pref, "Game Type\\artefact hunt"),       	&m_GameType, eGameIDArtefactHunt);
     PHelper().CreateFlag16  (items, PrepareKey(pref, "Game Type\\capture the artefact"),	&m_GameType, eGameIDCaptureTheArtefact);
-    PHelper().CreateFlag16  (items, PrepareKey(pref, "Game Type\\domination zone"),     	&m_GameType, eGameIDDominationZone);
-    PHelper().CreateFlag16  (items, PrepareKey(pref, "Game Type\\team domination zone"),	&m_GameType, eGameIDTeamDominationZone);
 */
  }
 #endif // #ifndef XRGAME_EXPORTS

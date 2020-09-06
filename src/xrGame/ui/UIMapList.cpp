@@ -170,6 +170,8 @@ EGameIDs CUIMapList::GetCurGameType()
 			return	eGameIDArtefactHunt;
 		else if (0 == xr_strcmp(text, CStringTable().translate(get_token_name(g_GameModes,eGameIDCaptureTheArtefact))) )
 			return	eGameIDCaptureTheArtefact;
+		else if (0 == xr_strcmp(text, CStringTable().translate(get_token_name(g_GameModes, eGameIDFreeMp))))
+			return	eGameIDFreeMp;
 		else
 			NODEFAULT;
 	}
@@ -184,6 +186,8 @@ EGameIDs CUIMapList::GetCurGameType()
 			return	eGameIDArtefactHunt;
 		else if (0 == xr_strcmp(text, get_token_name(g_GameModes,eGameIDCaptureTheArtefact)) )
 			return	eGameIDCaptureTheArtefact;
+		else if (0 == xr_strcmp(text, get_token_name(g_GameModes, eGameIDFreeMp)))
+			return	eGameIDFreeMp;
 		else
 			NODEFAULT;
 	}

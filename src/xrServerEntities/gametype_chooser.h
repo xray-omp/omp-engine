@@ -11,8 +11,7 @@ enum EGameIDs {
         eGameIDTeamDeathmatch                           = u32(1) << 2,
         eGameIDArtefactHunt                             = u32(1) << 3,
         eGameIDCaptureTheArtefact                       = u32(1) << 4,
-        eGameIDDominationZone                           = u32(1) << 5,
-        eGameIDTeamDominationZone                       = u32(1) << 6,
+		eGameIDFreeMp									= u32(1) << 5,
 };
 
 class PropValue;

@@ -67,7 +67,7 @@ _action  actions[]		= {
 	{ "buy_menu",			kBUY					,_mp},		
 	{ "skin_menu",			kSKIN					,_mp},		
 	{ "team_menu",			kTEAM					,_mp},		
-	{ "active_jobs",		kACTIVE_JOBS			,_sp},		
+	{ "active_jobs",		kACTIVE_JOBS			,_both},
 																
 	{ "vote_begin",			kVOTE_BEGIN				,_mp},		
 	{ "show_admin_menu",	kSHOW_ADMIN_MENU		,_mp},		

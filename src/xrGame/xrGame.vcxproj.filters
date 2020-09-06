@@ -2485,6 +2485,12 @@
     <Filter Include="Physics\scripts">
       <UniqueIdentifier>{69ebf4ce-a701-4d87-ae88-a77479be1f0c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Server\Games\server\freemp">
+      <UniqueIdentifier>{d08e08ef-3e2f-4791-9485-377179643799}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Server\Games\client\freemp">
+      <UniqueIdentifier>{00557b8e-492b-48c7-b4b0-332fc13aa87c}</UniqueIdentifier>
+    </Filter>
     <Filter Include="UI\GameTypes\FreeMp">
       <UniqueIdentifier>{6b2387dd-8f2f-47b8-a16b-8018d236136a}</UniqueIdentifier>
     </Filter>
@@ -7374,6 +7380,11 @@
     <ClInclude Include="physics_world_scripted.h">
       <Filter>Physics\scripts</Filter>
     </ClInclude>
+    <ClInclude Include="game_sv_freemp.h">
+      <Filter>Core\Server\Games\server\freemp</Filter>
+    </ClInclude>
+    <ClInclude Include="game_cl_freemp.h">
+      <Filter>Core\Server\Games\client\freemp</Filter>
     </ClInclude>
     <ClInclude Include="UIGameFMP.h">
       <Filter>UI\GameTypes\FreeMp</Filter>
@@ -11024,6 +11035,12 @@
     </ClCompile>
     <ClCompile Include="ai\stalker\ai_stalker_net.cpp">
       <Filter>AI\AMonsters\humans\stalker</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sv_freemp.cpp">
+      <Filter>Core\Server\Games\server\freemp</Filter>
+    </ClCompile>
+    <ClCompile Include="game_cl_freemp.cpp">
+      <Filter>Core\Server\Games\client\freemp</Filter>
     </ClCompile>
     <ClCompile Include="UIGameFMP.cpp">
       <Filter>UI\GameTypes\FreeMp</Filter>
