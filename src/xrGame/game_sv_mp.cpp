@@ -590,7 +590,10 @@ void	game_sv_mp::SpawnPlayer(ClientID id, LPCSTR N)
 	{
 		pA->s_team				=	u8(ps_who->team);
 		assign_RP				(pA, ps_who);
-		SetSkin					(E, pA->s_team, ps_who->skin);
+		if (UseSKin())
+		{
+			SetSkin(E, pA->s_team, ps_who->skin);
+		}
 		ps_who->resetFlag		(GAME_PLAYER_FLAG_VERY_VERY_DEAD);
 		if (!ps_who->RespawnTime)
 		{
@@ -669,6 +672,8 @@ void game_sv_mp::OnPlayerDisconnect		(ClientID id_who, LPSTR Name, u16 GameID)
 
 void	game_sv_mp::SetSkin					(CSE_Abstract* E, u16 Team, u16 ID)
 {
+	R_ASSERT(UseSKin());
+
 	if (!E) return;
 	//-------------------------------------------
 	CSE_Visual* pV = smart_cast<CSE_Visual*>(E);
