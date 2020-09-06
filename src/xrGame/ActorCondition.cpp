@@ -310,7 +310,7 @@ void CActorCondition::UpdateBoosters()
 		}
 	}
 
-	if(m_object == Level().CurrentViewEntity())
+	if(m_object == Level().CurrentViewEntity() && CurrentGameUI())
 		CurrentGameUI()->UIMainIngameWnd->UpdateBoosterIndicators(m_booster_influences);
 }
 
