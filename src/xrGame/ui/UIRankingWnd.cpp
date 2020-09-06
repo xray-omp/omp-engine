@@ -50,9 +50,16 @@ CUIRankingWnd::~CUIRankingWnd()
 
 void CUIRankingWnd::Show( bool status )
 {
-	if ( status )
+	if ( status && Actor())
 	{
-		m_actor_ch_info->InitCharacter( Actor()->object_id() );
+		if (IsGameTypeSingle())
+		{
+			m_actor_ch_info->InitCharacter(Actor()->object_id());
+		}
+		else
+		{
+			m_actor_ch_info->InitCharacterMP(Actor());
+		}
 		
 		string64 buf;
 		xr_sprintf( buf, sizeof(buf), "%d %s", Actor()->get_money(), "RU" );

@@ -9,6 +9,7 @@
 #include "../ai_space.h"
 #include "../../xrServerEntities/script_engine.h"
 #include "../string_table.h"
+#include "Level.h"
 
 CUIAchievements::CUIAchievements(CUIScrollView* parent):m_parent(parent)
 {
@@ -37,6 +38,9 @@ void CUIAchievements::init_from_xml(CUIXml& xml)
 }
 void CUIAchievements::Update()
 {
+	if (!IsGameTypeSingle())
+		return;
+
 	if(ParentHasMe() && !m_repeat)
 		return;
 
