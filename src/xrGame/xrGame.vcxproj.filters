@@ -2494,6 +2494,9 @@
     <Filter Include="UI\GameTypes\FreeMp">
       <UniqueIdentifier>{6b2387dd-8f2f-47b8-a16b-8018d236136a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="AI\AMonsters\common\net">
+      <UniqueIdentifier>{459ccbd1-4831-4852-b1e6-77370a630e09}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="mt_config.h">
@@ -7389,6 +7392,9 @@
     <ClInclude Include="UIGameFMP.h">
       <Filter>UI\GameTypes\FreeMp</Filter>
     </ClInclude>
+    <ClInclude Include="net_physics_state.h">
+      <Filter>AI\AMonsters\common\net</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="damage_manager.cpp">
@@ -11044,6 +11050,9 @@
     </ClCompile>
     <ClCompile Include="UIGameFMP.cpp">
       <Filter>UI\GameTypes\FreeMp</Filter>
+    </ClCompile>
+    <ClCompile Include="net_physics_state.cpp">
+      <Filter>AI\AMonsters\common\net</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

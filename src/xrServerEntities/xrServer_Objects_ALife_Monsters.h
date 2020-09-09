@@ -14,6 +14,7 @@
 #include "character_info_defs.h"
 #include "associative_vector.h"
 #include "alife_movement_manager_holder.h"
+#include "net_physics_state.h"
 
 class CALifeMonsterBrain;
 class CALifeHumanBrain;
@@ -519,20 +520,24 @@ add_to_type_list(CSE_ALifeHumanAbstract)
 SERVER_ENTITY_DECLARE_BEGIN2(CSE_ALifeHumanStalker,CSE_ALifeHumanAbstract,CSE_PHSkeleton)
 	shared_str						m_start_dialog;
 
+	net_physics_state				physics_state;
+
 	float							f_health;
 	float							f_head_dir_pitch;
 	float							f_head_dir_yaw;
 	u16								u_active_slot;
 
 	u16								u_torso_anm_idx;
-	u8								u_torso_anm_slot;
 	u16								u_legs_anm_idx;
-	u8								u_legs_anm_slot;
 	u16								u_head_anm_idx;
-	u8								u_head_anm_slot;
 	u16								u_script_anm_idx;
+
+	u8								u_torso_anm_slot;
+	u8								u_legs_anm_slot;
+	u8								u_head_anm_slot;
 	u8								u_script_anm_slot;
 
+	u8								phSyncFlag = 0;
 
 									CSE_ALifeHumanStalker	(LPCSTR caSection);
 	virtual							~CSE_ALifeHumanStalker	();

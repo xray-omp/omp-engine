@@ -14,6 +14,8 @@
 #include "../../step_manager.h"
 #include "../../../xrServerEntities/script_export_space.h"
 
+#include "../../../xrServerEntities/PHNetState.h"
+
 #ifdef DEBUG
 	template <typename _object_type>
 	class CActionBase;
@@ -57,6 +59,27 @@ namespace smart_cover {
 		class action;
 	};
 };
+
+
+namespace stalker_interpolation {
+	struct InterpData
+	{
+		Fvector Pos;
+		Fvector Vel;
+		SRotation o_torso;
+		SRotation head;
+		float o_model;
+	};
+
+	struct net_update_A
+	{
+		SPHNetState State;
+		SRotation o_torso;
+		SRotation head;
+		u32 dwTimeStamp = 0;
+	};
+};
+
 
 enum ECriticalWoundType;
 
@@ -124,6 +147,31 @@ private:
 	float							m_power_fx_factor;
 
 private:
+	// for interpolation
+	SPHNetState						LastState;
+	SPHNetState						RecalculatedState;
+	SPHNetState						PredictedState;
+	
+	float							SCoeff[3][4];			//коэффициэнты для сплайна Бизье
+	float							HCoeff[3][4];			//коэффициэнты для сплайна Эрмита
+	Fvector							IPosS, IPosH, IPosL;	//положение актера после интерполяции Бизье, Эрмита, линейной
+
+
+	xr_deque<stalker_interpolation::net_update_A>	NET_A;
+
+	stalker_interpolation::net_update_A				NET_A_Last;
+
+	stalker_interpolation::InterpData		IStart;
+	//stalker_interpolation::InterpData		IRec;
+	stalker_interpolation::InterpData		IEnd;
+
+	bool							m_bInInterpolation;
+	bool							m_bInterpolate;
+	u32								m_dwIStartTime;
+	u32								m_dwIEndTime;
+	u32								m_dwILastUpdateTime;
+
+private:
 	float							m_fRankDisperison;
 	float							m_fRankVisibility;
 	float							m_fRankImmunity;
@@ -179,6 +227,13 @@ public:
 	virtual	void						reinit								();
 	virtual void						reload								(LPCSTR	section );				
 	virtual void						LoadSounds							(LPCSTR section );
+
+
+	virtual void						PH_B_CrPr							(); // actions & operations before physic correction-prediction steps
+	virtual void						PH_I_CrPr							(); // actions & operations after correction before prediction steps
+	virtual void						PH_A_CrPr							(); // actions & operations after phisic correction-prediction steps
+
+			void						postprocess_packet					(stalker_interpolation::net_update_A &packet);
 	
 	virtual BOOL						net_Spawn							(CSE_Abstract* DC);
 	virtual void						net_Export							(NET_Packet& P);
@@ -288,6 +343,11 @@ public:
 	
 			bool						undetected_anomaly		();
 			bool						inside_anomaly			();
+
+
+private:
+			void						CalculateInterpolationParams();
+			virtual void				make_Interpolation();
 
 private:
 	bool				m_can_kill_member;
