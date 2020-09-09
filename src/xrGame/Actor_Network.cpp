@@ -941,10 +941,6 @@ void ACTOR_DEFS::net_update::lerp(ACTOR_DEFS::net_update& A, ACTOR_DEFS::net_upd
 //	weapon			= (f<0.5f)?A.weapon:B.weapon;
 }
 
-InterpData				IStartT;
-InterpData				IRecT;
-InterpData				IEndT;
-
 void CActor::PH_B_CrPr		()	// actions & operations before physic correction-prediction steps
 {
 	//just set last update data for now
