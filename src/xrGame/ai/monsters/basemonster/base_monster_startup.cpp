@@ -342,6 +342,11 @@ BOOL CBaseMonster::net_Spawn (CSE_Abstract* DC)
 	control().update_frame();
 	control().update_schedule();
 
+
+	m_bInInterpolation = false;
+	m_bInterpolate = false;
+	m_dwILastUpdateTime = 0;
+
 	// spawn inventory item
 //	if (ai().get_alife()) {
 //		

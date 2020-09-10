@@ -59,6 +59,24 @@ namespace debug { class text_tree; }
 
 class anti_aim_ability;
 
+
+namespace monster_interpolation {
+	struct InterpData
+	{
+		Fvector Pos;
+		Fvector Vel;
+		SRotation o_torso;
+	};
+
+	struct net_update_A
+	{
+		SPHNetState State;
+		SRotation o_torso;
+		u32 dwTimeStamp = 0;
+	};
+};
+
+
 class CBaseMonster : public CCustomMonster, public CStepManager
 {
 	typedef	CCustomMonster								inherited;
@@ -141,6 +159,12 @@ public:
 	virtual void			PHUnFreeze						()							{return inherited::PHUnFreeze();}
 	virtual void			PHFreeze						()							{return inherited::PHFreeze();}
 	virtual BOOL			UsedAI_Locations				()							{return inherited::UsedAI_Locations();}
+
+	virtual void			PH_B_CrPr(); // actions & operations before physic correction-prediction steps
+	virtual void			PH_I_CrPr(); // actions & operations after correction before prediction steps
+	virtual void			PH_A_CrPr(); // actions & operations after phisic correction-prediction steps
+
+	void					postprocess_packet(monster_interpolation::net_update_A &packet);
 
 	virtual const SRotation	Orientation						() const					{return inherited::Orientation();}
 	virtual void			renderable_Render				()							{return inherited::renderable_Render();} 
@@ -243,6 +267,34 @@ public:
 
 
 
+private:
+// for interpolation
+			SPHNetState						LastState;
+			SPHNetState						RecalculatedState;
+			SPHNetState						PredictedState;
+
+			float							SCoeff[3][4];			//коэффициэнты для сплайна Бизье
+			float							HCoeff[3][4];			//коэффициэнты для сплайна Эрмита
+			Fvector							IPosS, IPosH, IPosL;	//положение актера после интерполяции Бизье, Эрмита, линейной
+
+
+			xr_deque<monster_interpolation::net_update_A>	NET_A;
+			monster_interpolation::net_update_A				NET_A_Last;
+
+			monster_interpolation::InterpData		IStart;
+			//stalker_interpolation::InterpData		IRec;
+			monster_interpolation::InterpData		IEnd;
+
+			bool							m_bInInterpolation;
+			bool							m_bInterpolate;
+			u32								m_dwIStartTime;
+			u32								m_dwIEndTime;
+			u32								m_dwILastUpdateTime;
+
+			void							CalculateInterpolationParams();
+			void							ApplyAnimation(u16 motion_idx, u8 motion_slot);
+			virtual void					make_Interpolation();
+// for interpolation
 
 
 	// Movement Manager

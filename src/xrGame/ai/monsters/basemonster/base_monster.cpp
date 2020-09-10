@@ -338,7 +338,12 @@ void CBaseMonster::UpdateCL()
 	}
 
 	inherited::UpdateCL();
-	
+
+	if (g_Alive() && Remote() && !IsGameTypeSingle())
+	{
+		make_Interpolation();
+	}
+
 	if ( g_Alive() ) 
 	{
 		update_enemy_accessible_and_at_home_info();

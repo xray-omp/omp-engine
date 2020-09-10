@@ -442,11 +442,12 @@ add_to_type_list(CSE_ALifeMonsterZombie)
 #define script_type_list save_type_list(CSE_ALifeMonsterZombie)
 
 SERVER_ENTITY_DECLARE_BEGIN2(CSE_ALifeMonsterBase,CSE_ALifeMonsterAbstract,CSE_PHSkeleton)
-	u16								m_spec_object_id;
-
+	net_physics_state				physics_state;
 	float							f_health;
+	u16								m_spec_object_id;
 	u16								u_motion_idx;
-	u16								u_motion_slot;
+	u8								u_motion_slot;	   
+	u8								phSyncFlag = 0;
 
 									CSE_ALifeMonsterBase	(LPCSTR caSection);				// constructor for variable initialization
 	virtual							~CSE_ALifeMonsterBase	();
