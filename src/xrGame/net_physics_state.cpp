@@ -1,6 +1,14 @@
 #include "StdAfx.h"
 #include "net_physics_state.h"
 
+net_physics_state::net_physics_state()
+{
+	physics_linear_velocity.set(0,0,0);
+	physics_position.set(0, 0, 0);
+	physics_state_enabled = false;
+	dwTimeStamp = 0;
+}
+
 void net_physics_state::fill(SPHNetState &state, u32 time)
 {
 	dwTimeStamp = time;
@@ -15,13 +23,13 @@ void net_physics_state::write(NET_Packet &packet)
 	packet.w_u32(dwTimeStamp);
 
 	// linear velocity
-	clamp(physics_linear_velocity.x, MIN_LINEAR_VELOCITY_COMPONENT, MAX_LINEAR_VELOCITY_COMPONENT);
-	clamp(physics_linear_velocity.y, MIN_LINEAR_VELOCITY_COMPONENT, MAX_LINEAR_VELOCITY_COMPONENT);
-	clamp(physics_linear_velocity.z, MIN_LINEAR_VELOCITY_COMPONENT, MAX_LINEAR_VELOCITY_COMPONENT);
-
-	packet.w_float_q8(physics_linear_velocity.x, MIN_LINEAR_VELOCITY_COMPONENT, MAX_LINEAR_VELOCITY_COMPONENT);
-	packet.w_float_q8(physics_linear_velocity.y, MIN_LINEAR_VELOCITY_COMPONENT, MAX_LINEAR_VELOCITY_COMPONENT);
-	packet.w_float_q8(physics_linear_velocity.z, MIN_LINEAR_VELOCITY_COMPONENT, MAX_LINEAR_VELOCITY_COMPONENT);
+	//clamp(physics_linear_velocity.x, MIN_LINEAR_VELOCITY_COMPONENT, MAX_LINEAR_VELOCITY_COMPONENT);
+	//clamp(physics_linear_velocity.y, MIN_LINEAR_VELOCITY_COMPONENT, MAX_LINEAR_VELOCITY_COMPONENT);
+	//clamp(physics_linear_velocity.z, MIN_LINEAR_VELOCITY_COMPONENT, MAX_LINEAR_VELOCITY_COMPONENT);
+	//
+	//packet.w_float_q8(physics_linear_velocity.x, MIN_LINEAR_VELOCITY_COMPONENT, MAX_LINEAR_VELOCITY_COMPONENT);
+	//packet.w_float_q8(physics_linear_velocity.y, MIN_LINEAR_VELOCITY_COMPONENT, MAX_LINEAR_VELOCITY_COMPONENT);
+	//packet.w_float_q8(physics_linear_velocity.z, MIN_LINEAR_VELOCITY_COMPONENT, MAX_LINEAR_VELOCITY_COMPONENT);
 
 	// position
 	packet.w_float(physics_position.x);
@@ -38,9 +46,9 @@ void net_physics_state::read(NET_Packet &packet)
 	packet.r_u32(dwTimeStamp);
 
 	// linear velocity
-	packet.r_float_q8(physics_linear_velocity.x, MIN_LINEAR_VELOCITY_COMPONENT, MAX_LINEAR_VELOCITY_COMPONENT);
-	packet.r_float_q8(physics_linear_velocity.y, MIN_LINEAR_VELOCITY_COMPONENT, MAX_LINEAR_VELOCITY_COMPONENT);
-	packet.r_float_q8(physics_linear_velocity.z, MIN_LINEAR_VELOCITY_COMPONENT, MAX_LINEAR_VELOCITY_COMPONENT);
+	//packet.r_float_q8(physics_linear_velocity.x, MIN_LINEAR_VELOCITY_COMPONENT, MAX_LINEAR_VELOCITY_COMPONENT);
+	//packet.r_float_q8(physics_linear_velocity.y, MIN_LINEAR_VELOCITY_COMPONENT, MAX_LINEAR_VELOCITY_COMPONENT);
+	//packet.r_float_q8(physics_linear_velocity.z, MIN_LINEAR_VELOCITY_COMPONENT, MAX_LINEAR_VELOCITY_COMPONENT);
 
 	// position
 	packet.r_float(physics_position.x);

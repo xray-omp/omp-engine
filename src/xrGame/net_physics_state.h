@@ -11,6 +11,7 @@ struct net_physics_state
 	bool	physics_state_enabled;
 	u32		dwTimeStamp;
 
+	net_physics_state();
 	void fill(SPHNetState &state, u32 time);
 	void write(NET_Packet &packet);
 	void read(NET_Packet &packet);
