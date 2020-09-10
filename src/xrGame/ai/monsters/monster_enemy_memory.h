@@ -16,6 +16,7 @@ public:
 
 	void				init_external			(CBaseMonster *M, TTime mem_time);
 	void				update					();
+	void				update_mp				();
 
 	// -----------------------------------------------------
 	const CEntityAlive	*get_enemy				();

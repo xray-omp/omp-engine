@@ -32,6 +32,12 @@ extern CActor*	g_actor;
 
 void CMonsterEnemyMemory::update() 
 {
+	if (!IsGameTypeSingle())
+	{
+		update_mp();
+		return;
+	}
+
 	VERIFY		(monster->g_Alive());
 
 	CMonsterHitMemory& monster_hit_memory = monster->HitMemory;
@@ -127,6 +133,91 @@ void CMonsterEnemyMemory::update()
 		u8		relation_value = u8(monster->tfGetRelationType(it->first));
 		float	dist = monster->Position().distance_to(it->second.position);
 		it->second.danger = (1 + relation_value*relation_value*relation_value) / (1 + dist);
+	}
+}
+
+void CMonsterEnemyMemory::update_mp()
+{
+	VERIFY(monster->g_Alive());
+
+	CMonsterHitMemory& monster_hit_memory = monster->HitMemory;
+
+	typedef CObjectManager<const CEntityAlive>::OBJECTS	objects_list;
+
+	objects_list const& objects = monster->memory().enemy().objects();
+
+	if (monster_hit_memory.is_hit() && time() < monster_hit_memory.get_last_hit_time() + 1000)
+	{
+		if (CEntityAlive* enemy = smart_cast<CEntityAlive*>(monster->HitMemory.get_last_hit_object()))
+		{
+			if (monster->CCustomMonster::useful(&monster->memory().enemy(), enemy) &&
+				monster->Position().distance_to(enemy->Position())
+				<
+				monster->get_feel_enemy_who_just_hit_max_distance())
+			{
+				add_enemy(enemy);
+
+				bool const self_is_dog = !!smart_cast<const CAI_Dog*>(monster);
+				if (self_is_dog)
+				{
+					CMonsterSquad* const squad = monster_squad().get_squad(monster);
+					squad->set_home_in_danger();
+				}
+			}
+		}
+	}
+
+	if (monster->SoundMemory.IsRememberSound())
+	{
+		SoundElem sound;
+		bool dangerous;
+		monster->SoundMemory.GetSound(sound, dangerous);
+		if (dangerous && Device.dwTimeGlobal < sound.time + 2000)
+		{
+			if (CEntityAlive const* enemy = smart_cast<CEntityAlive const*>(sound.who))
+			{
+				if (CActor const* enemy_actor = smart_cast<CActor const*>(sound.who)) {
+					float const xz_dist = monster->Position().distance_to_xz(enemy_actor->Position());
+					float const y_dist = _abs(monster->Position().y - enemy_actor->Position().y);
+
+					if (monster->CCustomMonster::useful(&monster->memory().enemy(), enemy) &&
+						y_dist < 10 &&
+						xz_dist < monster->get_feel_enemy_who_made_sound_max_distance() &&
+						enemy_actor->memory().visual().visible_now(monster))
+					{
+						add_enemy(enemy);
+
+						bool const self_is_dog = !!smart_cast<const CAI_Dog*>(monster);
+						if (self_is_dog)
+						{
+							CMonsterSquad* const squad = monster_squad().get_squad(monster);
+							squad->set_home_in_danger();
+						}
+					}
+				}
+			}
+		}
+	}
+
+	const float feel_enemy_max_distance = monster->get_feel_enemy_max_distance();
+
+	for (objects_list::const_iterator	I = objects.begin(); I != objects.end(); ++I)
+	{
+		const CEntityAlive* enemy = *I;
+		const bool feel_enemy = monster->Position().distance_to(enemy->Position()) < feel_enemy_max_distance;
+		if (feel_enemy || monster->memory().visual().visible_now(*I))
+			add_enemy(*I);
+	}
+
+	// удалить устаревших врагов
+	remove_non_actual();
+
+	// обновить опасность 
+	for (ENEMIES_MAP_IT it = m_objects.begin(); it != m_objects.end(); it++)
+	{
+		u8 relation_value = u8(monster->tfGetRelationType(it->first));
+		float dist = monster->Position().distance_to(it->second.position);
+		it->second.danger = (1 + relation_value * relation_value*relation_value) / (1 + dist);
 	}
 }
 
