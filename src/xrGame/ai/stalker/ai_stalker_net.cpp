@@ -12,9 +12,7 @@
 #include "../../Weapon.h"
 
 #include "../../CharacterPhysicsSupport.h"
-
 #include "../../../xrphysics/iPHWorld.h"
-#include "../../CharacterPhysicsSupport.h"
 #include "../../PHMovementControl.h"
 
 #include "net_physics_state.h"
@@ -100,7 +98,7 @@ void CAI_Stalker::net_Export(NET_Packet& P)
 
 		// agnles
 		P.w_angle8(movement().m_body.current.pitch);
-		P.w_angle8(movement().m_body.current.roll);
+		//P.w_angle8(movement().m_body.current.roll);
 		P.w_angle8(movement().m_body.current.yaw);
 		P.w_angle8(movement().m_head.current.pitch);
 		P.w_angle8(movement().m_head.current.yaw);
@@ -178,7 +176,7 @@ void CAI_Stalker::net_Import(NET_Packet& P)
 
 		SRotation fv_direction;
 		SRotation fv_head_orientation;
-		Fvector position;
+		Fvector fv_position;
 
 		float f_health;
 
@@ -203,13 +201,13 @@ void CAI_Stalker::net_Import(NET_Packet& P)
 		}
 		else
 		{
-			P.r_vec3(position);
+			P.r_vec3(fv_position);
 		}
 		
 		P.r_float(f_health);
 		
 		P.r_angle8(fv_direction.pitch);
-		P.r_angle8(fv_direction.roll);
+		//P.r_angle8(fv_direction.roll);
 		P.r_angle8(fv_direction.yaw);
 		P.r_angle8(fv_head_orientation.pitch);
 		P.r_angle8(fv_head_orientation.yaw);
@@ -244,64 +242,20 @@ void CAI_Stalker::net_Import(NET_Packet& P)
 		}
 		else
 		{
-			Position().set(position);
-
+			Position().set(fv_position);
 			//TODO: disable interpolation?
 		}
 		
+		// Pavel: create structure for animation?
+		ApplyAnimation(
+			u_torso_motion_idx, u_torso_motion_slot,
+			u_legs_motion_idx, u_legs_motion_slot,
+			u_head_motion_idx, u_head_motion_slot,
+			u_script_motion_idx, u_script_motion_slot
+		);
+
 		setVisible(TRUE);
 		setEnabled(TRUE);
-		
-		MotionID motion;
-		IKinematicsAnimated* ik_anim_obj = smart_cast<IKinematicsAnimated*>(Visual());
-		if (u_last_torso_motion_idx != u_torso_motion_idx)
-		{
-			u_last_torso_motion_idx = u_torso_motion_idx;
-			motion.idx = u_torso_motion_idx;
-			motion.slot = u_torso_motion_slot;
-			if (motion.valid())
-			{
-				ik_anim_obj->LL_PlayCycle(ik_anim_obj->LL_PartID("torso"), motion, TRUE, 
-					ik_anim_obj->LL_GetMotionDef(motion)->Accrue(), ik_anim_obj->LL_GetMotionDef(motion)->Falloff(), 
-					ik_anim_obj->LL_GetMotionDef(motion)->Speed(), FALSE, 0, 0, 0);
-			}
-		}
-		if (u_last_legs_motion_idx != u_legs_motion_idx)
-		{
-			u_last_legs_motion_idx = u_legs_motion_idx;
-			motion.idx = u_legs_motion_idx;
-			motion.slot = u_legs_motion_slot;
-			if (motion.valid())
-			{
-				CStepManager::on_animation_start(motion, ik_anim_obj->LL_PlayCycle(ik_anim_obj->LL_PartID("legs"), motion, 
-					TRUE, ik_anim_obj->LL_GetMotionDef(motion)->Accrue(), 
-					ik_anim_obj->LL_GetMotionDef(motion)->Falloff(), ik_anim_obj->LL_GetMotionDef(motion)->Speed(), FALSE, 0, 0, 0));
-			}
-		}
-		if (u_last_head_motion_idx != u_head_motion_idx)
-		{
-			u_last_head_motion_idx = u_head_motion_idx;
-			motion.idx = u_head_motion_idx;
-			motion.slot = u_head_motion_slot;
-			if (motion.valid())
-			{
-				ik_anim_obj->LL_PlayCycle(ik_anim_obj->LL_PartID("head"), motion, TRUE, 
-					ik_anim_obj->LL_GetMotionDef(motion)->Accrue(), ik_anim_obj->LL_GetMotionDef(motion)->Falloff(), 
-					ik_anim_obj->LL_GetMotionDef(motion)->Speed(), FALSE, 0, 0, 0);
-			}
-		}
-
-		if (u_last_script_motion_idx != u_script_motion_idx) {
-			motion.idx = u_script_motion_idx;
-			motion.slot = u_script_motion_slot;
-			u_last_script_motion_idx = u_script_motion_idx;
-			if (motion.valid())
-			{
-				ik_anim_obj->LL_PlayCycle(ik_anim_obj->LL_GetMotionDef(motion)->bone_or_part, motion, TRUE,
-					ik_anim_obj->LL_GetMotionDef(motion)->Accrue(), ik_anim_obj->LL_GetMotionDef(motion)->Falloff(), 
-					ik_anim_obj->LL_GetMotionDef(motion)->Speed(), ik_anim_obj->LL_GetMotionDef(motion)->StopAtEnd(), 0, 0, 0);
-			}
-		}
 	}
 }
 
@@ -364,7 +318,7 @@ void CAI_Stalker::PH_B_CrPr()
 
 		pIStart->o_torso.yaw = angle_normalize(movement().m_body.current.yaw);
 		pIStart->o_torso.pitch = angle_normalize(movement().m_body.current.pitch);
-		pIStart->o_torso.roll = angle_normalize(movement().m_body.current.roll);
+		//pIStart->o_torso.roll = angle_normalize(movement().m_body.current.roll);
 
 		pIStart->head.pitch = angle_normalize(movement().m_head.current.pitch);
 		pIStart->head.yaw = angle_normalize(movement().m_head.current.yaw);
@@ -401,29 +355,6 @@ void CAI_Stalker::PH_B_CrPr()
 		CrPr_SetActivated(true);
 		PHUnFreeze();
 	}
-	//else
-	//{
-	//	if (PHGetSyncItemsNumber() != m_u16NumBones || m_States.empty()) return;
-	//	CrPr_SetActivated(true);
-	//
-	//	PHUnFreeze();
-	//
-	//	for (u16 i = 0; i < m_u16NumBones; i++)
-	//	{
-	//		SPHNetState state, stateL;
-	//		PHGetSyncItem(i)->get_State(state);
-	//		stateL = m_States[i];
-	//
-	//		state.position = stateL.position;
-	//		state.previous_position = stateL.previous_position;
-	//		state.quaternion = stateL.quaternion;
-	//		state.previous_quaternion = stateL.previous_quaternion;
-	//		state.linear_vel = stateL.linear_vel;
-	//		state.enabled = true;
-	//
-	//		PHGetSyncItem(i)->set_State(state);
-	//	};
-	//};
 }
 
 void CAI_Stalker::PH_I_CrPr()
@@ -469,6 +400,65 @@ void CAI_Stalker::PH_A_CrPr()
 	}
 
 	CalculateInterpolationParams();
+}
+
+void CAI_Stalker::ApplyAnimation(
+	u16 u_torso_motion_idx, u8 u_torso_motion_slot,
+	u16 u_legs_motion_idx, u8 u_legs_motion_slot,
+	u16 u_head_motion_idx, u8 u_head_motion_slot,
+	u16 u_script_motion_idx, u8 u_script_motion_slot
+)
+{
+	MotionID motion;
+	IKinematicsAnimated* ik_anim_obj = smart_cast<IKinematicsAnimated*>(Visual());
+	if (u_last_torso_motion_idx != u_torso_motion_idx)
+	{
+		u_last_torso_motion_idx = u_torso_motion_idx;
+		motion.idx = u_torso_motion_idx;
+		motion.slot = u_torso_motion_slot;
+		if (motion.valid())
+		{
+			ik_anim_obj->LL_PlayCycle(ik_anim_obj->LL_PartID("torso"), motion, TRUE,
+				ik_anim_obj->LL_GetMotionDef(motion)->Accrue(), ik_anim_obj->LL_GetMotionDef(motion)->Falloff(),
+				ik_anim_obj->LL_GetMotionDef(motion)->Speed(), FALSE, 0, 0, 0);
+		}
+	}
+	if (u_last_legs_motion_idx != u_legs_motion_idx)
+	{
+		u_last_legs_motion_idx = u_legs_motion_idx;
+		motion.idx = u_legs_motion_idx;
+		motion.slot = u_legs_motion_slot;
+		if (motion.valid())
+		{
+			CStepManager::on_animation_start(motion, ik_anim_obj->LL_PlayCycle(ik_anim_obj->LL_PartID("legs"), motion,
+				TRUE, ik_anim_obj->LL_GetMotionDef(motion)->Accrue(),
+				ik_anim_obj->LL_GetMotionDef(motion)->Falloff(), ik_anim_obj->LL_GetMotionDef(motion)->Speed(), FALSE, 0, 0, 0));
+		}
+	}
+	if (u_last_head_motion_idx != u_head_motion_idx)
+	{
+		u_last_head_motion_idx = u_head_motion_idx;
+		motion.idx = u_head_motion_idx;
+		motion.slot = u_head_motion_slot;
+		if (motion.valid())
+		{
+			ik_anim_obj->LL_PlayCycle(ik_anim_obj->LL_PartID("head"), motion, TRUE,
+				ik_anim_obj->LL_GetMotionDef(motion)->Accrue(), ik_anim_obj->LL_GetMotionDef(motion)->Falloff(),
+				ik_anim_obj->LL_GetMotionDef(motion)->Speed(), FALSE, 0, 0, 0);
+		}
+	}
+
+	if (u_last_script_motion_idx != u_script_motion_idx) {
+		motion.idx = u_script_motion_idx;
+		motion.slot = u_script_motion_slot;
+		u_last_script_motion_idx = u_script_motion_idx;
+		if (motion.valid())
+		{
+			ik_anim_obj->LL_PlayCycle(ik_anim_obj->LL_GetMotionDef(motion)->bone_or_part, motion, TRUE,
+				ik_anim_obj->LL_GetMotionDef(motion)->Accrue(), ik_anim_obj->LL_GetMotionDef(motion)->Falloff(),
+				ik_anim_obj->LL_GetMotionDef(motion)->Speed(), ik_anim_obj->LL_GetMotionDef(motion)->StopAtEnd(), 0, 0, 0);
+		}
+	}
 }
 
 void CAI_Stalker::CalculateInterpolationParams()
@@ -633,7 +623,7 @@ void CAI_Stalker::make_Interpolation()
 			VERIFY2(_valid(renderable.xform), *cName());
 			
 			movement().m_body.current.pitch = angle_lerp(IStart.o_torso.pitch, IEnd.o_torso.pitch, factor);
-			movement().m_body.current.roll = angle_lerp(IStart.o_torso.roll, IEnd.o_torso.roll, factor);
+			//movement().m_body.current.roll = angle_lerp(IStart.o_torso.roll, IEnd.o_torso.roll, factor);
 			movement().m_body.current.yaw = angle_lerp(IStart.o_torso.yaw, IEnd.o_torso.yaw, factor);
 			movement().m_head.current.pitch = angle_lerp(IStart.head.pitch, IEnd.head.pitch, factor);
 			movement().m_head.current.yaw = angle_lerp(IStart.head.yaw, IEnd.head.yaw, factor);

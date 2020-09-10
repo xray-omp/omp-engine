@@ -2142,18 +2142,25 @@ void CSE_ALifeHumanStalker::UPDATE_Write	(NET_Packet &tNetPacket)
 		}
 
 		tNetPacket.w_float(get_health());
+
 		tNetPacket.w_angle8(o_torso.pitch);
-		tNetPacket.w_angle8(o_torso.roll);
+		// tNetPacket.w_angle8(o_torso.roll);
 		tNetPacket.w_angle8(o_torso.yaw);
+
 		tNetPacket.w_angle8(f_head_dir_pitch);
 		tNetPacket.w_angle8(f_head_dir_yaw);
+
 		tNetPacket.w_u16(u_active_slot);
+
 		tNetPacket.w_u16(u_torso_anm_idx);
 		tNetPacket.w_u8(u_torso_anm_slot);
+
 		tNetPacket.w_u16(u_legs_anm_idx);
 		tNetPacket.w_u8(u_legs_anm_slot);
+
 		tNetPacket.w_u16(u_head_anm_idx);
 		tNetPacket.w_u8(u_head_anm_slot);
+
 		tNetPacket.w_u16(u_script_anm_idx);
 		tNetPacket.w_u8(u_script_anm_slot);
 	}
@@ -2181,18 +2188,25 @@ void CSE_ALifeHumanStalker::UPDATE_Read		(NET_Packet &tNetPacket)
 		}
 
 		tNetPacket.r_float(f_health);
+
 		tNetPacket.r_angle8(o_torso.pitch);
-		tNetPacket.r_angle8(o_torso.roll);
+		//tNetPacket.r_angle8(o_torso.roll);
 		tNetPacket.r_angle8(o_torso.yaw);
+
 		tNetPacket.r_angle8(f_head_dir_pitch);
 		tNetPacket.r_angle8(f_head_dir_yaw);
+
 		tNetPacket.r_u16(u_active_slot);
+
 		tNetPacket.r_u16(u_torso_anm_idx);
 		tNetPacket.r_u8(u_torso_anm_slot);
+
 		tNetPacket.r_u16(u_legs_anm_idx);
 		tNetPacket.r_u8(u_legs_anm_slot);
+
 		tNetPacket.r_u16(u_head_anm_idx);
 		tNetPacket.r_u8(u_head_anm_slot);
+
 		tNetPacket.r_u16(u_script_anm_idx);
 		tNetPacket.r_u8(u_script_anm_slot);
 
