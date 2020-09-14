@@ -725,7 +725,7 @@ void CInventory::ActiveWeapon( u16 slot )
 	// weapon is in active slot
 	if ( GetActiveSlot() == slot && ActiveItem() )
 	{
-		if ( IsGameTypeSingle() )
+		if (CheckGameFlag(F_USE_NO_ACTIVE_SLOT))
 			Activate(NO_ACTIVE_SLOT);
 		else
 			ActivateNextItemInActiveSlot();
