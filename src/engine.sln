@@ -162,11 +162,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mp_configs_verifyer", "util
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "minizip", "3rd party\bugtrap\minizip\minizip.vcxproj", "{893279CB-0805-405F-B484-9BB728A18261}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "settings", "settings", "{460FFC24-2B3C-4747-A34C-FBF334302142}"
-	ProjectSection(SolutionItems) = preProject
-		settings\omp_settings.h = settings\omp_settings.h
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_Dedicated|Win32 = Debug_Dedicated|Win32

@@ -17,6 +17,7 @@
 #include "secure_messaging.h"
 #include "traffic_optimization.h"
 
+#include "game_cl_base.h"
 
 class	CHUDManager;
 class	CParticlesObject;
@@ -41,6 +42,8 @@ class	demo_info;
 #ifdef DEBUG
 	class	CDebugRenderer;
 #endif
+
+extern u32 g_game_flags[];
 
 extern float g_fov;
 
@@ -318,6 +321,8 @@ public:
 	CLevel();
 	virtual ~CLevel();
 
+	void setup_game_flags();
+
 	//названияе текущего уровня
 	virtual shared_str			name					() const;
 			shared_str			version					() const { return map_data.m_map_version.c_str(); } //this method can be used ONLY from CCC_ChangeGameType
@@ -457,6 +462,19 @@ IC CPHCommander & CLevel::ph_commander_physics_worldstep()
 IC bool		OnServer()			{ return Level().IsServer();}
 IC bool		OnClient()			{ return Level().IsClient();}
 IC bool		IsGameTypeSingle()	{ return (g_pGamePersistent->GameType() == eGameIDSingle);};
+
+
+enum EGameFlags
+{
+	// pavel: use 1 flag for weapon loockout ?
+	F_DISABLE_WEAPON_FIRE_WHEN_LOOKOUT,
+	F_DISABLE_RENDER_WEAPON_WHEN_LOOKOUT,
+	F_DISABLE_RENDER_WEAPON_CROSSHAIR_WHEN_LOOKOUT,
+
+	GAME_FLAGS_COUNT
+};
+
+IC bool		CheckGameFlag(u64 flag) { return g_game_flags[flag] & Game().Type(); }
 
 //class  CPHWorld;
 //extern CPHWorld*				ph_world;
