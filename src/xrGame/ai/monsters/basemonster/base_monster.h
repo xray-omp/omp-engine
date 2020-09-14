@@ -164,8 +164,6 @@ public:
 	virtual void			PH_I_CrPr(); // actions & operations after correction before prediction steps
 	virtual void			PH_A_CrPr(); // actions & operations after phisic correction-prediction steps
 
-	void					postprocess_packet(monster_interpolation::net_update_A &packet);
-
 	virtual const SRotation	Orientation						() const					{return inherited::Orientation();}
 	virtual void			renderable_Render				()							{return inherited::renderable_Render();} 
 
@@ -291,6 +289,7 @@ private:
 			u32								m_dwIEndTime;
 			u32								m_dwILastUpdateTime;
 
+			void							postprocess_packet(monster_interpolation::net_update_A &packet);
 			void							CalculateInterpolationParams();
 			void							ApplyAnimation(u16 motion_idx, u8 motion_slot);
 			virtual void					make_Interpolation();

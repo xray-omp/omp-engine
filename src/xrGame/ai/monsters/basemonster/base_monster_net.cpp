@@ -159,9 +159,14 @@ void CBaseMonster::net_Import(NET_Packet& P)
 		P.r_u8(phSyncFlag);
 
 		if (phSyncFlag)
+		{
 			physics_state.read(P);
+			fv_position.set(physics_state.physics_position);
+		}
 		else
+		{
 			P.r_vec3(fv_position);
+		}
 
 		P.r_float(f_health);
 
@@ -174,6 +179,9 @@ void CBaseMonster::net_Import(NET_Packet& P)
 
 		SetfHealth(f_health);
 
+		setVisible(TRUE);
+		setEnabled(TRUE);
+
 		if (phSyncFlag)
 		{
 			monster_interpolation::net_update_A N_A;
@@ -183,19 +191,30 @@ void CBaseMonster::net_Import(NET_Packet& P)
 			N_A.o_torso = fv_direction;
 			N_A.dwTimeStamp = physics_state.dwTimeStamp;
 
-			// interpolcation
+			// interpocation
 			postprocess_packet(N_A);
 		}
 		else
 		{
-			Position().set(fv_position);
-			//TODO: disable interpolation?
+			Fmatrix M;
+			M.setHPB(0.0f, -fv_direction.pitch, 0.0f);
+			XFORM().mulB_43(M);
+			XFORM().rotateY(fv_direction.yaw);
+
+			// pavel: should be after rotation
+			XFORM().translate_over(fv_position);
+			Position().set(fv_position); // we need it?
+
+			// pavel: not tested. We need it?
+			if (!g_Alive())
+			{
+				PHUnFreeze();
+			}
+
+			NET_A.clear();
 		}
 
 		ApplyAnimation(u_motion_idx, u_motion_slot);
-
-		setVisible(TRUE);
-		setEnabled(TRUE);
 	}
 }
 
@@ -203,10 +222,10 @@ void CBaseMonster::net_Import(NET_Packet& P)
 void CBaseMonster::postprocess_packet(monster_interpolation::net_update_A &N_A)
 {
 
-	//if (!NET_A.empty())
-	//	N_A.dwTimeStamp = NET_A.back().dwTimeStamp;
-	//else
-	//	N_A.dwTimeStamp = Level().timeServer();
+	if (!NET_A.empty())
+		N_A.dwTimeStamp = NET_A.back().dwTimeStamp;
+	else
+		N_A.dwTimeStamp = Level().timeServer();
 
 	N_A.State.previous_position = N_A.State.position;
 	N_A.State.previous_quaternion = N_A.State.quaternion;
@@ -517,6 +536,8 @@ void CBaseMonster::make_Interpolation()
 			if (m_dwIEndTime != m_dwIStartTime)
 				factor = float(CurTime - m_dwIStartTime) / (m_dwIEndTime - m_dwIStartTime);
 
+			clamp(factor, 0.f, 1.0f);
+
 			Fvector NewPos;
 			NewPos.lerp(IStart.Pos, IEnd.Pos, factor);
 
@@ -575,8 +596,9 @@ void CBaseMonster::make_Interpolation()
 				R_ASSERT2(0, "Unknown interpolation curve type!");
 				break;
 			}
-			Position().set(ResPosition);
-			character_physics_support()->movement()->SetPosition(ResPosition); // we need it ?
+			XFORM().translate_over(ResPosition);
+			Position().set(ResPosition); // we need it?
+			character_physics_support()->movement()->SetPosition(ResPosition); // we need it?
 			character_physics_support()->movement()->SetVelocity(SpeedVector);
 		};
 	}
