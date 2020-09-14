@@ -333,6 +333,8 @@ void CLevel::setup_game_flags()
 	g_game_flags[F_DISABLE_WEAPON_FIRE_WHEN_LOOKOUT] = eGameIDDeathmatch | eGameIDTeamDeathmatch | eGameIDArtefactHunt | eGameIDCaptureTheArtefact;
 	g_game_flags[F_DISABLE_RENDER_WEAPON_WHEN_LOOKOUT] = eGameIDDeathmatch | eGameIDTeamDeathmatch | eGameIDArtefactHunt | eGameIDCaptureTheArtefact;
 	g_game_flags[F_DISABLE_RENDER_WEAPON_CROSSHAIR_WHEN_LOOKOUT] = eGameIDDeathmatch | eGameIDTeamDeathmatch | eGameIDArtefactHunt | eGameIDCaptureTheArtefact;
+	
+	g_game_flags[F_USE_BOLT] = eGameIDSingle | eGameIDFreeMp;
 }
 
 shared_str	CLevel::name		() const
