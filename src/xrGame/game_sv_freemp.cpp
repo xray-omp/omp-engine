@@ -137,3 +137,16 @@ void game_sv_freemp::Update()
 		OnRoundStart();
 	}
 }
+
+BOOL game_sv_freemp::OnTouch(u16 eid_who, u16 eid_what, BOOL bForced)
+{
+	CSE_ActorMP *e_who = smart_cast<CSE_ActorMP*>(m_server->ID_to_entity(eid_who));
+	if (!e_who)
+		return TRUE;
+
+	CSE_Abstract *e_entity = m_server->ID_to_entity(eid_what);
+	if (!e_entity)
+		return FALSE;
+
+	return TRUE;
+}
