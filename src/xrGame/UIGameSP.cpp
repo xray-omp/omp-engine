@@ -25,25 +25,12 @@
 CUIGameSP::CUIGameSP()
 :m_game(NULL),m_game_objective(NULL)
 {
-	TalkMenu		= xr_new<CUITalkWnd>		();
 	UIChangeLevelWnd= xr_new<CChangeLevelWnd>	();
 }
 
 CUIGameSP::~CUIGameSP() 
 {
-	delete_data(TalkMenu);
 	delete_data(UIChangeLevelWnd);
-}
-
-void CUIGameSP::HideShownDialogs()
-{
-	HideActorMenu();
-	HidePdaMenu();
-	CUIDialogWnd* mir = TopInputReceiver();
-	if ( mir && mir == TalkMenu )
-	{
-		mir->HideDialog();
-	}
 }
 
 void CUIGameSP::SetClGame (game_cl_GameState* g)
@@ -151,17 +138,6 @@ void CUIGameSP::Render()
 #endif
 
 
-void  CUIGameSP::StartTrade(CInventoryOwner* pActorInv, CInventoryOwner* pOtherOwner)
-{
-//.	if( MainInputReceiver() )	return;
-
-	m_ActorMenu->SetActor		(pActorInv);
-	m_ActorMenu->SetPartner		(pOtherOwner);
-
-	m_ActorMenu->SetMenuMode	(mmTrade);
-	m_ActorMenu->ShowDialog		(true);
-}
-
 void  CUIGameSP::StartUpgrade(CInventoryOwner* pActorInv, CInventoryOwner* pMech)
 {
 //.	if( MainInputReceiver() )	return;
@@ -172,40 +148,6 @@ void  CUIGameSP::StartUpgrade(CInventoryOwner* pActorInv, CInventoryOwner* pMech
 	m_ActorMenu->SetMenuMode	(mmUpgrade);
 	m_ActorMenu->ShowDialog		(true);
 }
-
-void CUIGameSP::StartTalk(bool disable_break)
-{
-	RemoveCustomStatic		("main_task");
-	RemoveCustomStatic		("secondary_task");
-
-	TalkMenu->b_disable_break = disable_break;
-	TalkMenu->ShowDialog		(true);
-}
-
-
-void CUIGameSP::StartCarBody(CInventoryOwner* pActorInv, CInventoryOwner* pOtherOwner) //Deadbody search
-{
-	if( TopInputReceiver() )		return;
-
-	m_ActorMenu->SetActor		(pActorInv);
-	m_ActorMenu->SetPartner		(pOtherOwner);
-
-	m_ActorMenu->SetMenuMode	(mmDeadBodySearch);
-	m_ActorMenu->ShowDialog		(true);
-}
-
-void CUIGameSP::StartCarBody(CInventoryOwner* pActorInv, CInventoryBox* pBox) //Deadbody search
-{
-	if( TopInputReceiver() )		return;
-	
-	m_ActorMenu->SetActor		(pActorInv);
-	m_ActorMenu->SetInvBox		(pBox);
-	VERIFY( pBox );
-
-	m_ActorMenu->SetMenuMode	(mmDeadBodySearch);
-	m_ActorMenu->ShowDialog		(true);
-}
-
 
 extern ENGINE_API BOOL bShowPauseString;
 void CUIGameSP::ChangeLevel(	GameGraph::_GRAPH_ID game_vert_id, 

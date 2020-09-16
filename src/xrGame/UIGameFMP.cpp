@@ -25,8 +25,7 @@ void CUIGameFMP::SetClGame(game_cl_GameState * g)
 
 void CUIGameFMP::HideShownDialogs()
 {
-	HideActorMenu();
-	HidePdaMenu();
+	inherited::HideShownDialogs();
 }
 
 bool CUIGameFMP::IR_UIOnKeyboardPress(int dik)

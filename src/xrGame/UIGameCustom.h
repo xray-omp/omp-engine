@@ -21,6 +21,9 @@ struct KillMessageStruct;
 class CUIMainIngameWnd;
 class CUIMessagesWindow;
 
+class CUITalkWnd;
+class CInventoryBox;
+
 
 struct SDrawStaticStruct :public IPureDestroyableObject
 {
@@ -94,6 +97,9 @@ public:
 	CUIMainIngameWnd*	UIMainIngameWnd;
 	CUIMessagesWindow*	m_pMessagesWnd;
 
+
+	CUITalkWnd*			TalkMenu;
+
 	virtual void		SetClGame				(game_cl_GameState* g);
 	virtual void		OnInventoryAction		(PIItem item, u16 action_type);
 
@@ -121,7 +127,7 @@ public:
 	bool				CrosshairShown			()					{return !!psHUD_Flags.test	(HUD_CROSSHAIR_RT);}
 
 	
-	virtual void		HideShownDialogs		(){};
+	virtual void		HideShownDialogs		();
 
 	SDrawStaticStruct*	AddCustomStatic			(LPCSTR id, bool bSingleInstance);
 	SDrawStaticStruct*	GetCustomStatic			(LPCSTR id);
@@ -141,6 +147,12 @@ public:
 	void				UpdatePda				();
 	void				update_fake_indicators	(u8 type, float power);
 	void				enable_fake_indicators	(bool enable);
+
+
+	void				StartTalk(bool disable_break);
+	void				StartTrade(CInventoryOwner* pActorInv, CInventoryOwner* pOtherOwner);
+	void				StartCarBody(CInventoryOwner* pActorInv, CInventoryOwner* pOtherOwner);
+	void				StartCarBody(CInventoryOwner* pActorInv, CInventoryBox* pBox);
 
 	DECLARE_SCRIPT_REGISTER_FUNCTION
 }; // class CUIGameCustom
