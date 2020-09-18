@@ -178,7 +178,7 @@ void CHUDTarget::Render()
 			CEntityAlive*	pCurEnt = smart_cast<CEntityAlive*>	(Level().CurrentEntity());
 			PIItem			l_pI	= smart_cast<PIItem>		(PP.RQ.O);
 
-			if (IsGameTypeSingle())
+			if (/*IsGameTypeSingle()*/ true)
 			{
 				CInventoryOwner* our_inv_owner		= smart_cast<CInventoryOwner*>(pCurEnt);
 				
@@ -186,7 +186,7 @@ void CHUDTarget::Render()
 				{
 					C				= C_ON_ENEMY;
 				}
-				else if (E && E->g_Alive() && !E->cast_base_monster())
+				else if (E && E->g_Alive() && !E->cast_base_monster() && !E->cast_actor())
 				{
 					CInventoryOwner* others_inv_owner	= smart_cast<CInventoryOwner*>(E);
 
@@ -213,52 +213,51 @@ void CHUDTarget::Render()
 
 					fuzzyShowInfo += SHOW_INFO_SPEED*Device.fTimeDelta;
 				}
-				else 
-					if (l_pI && our_inv_owner && PP.RQ.range < 2.0f*2.0f)
-					{
-						if (fuzzyShowInfo>0.5f && l_pI->NameItem())
-						{
-							F->SetColor	(subst_alpha(C,u8(iFloor(255.f*(fuzzyShowInfo-0.5f)*2.f))));
-							F->OutNext	("%s",l_pI->NameItem());
-						}
-						fuzzyShowInfo += SHOW_INFO_SPEED*Device.fTimeDelta;
-					}
-			}
-			else
-			{
-				if (E && (E->GetfHealth()>0))
+				else if (l_pI && our_inv_owner && PP.RQ.range < 2.0f*2.0f)
 				{
-					if (pCurEnt && GameID() == eGameIDSingle)
+					if (fuzzyShowInfo>0.5f && l_pI->NameItem())
 					{
-						if (GameID() == eGameIDDeathmatch)			C = C_ON_ENEMY;
-						else
-						{	
-							if (E->g_Team() != pCurEnt->g_Team())	C = C_ON_ENEMY;
-							else									C = C_ON_FRIEND;
-						};
-						if (PP.RQ.range >= recon_mindist() && PP.RQ.range <= recon_maxdist())
-						{
-							float ddist = (PP.RQ.range - recon_mindist())/(recon_maxdist() - recon_mindist());
-							float dspeed = recon_minspeed() + (recon_maxspeed() - recon_minspeed())*ddist;
-							fuzzyShowInfo += Device.fTimeDelta/dspeed;
-						}else{
-							if (PP.RQ.range < recon_mindist()) 
-								fuzzyShowInfo += recon_minspeed()*Device.fTimeDelta;
-							else 
-								fuzzyShowInfo = 0;
-						};
-
-						if (fuzzyShowInfo>0.5f)
-						{
-							clamp(fuzzyShowInfo,0.f,1.f);
-							int alpha_C = iFloor(255.f*(fuzzyShowInfo-0.5f)*2.f);
-							u8 alpha_b	= u8(alpha_C & 0x00ff);
-							F->SetColor	(subst_alpha(C,alpha_b));
-							F->OutNext	("%s",*PP.RQ.O->cName());
-						}
+						F->SetColor	(subst_alpha(C,u8(iFloor(255.f*(fuzzyShowInfo-0.5f)*2.f))));
+						F->OutNext	("%s",l_pI->NameItem());
 					}
-				};
-			};
+					fuzzyShowInfo += SHOW_INFO_SPEED*Device.fTimeDelta;
+				}
+			}
+			//else
+			//{
+			//	if (E && (E->GetfHealth()>0))
+			//	{
+			//		if (pCurEnt && GameID() == eGameIDSingle)
+			//		{
+			//			if (GameID() == eGameIDDeathmatch)			C = C_ON_ENEMY;
+			//			else
+			//			{	
+			//				if (E->g_Team() != pCurEnt->g_Team())	C = C_ON_ENEMY;
+			//				else									C = C_ON_FRIEND;
+			//			};
+			//			if (PP.RQ.range >= recon_mindist() && PP.RQ.range <= recon_maxdist())
+			//			{
+			//				float ddist = (PP.RQ.range - recon_mindist())/(recon_maxdist() - recon_mindist());
+			//				float dspeed = recon_minspeed() + (recon_maxspeed() - recon_minspeed())*ddist;
+			//				fuzzyShowInfo += Device.fTimeDelta/dspeed;
+			//			}else{
+			//				if (PP.RQ.range < recon_mindist()) 
+			//					fuzzyShowInfo += recon_minspeed()*Device.fTimeDelta;
+			//				else 
+			//					fuzzyShowInfo = 0;
+			//			};
+			//
+			//			if (fuzzyShowInfo>0.5f)
+			//			{
+			//				clamp(fuzzyShowInfo,0.f,1.f);
+			//				int alpha_C = iFloor(255.f*(fuzzyShowInfo-0.5f)*2.f);
+			//				u8 alpha_b	= u8(alpha_C & 0x00ff);
+			//				F->SetColor	(subst_alpha(C,alpha_b));
+			//				F->OutNext	("%s",*PP.RQ.O->cName());
+			//			}
+			//		}
+			//	};
+			//};
 
 		}else{
 			fuzzyShowInfo -= HIDE_INFO_SPEED*Device.fTimeDelta;
