@@ -63,10 +63,21 @@ void CUIActorMenu::SetPartner(CInventoryOwner* io)
 	m_pPartnerInvOwner	= io;
 	if ( m_pPartnerInvOwner )
 	{
-		if (m_pPartnerInvOwner->use_simplified_visual() ) 
+		if (m_pPartnerInvOwner->use_simplified_visual())
+		{
 			m_PartnerCharacterInfo->ClearInfo();
-		else 
-			m_PartnerCharacterInfo->InitCharacter( m_pPartnerInvOwner->object_id() );
+		}
+		else
+		{
+			if (IsGameTypeSingle())
+			{
+				m_PartnerCharacterInfo->InitCharacter(m_pPartnerInvOwner->object_id());
+			}
+			else
+			{
+				m_PartnerCharacterInfo->InitCharacterMP(m_pPartnerInvOwner);
+			}
+		}
 
 		SetInvBox( NULL );
 	}else
