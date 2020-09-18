@@ -89,3 +89,18 @@ LPCSTR game_cl_freemp::GetGameScore(string32&	score_dest)
 	return score_dest;
 }
 
+void game_cl_freemp::OnConnected()
+{
+	inherited::OnConnected();
+	if (m_game_ui)
+	{
+		R_ASSERT(!g_dedicated_server);
+		m_game_ui = smart_cast<CUIGameFMP*>	(CurrentGameUI());
+		m_game_ui->SetClGame(this);
+	}
+
+	luabind::functor<void>	funct;
+	R_ASSERT(ai().script_engine().functor("mp_game_cl.on_connected", funct));
+	funct();
+}
+

@@ -27,5 +27,7 @@ public:
 	virtual LPCSTR GetGameScore(string32&	score_dest);
 	virtual bool Is_Rewarding_Allowed()  const { return false; };
 
+	virtual void OnConnected();
+
 };
 
