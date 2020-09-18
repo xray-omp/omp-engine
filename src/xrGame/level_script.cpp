@@ -704,9 +704,14 @@ bool has_active_tutotial()
 	return (g_tutorial!=NULL);
 }
 
-bool is_server()
+bool is_dedicated()
 {
-	return OnServer();
+	return g_dedicated_server;
+}
+
+void print_msg(LPCSTR str)
+{
+	Msg("[lua] %s", str);
 }
 
 
@@ -808,9 +813,7 @@ void CLevel::script_register(lua_State *L)
 		
 		def("vertex_id",						&vertex_id),
 
-		def("game_id",							&GameID),
-
-		def("is_server",						&is_server)
+		def("game_id",							&GameID)
 	],
 	
 	module(L,"actor_stats")
@@ -826,7 +829,11 @@ void CLevel::script_register(lua_State *L)
 		def("IsGameTypeSingle",					&IsGameTypeSingle),
 		def("IsDynamicMusic",					&IsDynamicMusic),
 		def("render_get_dx_level",				&render_get_dx_level),
-		def("IsImportantSave",					&IsImportantSave)
+		def("IsImportantSave",					&IsImportantSave),
+		def("print_msg",						&print_msg),
+		def("IsDedicated",						&is_dedicated),
+		def("OnClient",							&OnClient),
+		def("OnServer",							&OnServer)
 	];
 
 	module(L,"relation_registry")
