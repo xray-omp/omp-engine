@@ -714,6 +714,18 @@ void print_msg(LPCSTR str)
 	Msg("[lua] %s", str);
 }
 
+int get_local_player_id()
+{
+	return Game().local_player->GameID;
+}
+
+int get_g_actor_id()
+{
+	if (!Actor())
+		return -1;
+
+	return Actor()->ID();
+}
 
 #pragma optimize("s",on)
 void CLevel::script_register(lua_State *L)
@@ -813,7 +825,11 @@ void CLevel::script_register(lua_State *L)
 		
 		def("vertex_id",						&vertex_id),
 
-		def("game_id",							&GameID)
+		def("game_id",							&GameID),
+
+		// new for mp
+		def("get_local_player_id", &get_local_player_id),
+		def("get_g_actor_id", &get_g_actor_id)
 	],
 	
 	module(L,"actor_stats")
