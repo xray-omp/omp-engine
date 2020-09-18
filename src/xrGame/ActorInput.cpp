@@ -402,7 +402,7 @@ void CActor::ActorUse()
 
 	if(!m_pUsableObject||m_pUsableObject->nonscript_usable())
 	{
-		if(m_pPersonWeLookingAt)
+		if(m_pPersonWeLookingAt && !smart_cast<CActor*>(m_pPersonWeLookingAt))
 		{
 			CEntityAlive* pEntityAliveWeLookingAt = 
 				smart_cast<CEntityAlive*>(m_pPersonWeLookingAt);

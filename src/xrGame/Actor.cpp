@@ -1310,7 +1310,7 @@ void CActor::shedule_Update	(u32 DT)
 				{
 					m_sDefaultObjAction = m_sCharacterUseAction;
 				}
-				else if ( pEntityAlive && !pEntityAlive->g_Alive() )
+				else if ( pEntityAlive && !pEntityAlive->g_Alive() && !pEntityAlive->cast_actor())
 				{
 					if ( m_pPersonWeLookingAt && m_pPersonWeLookingAt->deadbody_closed_status() )
 					{
