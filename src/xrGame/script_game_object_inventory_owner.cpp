@@ -704,14 +704,10 @@ void CScriptGameObject::SetGameTaskState	(ETaskState state, LPCSTR task_id)
 void  CScriptGameObject::SwitchToTrade		()
 {
 	CActor* pActor = smart_cast<CActor*>(&object());	if(!pActor) return;
-
-	//только если находимся в режиме single
-	CUIGameSP* pGameSP = smart_cast<CUIGameSP*>(CurrentGameUI());
-	if(!pGameSP) return;
-
-	if(pGameSP->TalkMenu->IsShown())
+	
+	if(CurrentGameUI()->TalkMenu->IsShown())
 	{
-		pGameSP->TalkMenu->SwitchToTrade();
+		CurrentGameUI()->TalkMenu->SwitchToTrade();
 	}
 }
 
