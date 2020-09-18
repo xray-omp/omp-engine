@@ -26,6 +26,8 @@ public:
 #ifdef XRGAME_EXPORTS
 	virtual	void			on_death				(CSE_Abstract *killer);	
 #endif
+
+	virtual shared_str specific_character();
 };
 
 #endif // ACTOR_MP_SERVER_H
