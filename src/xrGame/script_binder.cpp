@@ -57,6 +57,7 @@ void CScriptBinder::reinit			()
 			m_object->reinit	();
 		}
 		catch(...) {
+			R_ASSERT3(0, "Script binder crashed during reinit", m_object->m_object->Name());
 			clear			();
 		}
 	}
@@ -97,6 +98,7 @@ void CScriptBinder::reload			(LPCSTR section)
 		lua_function		(game_object ? game_object->lua_game_object() : 0);
 	}
 	catch(...) {
+		R_ASSERT3(0, "Script binder crashed during getting lua game object", m_object->m_object->Name());
 		clear				();
 		return;
 	}
@@ -106,6 +108,7 @@ void CScriptBinder::reload			(LPCSTR section)
 			m_object->reload(section);
 		}
 		catch(...) {
+			R_ASSERT3(0, "Script binder crashed during reload", m_object->m_object->Name());
 			clear			();
 		}
 	}
@@ -133,6 +136,7 @@ BOOL CScriptBinder::net_Spawn		(CSE_Abstract* DC)
 			return			((BOOL)m_object->net_Spawn(object));
 		}
 		catch(...) {
+			R_ASSERT3(0, "Script binder crashed during net_Spawn", m_object->m_object->Name());
 			clear			();
 		}
 	}
@@ -158,6 +162,7 @@ void CScriptBinder::net_Destroy		()
 			m_object->net_Destroy	();
 		}
 		catch(...) {
+			R_ASSERT3(0, "Script binder crashed during net_Destroy", m_object->m_object->Name());
 			clear			();
 		}
 	}
@@ -184,6 +189,7 @@ void CScriptBinder::shedule_Update	(u32 time_delta)
 			m_object->shedule_Update	(time_delta);
 		}
 		catch(...) {
+			R_ASSERT3(0, "Script binder crashed during shedule_Update", m_object->m_object->Name());
 			clear			();
 		}
 	}
@@ -196,6 +202,7 @@ void CScriptBinder::save			(NET_Packet &output_packet)
 			m_object->save	(&output_packet);
 		}
 		catch(...) {
+			R_ASSERT3(0, "Script binder crashed during save", m_object->m_object->Name());
 			clear			();
 		}
 	}
@@ -208,6 +215,7 @@ void CScriptBinder::load			(IReader &input_packet)
 			m_object->load	(&input_packet);
 		}
 		catch(...) {
+			R_ASSERT3(0, "Script binder crashed during load", m_object->m_object->Name());
 			clear			();
 		}
 	}
@@ -220,6 +228,7 @@ BOOL CScriptBinder::net_SaveRelevant()
 			return			(m_object->net_SaveRelevant());
 		}
 		catch(...) {
+			R_ASSERT3(0, "Script binder crashed during net_SaveRelevant", m_object->m_object->Name());
 			clear			();
 		}
 	}
@@ -234,6 +243,7 @@ void CScriptBinder::net_Relcase		(CObject *object)
 			m_object->net_Relcase	(game_object->lua_game_object());
 		}
 		catch(...) {
+			R_ASSERT3(0, "Script binder crashed during net_Relcase", m_object->m_object->Name());
 			clear			();
 		}
 	}
