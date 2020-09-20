@@ -26,6 +26,7 @@
 #include "alife_object_registry.h"
 #include "CustomOutfit.h"
 #include "Bolt.h"
+#include "actor_mp_server.h"
 
 CInventoryOwner::CInventoryOwner			()
 {
@@ -119,7 +120,7 @@ BOOL CInventoryOwner::net_Spawn		(CSE_Abstract* DC)
 	if(!pThis) return FALSE;
 	CSE_Abstract* E	= (CSE_Abstract*)(DC);
 
-	if (/*IsGameTypeSingle() ||*/ !smart_cast<CSE_ALifeCreatureActor*>(E))
+	if (IsGameTypeSingle() || !smart_cast<CSE_ActorMP*>(E))
 	{
 		CSE_ALifeTraderAbstract* pTrader = NULL;
 		if(E) pTrader = smart_cast<CSE_ALifeTraderAbstract*>(E);
