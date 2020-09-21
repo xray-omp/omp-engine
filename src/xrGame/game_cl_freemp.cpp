@@ -45,6 +45,30 @@ void game_cl_freemp::net_import_update(NET_Packet & P)
 	inherited::net_import_update(P);
 }
 
+void game_cl_freemp::shedule_Update(u32 dt)
+{
+	if (!local_player)
+		return;
+
+	// синхронизация имени и денег игроков для InventoryOwner
+	for (auto cl : players)
+	{
+		game_PlayerState* ps = cl.second;
+		if (!ps || ps->testFlag(GAME_PLAYER_FLAG_VERY_VERY_DEAD)) continue;
+
+		CActor* pActor = smart_cast<CActor*>(Level().Objects.net_Find(ps->GameID));
+		if (!pActor || !pActor->g_Alive()) continue;
+
+		pActor->SetName(ps->getName());
+		pActor->cName_set(ps->getName());
+		
+		if (local_player->GameID == ps->GameID)
+		{
+			pActor->set_money((u32)ps->money_for_round, false);
+		}
+	}
+}
+
 bool game_cl_freemp::OnKeyboardPress(int key)
 {
 	if (kJUMP == key)
