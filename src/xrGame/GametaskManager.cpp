@@ -151,7 +151,10 @@ void CGameTaskManager::UpdateTasks						()
 {
 	if(Device.Paused())		return;
 
-	Level().MapManager().DisableAllPointers();
+	if (IsGameTypeSingle())
+	{
+		Level().MapManager().DisableAllPointers();
+	}
 
 	u32					task_count = GetGameTasks().size();
 	if(0==task_count)	return;
