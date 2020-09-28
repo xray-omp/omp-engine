@@ -83,7 +83,7 @@ extern bool IsGameTypeSingle	();
 CRelationRegistryWrapper& RELATION_REGISTRY::relation_registry()
 {
 	if(!m_relation_registry){
-		VERIFY(IsGameTypeSingle());
+		//VERIFY(IsGameTypeSingle());
 
 		m_relation_registry = xr_new<CRelationRegistryWrapper>();
 		load_attack_goodwill();

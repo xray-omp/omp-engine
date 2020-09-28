@@ -13,6 +13,7 @@
 #include "../../../../xrphysics/iPHWorld.h"
 #include "../../../PHMovementControl.h"
 #include "../../../../xrphysics/PhysicsShell.h"
+#include "../xrphysics/phvalide.h"
 
 extern int g_cl_InterpolationType;
 

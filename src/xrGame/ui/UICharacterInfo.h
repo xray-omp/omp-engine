@@ -11,6 +11,8 @@ class CUIStatic;
 class CCharacterInfo;
 class CUIXml;
 class CUIScrollView;
+class CInventoryOwner;
+
 class CUICharacterInfo: public CUIWindow
 {
 private:

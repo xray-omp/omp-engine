@@ -21,6 +21,8 @@ struct KillMessageStruct;
 class CUIMainIngameWnd;
 class CUIMessagesWindow;
 
+class CInventoryOwner;
+
 class CUITalkWnd;
 class CInventoryBox;
 

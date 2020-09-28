@@ -16,6 +16,7 @@
 #include "../../PHMovementControl.h"
 
 #include "net_physics_state.h"
+#include "../xrphysics/phvalide.h"
 
 extern int g_cl_InterpolationType;
 
