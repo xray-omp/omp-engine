@@ -4,7 +4,7 @@
 
 #include "../xrEngine/igame_level.h"
 #include "../xrEngine/IGame_Persistent.h"
-#include "../xrNetServer/net_client.h"
+#include "../xrNetServer/IPureClient.h"
 #include "script_export_space.h"
 #include "../xrEngine/StatGraph.h"
 #include "xrMessages.h"

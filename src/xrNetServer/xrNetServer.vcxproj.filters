@@ -3,7 +3,6 @@
   <ItemGroup>
     <ClCompile Include="ip_filter.cpp" />
     <ClCompile Include="NET_AuthCheck.cpp" />
-    <ClCompile Include="NET_Client.cpp" />
     <ClCompile Include="NET_Common.cpp" />
     <ClCompile Include="NET_Compressor.cpp" />
     <ClCompile Include="NET_Log.cpp" />
@@ -23,11 +22,16 @@
     <ClCompile Include="IPureServer.cpp">
       <Filter>NET_Server</Filter>
     </ClCompile>
+    <ClCompile Include="INetQueue.cpp">
+      <Filter>NET_Client</Filter>
+    </ClCompile>
+    <ClCompile Include="IPureClient.cpp">
+      <Filter>NET_Client</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ip_filter.h" />
     <ClInclude Include="NET_AuthCheck.h" />
-    <ClInclude Include="NET_Client.h" />
     <ClInclude Include="NET_Common.h" />
     <ClInclude Include="NET_Compressor.h" />
     <ClInclude Include="NET_Log.h" />
@@ -52,6 +56,12 @@
     <ClInclude Include="PlayersMonitor.h">
       <Filter>NET_Server</Filter>
     </ClInclude>
+    <ClInclude Include="INetQueue.h">
+      <Filter>NET_Client</Filter>
+    </ClInclude>
+    <ClInclude Include="IPureClient.h">
+      <Filter>NET_Client</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="NET_Server">
@@ -59,6 +69,9 @@
     </Filter>
     <Filter Include="NET_Common">
       <UniqueIdentifier>{ee0e7768-4ae0-4edd-a790-3e37ce6778c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NET_Client">
+      <UniqueIdentifier>{e9d7a0f5-655c-4c81-b93c-cdb619930612}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

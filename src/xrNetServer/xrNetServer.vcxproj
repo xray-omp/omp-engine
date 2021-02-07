@@ -243,11 +243,12 @@
     <ClCompile Include="IBannedClient.cpp" />
     <ClCompile Include="IClient.cpp" />
     <ClCompile Include="IClientStatistic.cpp" />
+    <ClCompile Include="INetQueue.cpp" />
+    <ClCompile Include="IPureClient.cpp" />
     <ClCompile Include="IPureServer.cpp" />
     <ClCompile Include="ip_address.cpp" />
     <ClCompile Include="ip_filter.cpp" />
     <ClCompile Include="NET_AuthCheck.cpp" />
-    <ClCompile Include="NET_Client.cpp" />
     <ClCompile Include="NET_Common.cpp" />
     <ClCompile Include="NET_Compressor.cpp" />
     <ClCompile Include="NET_Log.cpp" />
@@ -261,11 +262,12 @@
     <ClInclude Include="IBannedClient.h" />
     <ClInclude Include="IClient.h" />
     <ClInclude Include="IClientStatistic.h" />
+    <ClInclude Include="INetQueue.h" />
+    <ClInclude Include="IPureClient.h" />
     <ClInclude Include="IPureServer.h" />
     <ClInclude Include="ip_address.h" />
     <ClInclude Include="ip_filter.h" />
     <ClInclude Include="NET_AuthCheck.h" />
-    <ClInclude Include="NET_Client.h" />
     <ClInclude Include="NET_Common.h" />
     <ClInclude Include="NET_Compressor.h" />
     <ClInclude Include="NET_Log.h" />
