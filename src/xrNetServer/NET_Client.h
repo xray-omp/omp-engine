@@ -2,6 +2,7 @@
 
 #include "net_shared.h"
 #include "NET_Common.h"
+#include "IClientStatistic.h"
 
 struct ip_address;
 

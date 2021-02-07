@@ -1,9 +1,10 @@
 #include "stdafx.h"
 #include "NET_Common.h"
 #include "net_client.h"
-#include "net_server.h"
 #include "net_messages.h"
 #include "NET_Log.h"
+#include "ip_address.h"
+#include "IPureServer.h"
 
 #include "../xrGameSpy/xrGameSpy_MainDefs.h"
 

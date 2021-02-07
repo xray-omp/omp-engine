@@ -70,6 +70,9 @@
     <ExtensionsToDeleteOnClean>*.idb%3b*.obj%3b*.ilk%3b*.pdb%3b*.tlb%3b*.tli%3b*.tlh%3b*.tmp%3b*.rsp%3b*.bat%3b$(TargetPath)</ExtensionsToDeleteOnClean>
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
+  <PropertyGroup Label="Vcpkg">
+    <VcpkgEnabled>false</VcpkgEnabled>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Midl>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -114,7 +117,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalOptions>/MACHINE:I386 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>Ws2_32.lib;dxerr.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Ws2_32.lib;dxerr.lib;GameNetworkingSockets.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\sdk\libraries;..\..\..\libraries;$(DXSDK_DIR)\Lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -237,13 +240,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="IBannedClient.cpp" />
+    <ClCompile Include="IClient.cpp" />
+    <ClCompile Include="IClientStatistic.cpp" />
+    <ClCompile Include="IPureServer.cpp" />
+    <ClCompile Include="ip_address.cpp" />
     <ClCompile Include="ip_filter.cpp" />
     <ClCompile Include="NET_AuthCheck.cpp" />
     <ClCompile Include="NET_Client.cpp" />
     <ClCompile Include="NET_Common.cpp" />
     <ClCompile Include="NET_Compressor.cpp" />
     <ClCompile Include="NET_Log.cpp" />
-    <ClCompile Include="NET_Server.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Mixed|Win32'">Create</PrecompiledHeader>
@@ -251,6 +258,11 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="IBannedClient.h" />
+    <ClInclude Include="IClient.h" />
+    <ClInclude Include="IClientStatistic.h" />
+    <ClInclude Include="IPureServer.h" />
+    <ClInclude Include="ip_address.h" />
     <ClInclude Include="ip_filter.h" />
     <ClInclude Include="NET_AuthCheck.h" />
     <ClInclude Include="NET_Client.h" />
@@ -258,9 +270,8 @@
     <ClInclude Include="NET_Compressor.h" />
     <ClInclude Include="NET_Log.h" />
     <ClInclude Include="NET_Messages.h" />
-    <ClInclude Include="NET_PlayersMonitor.h" />
-    <ClInclude Include="NET_Server.h" />
     <ClInclude Include="NET_Shared.h" />
+    <ClInclude Include="PlayersMonitor.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>

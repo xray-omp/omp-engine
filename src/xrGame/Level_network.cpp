@@ -303,15 +303,18 @@ void CLevel::Send		(NET_Packet& P, u32 dwFlags, u32 dwTimeout)
 		ClientID	_clid;
 		_clid.set	(1);
 		Server->OnMessage		(P,	_clid );
-	}else
-	if (Server && game_configured && OnServer() )
+	}
+	else if (Server && game_configured && OnServer() )
 	{
 #ifdef DEBUG
 		VERIFY2(Server->IsPlayersMonitorLockedByMe() == false, "potential deadlock detected");
 #endif
 		Server->OnMessageSync	(P,Game().local_svdpnid	);
-	}else											
-		IPureClient::Send	(P,dwFlags,dwTimeout	);
+	}
+	else
+	{
+		IPureClient::Send(P, dwFlags, dwTimeout);
+	}
 
 	if (g_pGameLevel && Level().game && GameID() != eGameIDSingle && !g_SV_Disable_Auth_Check)		{
 		// anti-cheat
