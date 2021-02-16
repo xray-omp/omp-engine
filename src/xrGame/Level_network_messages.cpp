@@ -473,5 +473,5 @@ void CLevel::ClientReceive()
 
 void				CLevel::OnMessage				(void* data, u32 size)
 {	
-	IPureClient::OnMessage(data, size);	
+	NET_CLIENT_CLASS::OnMessage(data, size);
 };

@@ -85,7 +85,7 @@ xrServer::EConnect xrServer::Connect(shared_str &session_name, GameDescriptionDa
 
 	game->Create			(session_name);
 
-	return IPureServer::Connect(*session_name, game_descr);
+	return inherited::Connect(*session_name, game_descr);
 }
 
 

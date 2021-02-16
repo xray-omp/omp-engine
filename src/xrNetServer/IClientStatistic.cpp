@@ -1,6 +1,11 @@
 #include "stdafx.h"
 #include "IClientStatistic.h"
 
+#pragma warning(push)
+#pragma warning(disable:4995)
+#include <DPlay/dplay8.h>
+#pragma warning(pop)
+
 void IClientStatistic::Update(DPN_CONNECTION_INFO& CI)
 {
 	u32 time_global = TimeGlobal(device_timer);

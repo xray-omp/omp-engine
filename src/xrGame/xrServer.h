@@ -7,7 +7,7 @@
 #define AFX_XRSERVER_H__65728A25_16FC_4A7B_8CCE_D798CA5EC64E__INCLUDED_
 #pragma once
 
-#include "../xrNetServer/IPureServer.h"
+#include "../xrNetServer/Net_Server.h"
 #include "game_sv_base.h"
 #include "id_generator.h"
 #include "../xrEngine/mp_logging.h"
@@ -80,8 +80,11 @@ namespace file_transfer
 class clientdata_proxy;
 class server_info_uploader;
 
-class xrServer	: public IPureServer  
+class xrServer	: public NET_SERVER_CLASS
 {
+private:
+	typedef NET_SERVER_CLASS inherited;
+
 private:
 	xrS_entities				entities;
 	xr_multiset<svs_respawn>	q_respawn;
@@ -250,7 +253,7 @@ public:
 	CSE_Abstract*			GetEntity			(u32 Num);
 	u32 const				GetLastUpdatesSize	() const { return m_last_updates_size; };
 
-	xrClientData*			ID_to_client		(ClientID ID, bool ScanAll = false ) { return (xrClientData*)(IPureServer::ID_to_client( ID, ScanAll)); }
+	xrClientData*			ID_to_client		(ClientID ID, bool ScanAll = false ) { return (xrClientData*)(NET_SERVER_CLASS::ID_to_client( ID, ScanAll)); }
 	CSE_Abstract*			ID_to_entity		(u16 ID);
 
 	// main

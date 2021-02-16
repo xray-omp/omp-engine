@@ -240,12 +240,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BaseClient.cpp" />
+    <ClCompile Include="BaseServer.cpp" />
+    <ClCompile Include="DirectPlayClient.cpp" />
+    <ClCompile Include="DirectPlayServer.cpp" />
     <ClCompile Include="IBannedClient.cpp" />
     <ClCompile Include="IClient.cpp" />
     <ClCompile Include="IClientStatistic.cpp" />
     <ClCompile Include="INetQueue.cpp" />
-    <ClCompile Include="IPureClient.cpp" />
-    <ClCompile Include="IPureServer.cpp" />
     <ClCompile Include="ip_address.cpp" />
     <ClCompile Include="ip_filter.cpp" />
     <ClCompile Include="NET_AuthCheck.cpp" />
@@ -259,21 +261,28 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BaseClient.h" />
+    <ClInclude Include="BaseServer.h" />
+    <ClInclude Include="ClientConnectionOptions.h" />
+    <ClInclude Include="DirectPlayClient.h" />
+    <ClInclude Include="DirectPlayServer.h" />
+    <ClInclude Include="dp_ids.h" />
     <ClInclude Include="IBannedClient.h" />
     <ClInclude Include="IClient.h" />
     <ClInclude Include="IClientStatistic.h" />
     <ClInclude Include="INetQueue.h" />
-    <ClInclude Include="IPureClient.h" />
-    <ClInclude Include="IPureServer.h" />
     <ClInclude Include="ip_address.h" />
     <ClInclude Include="ip_filter.h" />
     <ClInclude Include="NET_AuthCheck.h" />
+    <ClInclude Include="NET_Client.h" />
     <ClInclude Include="NET_Common.h" />
     <ClInclude Include="NET_Compressor.h" />
     <ClInclude Include="NET_Log.h" />
     <ClInclude Include="NET_Messages.h" />
+    <ClInclude Include="NET_Server.h" />
     <ClInclude Include="NET_Shared.h" />
     <ClInclude Include="PlayersMonitor.h" />
+    <ClInclude Include="ServerConnectionOptions.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>

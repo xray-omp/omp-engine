@@ -1,6 +1,11 @@
 #pragma once
 #include "NET_Shared.h"
 
+#pragma warning(push)
+#pragma warning(disable:4995)
+#include <DPlay/dplay8.h>
+#pragma warning(pop)
+
 class XRNETSERVER_API IClientStatistic
 {
 	DPN_CONNECTION_INFO	ci_last;

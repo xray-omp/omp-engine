@@ -7,7 +7,6 @@
 #include "game_sv_base_console_vars.h"
 #include "game_sv_event_queue.h"
 #include "game_sv_item_respawner.h"
-#include "../xrNetServer/IPureServer.h"
 
 #define MAX_PLAYERS_COUNT 32
 
@@ -22,6 +21,7 @@ enum ERoundEnd_Result
 	eRoundEnd_Force			= u32(-1)
 };
 
+class IClient;
 class CSE_Abstract;
 class xrServer;
 // [OLES] Policy:

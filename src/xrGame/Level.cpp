@@ -77,7 +77,7 @@ u32			lvInterpSteps		= 0;
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CLevel::CLevel():IPureClient	(Device.GetTimerGlobal())
+CLevel::CLevel():NET_CLIENT_CLASS (Device.GetTimerGlobal())
 #ifdef PROFILE_CRITICAL_SECTIONS
 	,DemoCS(MUTEX_PROFILE_ID(DemoCS))
 #endif // PROFILE_CRITICAL_SECTIONS
@@ -685,7 +685,7 @@ void CLevel::OnFrame	()
 			}
 			if (IsClient())
 			{
-				IPureClient::UpdateStatistic();
+				NET_CLIENT_CLASS::UpdateStatistic();
 
 				F->SetHeightI(0.015f);
 				F->OutSetI	(0.0f,0.5f);

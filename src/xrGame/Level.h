@@ -4,7 +4,7 @@
 
 #include "../xrEngine/igame_level.h"
 #include "../xrEngine/IGame_Persistent.h"
-#include "../xrNetServer/IPureClient.h"
+#include "../xrNetServer/NET_Client.h"
 #include "script_export_space.h"
 #include "../xrEngine/StatGraph.h"
 #include "xrMessages.h"
@@ -60,7 +60,7 @@ namespace file_transfer
 	class client_site;
 }; //namespace file_transfer
 
-class CLevel					: public IGame_Level, public IPureClient
+class CLevel					: public IGame_Level, public NET_CLIENT_CLASS
 {
 	#include "Level_network_Demo.h"
 	void						ClearAllObjects			();

@@ -3,7 +3,7 @@
 #include "NET_Common.h"
 #include "ip_address.h"
 
-class IPureServer;
+class BaseServer;
 
 class XRNETSERVER_API IClient: public MultipacketSender
 {
@@ -33,7 +33,7 @@ public:
 	DWORD				m_dwPort;
 	u32					process_id;
 
-	IPureServer*        server;
+	BaseServer*        server;
 
 private:
 

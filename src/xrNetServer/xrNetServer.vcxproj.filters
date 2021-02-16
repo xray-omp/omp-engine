@@ -19,13 +19,19 @@
     <ClCompile Include="IClientStatistic.cpp">
       <Filter>NET_Common</Filter>
     </ClCompile>
-    <ClCompile Include="IPureServer.cpp">
-      <Filter>NET_Server</Filter>
-    </ClCompile>
     <ClCompile Include="INetQueue.cpp">
       <Filter>NET_Client</Filter>
     </ClCompile>
-    <ClCompile Include="IPureClient.cpp">
+    <ClCompile Include="BaseServer.cpp">
+      <Filter>NET_Server</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectPlayServer.cpp">
+      <Filter>NET_Server</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseClient.cpp">
+      <Filter>NET_Client</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectPlayClient.cpp">
       <Filter>NET_Client</Filter>
     </ClCompile>
   </ItemGroup>
@@ -50,16 +56,37 @@
     <ClInclude Include="IClientStatistic.h">
       <Filter>NET_Common</Filter>
     </ClInclude>
-    <ClInclude Include="IPureServer.h">
-      <Filter>NET_Server</Filter>
-    </ClInclude>
     <ClInclude Include="PlayersMonitor.h">
       <Filter>NET_Server</Filter>
     </ClInclude>
     <ClInclude Include="INetQueue.h">
       <Filter>NET_Client</Filter>
     </ClInclude>
-    <ClInclude Include="IPureClient.h">
+    <ClInclude Include="dp_ids.h">
+      <Filter>NET_Client</Filter>
+    </ClInclude>
+    <ClInclude Include="ClientConnectionOptions.h">
+      <Filter>NET_Client</Filter>
+    </ClInclude>
+    <ClInclude Include="ServerConnectionOptions.h">
+      <Filter>NET_Server</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseServer.h">
+      <Filter>NET_Server</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectPlayServer.h">
+      <Filter>NET_Server</Filter>
+    </ClInclude>
+    <ClInclude Include="NET_Server.h">
+      <Filter>NET_Server</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseClient.h">
+      <Filter>NET_Client</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectPlayClient.h">
+      <Filter>NET_Client</Filter>
+    </ClInclude>
+    <ClInclude Include="NET_Client.h">
       <Filter>NET_Client</Filter>
     </ClInclude>
   </ItemGroup>

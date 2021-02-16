@@ -54,7 +54,7 @@ xrClientData::~xrClientData()
 }
 
 
-xrServer::xrServer() : IPureServer(Device.GetTimerGlobal(), g_dedicated_server)
+xrServer::xrServer() : inherited(Device.GetTimerGlobal(), g_dedicated_server)
 {
 	m_file_transfers	= NULL;
 	m_aDelayedPackets.clear();
@@ -393,7 +393,6 @@ u32 xrServer::OnDelayedMessage	(NET_Packet& P, ClientID sender)			// Non-Zero me
 				ClientIdSearchPredicate(sender));
 			VERIFY(tmp_client);
 			OnCL_Connected(tmp_client);
-			//OnCL_Connected				(CL);
 		}break;
 		case M_REMOTE_CONTROL_CMD:
 		{
@@ -683,7 +682,7 @@ u32 xrServer::OnMessage	(NET_Packet& P, ClientID sender)			// Non-Zero means bro
 
 	VERIFY							(verify_entities());
 
-	return							IPureServer::OnMessage(P, sender);
+	return							inherited::OnMessage(P, sender);
 }
 
 bool xrServer::CheckAdminRights(const shared_str& user, const shared_str& pass, string512& reason)
@@ -726,7 +725,7 @@ void xrServer::SendTo_LL			(ClientID ID, void* data, u32 size, u32 dwFlags, u32 
 		if (!pClient || !pClient->flags.bConnected)
 			return;
 
-		IPureServer::SendTo_Buf(ID,data,size,dwFlags,dwTimeout);
+		inherited::SendTo_Buf(ID,data,size,dwFlags,dwTimeout);
 	}
 }
 void xrServer::SendBroadcast(ClientID exclude, NET_Packet& P, u32 dwFlags)

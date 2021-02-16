@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "IClient.h"
-#include "IPureServer.h"
+#include "BaseServer.h"
 
 IClient::IClient(CTimer* timer): stats(timer), server(NULL)
 {
@@ -15,8 +15,8 @@ IClient::~IClient()
 {
 }
 
-void IClient::_SendTo_LL(const void* data, u32 size, u32 flags, u32 timeout)
+void IClient::_SendTo_LL(const void* data, u32 size, u32 _flags, u32 timeout)
 {
 	R_ASSERT(server);
-	server->IPureServer::SendTo_LL(ID, const_cast<void*>(data), size, flags, timeout);
+	server->BaseServer::SendTo_LL(ID, const_cast<void*>(data), size, _flags, timeout);
 }
