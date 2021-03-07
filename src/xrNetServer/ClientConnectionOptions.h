@@ -3,12 +3,10 @@
 struct ClientConnectionOptions
 {
 	string256 server_name = "";
-	string64 password_str = "";
-	string64 user_name_str = "";
+	string64 server_pass = "";
+	string64 user_name = "";
 	string64 user_pass = "";
-	int psSV_Port = 0;
-	int psCL_Port = 0;
+	int sv_port = 0;
+	int cl_port = 0;
 	bool bClPortWasSet = false;
 };
-
-

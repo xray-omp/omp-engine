@@ -1,0 +1,391 @@
+#include "stdafx.h"
+#include "SteamNetClient.h"
+#include "SteamNetServer.h"
+#include "ip_address.h"
+
+SteamNetClient* s_pCallbackInstance = nullptr;
+
+void ClSteamNetConnectionStatusChangedCallback(SteamNetConnectionStatusChangedCallback_t *pInfo)
+{
+	if (s_pCallbackInstance)
+	{
+		s_pCallbackInstance->OnSteamNetConnectionStatusChanged(pInfo);
+	}
+}
+
+// -----------------------------------------------------------------------------
+
+void steam_net_update_client(void* P)
+{
+	Msg("- [SteamNetClient] Thread for steam network client is started");
+	SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_BELOW_NORMAL);
+	SteamNetClient*	C = (SteamNetClient*)P;
+	C->Update();
+}
+
+// -----------------------------------------------------------------------------
+
+SteamNetClient::SteamNetClient(CTimer* tm)
+	: BaseClient(tm)
+#ifdef PROFILE_CRITICAL_SECTIONS
+	, csConnection(MUTEX_PROFILE_ID(SteamNetClient::csConnection))
+#endif // PROFILE_CRITICAL_SECTIONS
+{
+}
+
+// -----------------------------------------------------------------------------
+
+SteamNetClient::~SteamNetClient()
+{
+
+}
+
+// -----------------------------------------------------------------------------
+
+#pragma region connect / disconnect
+
+bool SteamNetClient::SetIdentity(SteamNetworkingIdentity& identity, ClientConnectionOptions& opt) const
+{
+	NET_Packet P;
+	P.write_start();
+	P.w_stringZ(opt.user_name);
+	P.w_stringZ(opt.user_pass);
+	P.w_stringZ(opt.server_pass);
+	P.w_u32(GetCurrentProcessId());
+	return identity.SetGenericBytes(P.B.data, P.B.count);
+}
+
+bool SteamNetClient::CreateConnection(ClientConnectionOptions & connectOpt)
+{
+	m_pInterface = SteamNetworkingSockets();
+
+	if (m_pInterface != nullptr)
+	{
+		// server client
+		SteamNetworkingIdentity identity;
+		m_pInterface->GetIdentity(&identity);
+		R_ASSERT2(identity.IsLocalHost(), "[SteamNetClient] Interface is initialized and identity is not localhost!");
+		m_bServerClient = true;
+	}
+	else
+	{
+		SteamNetworkingIdentity identity;
+		if (!SetIdentity(identity, connectOpt))
+		{
+			Msg("[SteamNetClient] Can't create an identity");
+			return false;
+		}
+
+		SteamDatagramErrMsg errMsg;
+		if (!GameNetworkingSockets_Init(&identity, errMsg))
+		{
+			Msg("[SteamNetClient] GameNetworkingSockets_Init failed.  %s", errMsg);
+			return false;
+		}
+
+		m_pInterface = SteamNetworkingSockets();
+
+		if (m_pInterface == nullptr)
+		{
+			Msg("[SteamNetClient] Server interface is NULL");
+			return false;
+		}
+	}
+
+	SteamNetworkingIPAddr serverAddr;
+	serverAddr.Clear();
+
+	int sv_port = connectOpt.sv_port;
+	if (stricmp(connectOpt.server_name, "localhost") == 0) // 127.0.0.1 ?!
+	{
+		serverAddr.SetIPv6LocalHost((uint16)sv_port);
+	}
+	else
+	{
+		serverAddr.ParseString(connectOpt.server_name);
+		serverAddr.m_port = (uint16)sv_port;
+	}
+
+	char szAddr[SteamNetworkingIPAddr::k_cchMaxString];
+	serverAddr.ToString(szAddr, sizeof(szAddr), true);
+	Msg("[SteamNetClient] Connecting to server at %s", szAddr);
+
+	SteamNetworkingConfigValue_t opt;
+	opt.SetPtr(k_ESteamNetworkingConfig_Callback_ConnectionStatusChanged, (void*)ClSteamNetConnectionStatusChangedCallback);
+
+	m_hConnection = m_pInterface->ConnectByIPAddress(serverAddr, 1, &opt);
+	if (m_hConnection == k_HSteamNetConnection_Invalid)
+	{
+		Msg("[SteamNetClient] Failed to create connection");
+		return false;
+	}
+
+	Msg("- [SteamNetClient] connect created");
+	thread_spawn(steam_net_update_client, "snetwork-update-client", 0, this);
+
+	return true;
+}
+
+void SteamNetClient::DestroyConnection()
+{
+	Msg("- [SteamNetClient] destroy connection");
+
+	xrCriticalSection::raii lock(&csConnection);
+
+	net_Disconnected = TRUE;
+
+	if (m_pInterface == nullptr)
+	{
+		return;
+	}
+
+	if (m_hConnection != k_HSteamNetConnection_Invalid)
+	{
+		m_pInterface->CloseConnection(m_hConnection, 0, nullptr, false);
+		m_hConnection = k_HSteamNetConnection_Invalid;
+	}
+	m_pInterface = nullptr;
+
+	// if no server client
+	if (!m_bServerClient)
+	{
+		GameNetworkingSockets_Kill();
+	}
+}
+
+#pragma endregion
+
+// -----------------------------------------------------------------------------
+
+#pragma region receive
+
+void SteamNetClient::Update()
+{
+	while (true)
+	{
+		csConnection.Enter();
+
+		if (!IsConnectionCreated())
+		{
+			csConnection.Leave();
+			break;
+		}
+		PollIncomingMessages();
+		PollConnectionStateChanges();
+
+		csConnection.Leave();
+		Sleep(1);
+	}
+}
+
+void SteamNetClient::PollIncomingMessages()
+{
+	while (true)
+	{
+		if (m_pInterface == nullptr)
+			break;
+
+		ISteamNetworkingMessage *pIncomingMsg = nullptr;
+		int numMsgs = m_pInterface->ReceiveMessagesOnConnection(m_hConnection, &pIncomingMsg, 1);
+		if (numMsgs <= 0)
+		{
+			break;
+		}
+
+		void* data = pIncomingMsg->m_pData;
+		int size = pIncomingMsg->m_cbSize;
+
+		if (!GameDescriptionReceived())
+		{
+			MSYS_GAME_DESCRIPTION*	sys_gd = (MSYS_GAME_DESCRIPTION*)data;
+			if (
+				size == sizeof(MSYS_GAME_DESCRIPTION) &&
+				sys_gd->sign1 == 0x02281488 &&
+				sys_gd->sign2 == 0x01488228
+				)
+			{
+				CopyMemory(&m_game_description, &sys_gd->data, sizeof(m_game_description));
+				m_bGameDescriptionRecieved = true;
+
+				pIncomingMsg->Release();
+				continue;
+			}
+		}
+
+		MultipacketReciever::RecievePacket(pIncomingMsg->m_pData, pIncomingMsg->m_cbSize);
+		pIncomingMsg->Release();
+	}
+}
+
+void SteamNetClient::PollConnectionStateChanges()
+{
+	s_pCallbackInstance = this;
+	m_pInterface->RunCallbacks();
+}
+
+void SteamNetClient::OnSteamNetConnectionStatusChanged(SteamNetConnectionStatusChangedCallback_t * pInfo)
+{
+	switch (pInfo->m_info.m_eState)
+	{
+	case k_ESteamNetworkingConnectionState_ClosedByPeer:
+	case k_ESteamNetworkingConnectionState_ProblemDetectedLocally:
+	{
+		if (pInfo->m_info.m_eState == k_ESteamNetworkingConnectionState_ClosedByPeer)
+		{
+			Msg("[SteamNetClient] ClosedByPeer");
+		}
+		else if (pInfo->m_info.m_eState == k_ESteamNetworkingConnectionState_ProblemDetectedLocally)
+		{
+			Msg("[SteamNetClient] ProblemDetectedLocally");
+		}
+
+		Msg("Disconnect reason: [%d] %s", pInfo->m_info.m_eEndReason, pInfo->m_info.m_szEndDebug);
+
+		net_Connected = EnmConnectionFails;
+		net_Disconnected = TRUE;
+
+		switch (pInfo->m_info.m_eEndReason)
+		{
+		case k_ESteamNetConnectionEnd_Misc_Timeout:
+			OnInvalidHost();
+			break;
+		case EUnknownReason:
+			OnSessionTerminate("Unknown");
+			break;
+		case EPlayerBanned:
+			OnSessionTerminate("Banned");
+			break;
+		case EServerShutdown:
+			OnSessionTerminate("st_server_shutdown");
+			break;
+		case EDetailedReason:
+			OnSessionTerminate(pInfo->m_info.m_szEndDebug);
+			break;
+		case EInvalidPassword:
+			OnInvalidPassword();
+			break;
+		case ESessionFull:
+			OnSessionFull();
+			break;
+		default:
+			OnSessionTerminate(pInfo->m_info.m_szEndDebug);
+			break;
+		}
+	}
+	break;
+	case k_ESteamNetworkingConnectionState_Connected:
+		Msg("[SteamNetClient] Connected to server");
+		break;
+	case k_ESteamNetworkingConnectionState_None:
+		// NOTE: We will get callbacks here when we destroy connections.  You can ignore these.
+		break;
+	case k_ESteamNetworkingConnectionState_Connecting:
+		// NOTE: We will get this callback when we start connecting. We can ignore this.
+		break;
+	default:
+		Msg("! [SteamNetClient] unknown steam connection state %d", pInfo->m_info.m_eState);
+		break;
+	}
+}
+
+#pragma endregion
+
+// -----------------------------------------------------------------------------
+
+#pragma region send
+
+void SteamNetClient::SendTo_LL(void * data, u32 size, u32 dwFlags, u32 dwTimeout)
+{
+	net_Statistic.dwBytesSended += size;
+
+	EResult result = m_pInterface->SendMessageToConnection(m_hConnection, data, size, convert_flags_for_steam(dwFlags), nullptr);
+	if (result != k_EResultOK)
+	{
+		//Msg("! [SteamNetClient] ERROR: Failed to send net-packet, reason: %d", result);
+	}
+}
+
+bool SteamNetClient::SendPingMessage(MSYS_PING & clPing)
+{
+	R_ASSERT(m_pInterface);
+
+	EResult result = m_pInterface->SendMessageToConnection(
+		m_hConnection,
+		LPBYTE(&clPing),
+		sizeof(clPing),
+		k_nSteamNetworkingSend_UnreliableNoNagle,
+		nullptr
+	);
+
+	return result == k_EResultOK;
+}
+
+#pragma endregion
+
+// -----------------------------------------------------------------------------
+
+#pragma region statistic
+
+void SteamNetClient::UpdateStatistic()
+{
+	SteamNetworkingQuickConnectionStatus status;
+	if (!m_pInterface->GetQuickConnectionStatus(m_hConnection, &status))
+	{
+		return;
+	}
+	net_Statistic.Update(status);
+}
+
+#pragma endregion
+
+// -----------------------------------------------------------------------------
+
+#pragma region pending messages
+
+bool SteamNetClient::GetPendingMessagesCount(DWORD& dwPending)
+{
+	R_ASSERT(m_pInterface);
+	R_ASSERT(m_hConnection != k_HSteamNetConnection_Invalid);
+
+	SteamNetworkingQuickConnectionStatus pStatus;
+	if (m_pInterface->GetQuickConnectionStatus(m_hConnection, &pStatus))
+	{
+		dwPending = pStatus.m_cbPendingReliable + pStatus.m_cbPendingUnreliable;
+		return true;
+	}
+
+	return false;
+}
+
+#pragma endregion
+
+// -----------------------------------------------------------------------------
+
+#pragma region ip address
+
+
+void SteamNetClient::GetIpAddress(SteamNetConnectionInfo_t & info, ip_address & out)
+{
+	string64 ip_str;
+	info.m_addrRemote.ToString(ip_str, sizeof(string64), false);
+	out.set(ip_str);
+}
+
+bool SteamNetClient::GetServerAddress(ip_address& pAddress, DWORD* pPort)
+{
+	*pPort = 0;
+
+	SteamNetConnectionInfo_t pInfo;
+	if (m_pInterface->GetConnectionInfo(m_hConnection, &pInfo))
+	{
+		GetIpAddress(pInfo, pAddress);
+		*pPort = pInfo.m_addrRemote.m_port;
+		return true;
+	}
+
+	return false;
+};
+
+#pragma endregion
+
+// -----------------------------------------------------------------------------

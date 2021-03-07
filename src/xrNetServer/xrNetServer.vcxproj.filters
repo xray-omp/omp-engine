@@ -34,6 +34,12 @@
     <ClCompile Include="DirectPlayClient.cpp">
       <Filter>NET_Client</Filter>
     </ClCompile>
+    <ClCompile Include="SteamNetClient.cpp">
+      <Filter>NET_Client</Filter>
+    </ClCompile>
+    <ClCompile Include="SteamNetServer.cpp">
+      <Filter>NET_Server</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ip_filter.h" />
@@ -88,6 +94,12 @@
     </ClInclude>
     <ClInclude Include="NET_Client.h">
       <Filter>NET_Client</Filter>
+    </ClInclude>
+    <ClInclude Include="SteamNetClient.h">
+      <Filter>NET_Client</Filter>
+    </ClInclude>
+    <ClInclude Include="SteamNetServer.h">
+      <Filter>NET_Server</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

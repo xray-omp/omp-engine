@@ -259,6 +259,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Mixed|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="SteamNetClient.cpp" />
+    <ClCompile Include="SteamNetServer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseClient.h" />
@@ -284,6 +286,8 @@
     <ClInclude Include="PlayersMonitor.h" />
     <ClInclude Include="ServerConnectionOptions.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="SteamNetClient.h" />
+    <ClInclude Include="SteamNetServer.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\xrCore\xrCore.vcxproj">

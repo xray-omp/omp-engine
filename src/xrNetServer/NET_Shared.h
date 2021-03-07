@@ -13,7 +13,7 @@
 #include "net_messages.h"
 #include "net_compressor.h"
 
-#define USE_DIRECT_PLAY
+// #define USE_DIRECT_PLAY
 
 XRNETSERVER_API extern ClientID BroadcastCID;
 

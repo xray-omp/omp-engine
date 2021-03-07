@@ -4,6 +4,7 @@
 #pragma warning(push)
 #pragma warning(disable:4995)
 #include <DPlay/dplay8.h>
+#include "GameNetworkingSockets/steam/steamnetworkingsockets.h"
 #pragma warning(pop)
 
 void IClientStatistic::Update(DPN_CONNECTION_INFO& CI)
@@ -25,5 +26,26 @@ void IClientStatistic::Update(DPN_CONNECTION_INFO& CI)
 		dwBytesReceivedPerSec = dwBytesReceived;
 		dwBytesReceived = 0;
 	}
-	ci_last = CI;
+
+	dwRoundTripLatencyMS = CI.dwRoundTripLatencyMS;
+	dwThroughputBPS = CI.dwThroughputBPS;
+	dwPeakThroughputBPS = CI.dwPeakThroughputBPS;
+	dwPacketsDropped = CI.dwPacketsDropped;
+	dwPacketsRetried = CI.dwPacketsRetried;
+}
+
+void IClientStatistic::Update(SteamNetworkingQuickConnectionStatus & status)
+{
+	u32 time_global = TimeGlobal(device_timer);
+	if (time_global - dwBaseTime >= 999)
+	{
+		dwBaseTime = time_global;
+			 
+		dwBytesSendedPerSec = dwBytesSended; // from other place
+		dwBytesSended = 0;
+		dwBytesReceivedPerSec = dwBytesReceived; // from other place
+		dwBytesReceived = 0;
+	}
+	
+	dwRoundTripLatencyMS = status.m_nPing;
 }

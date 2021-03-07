@@ -13,6 +13,7 @@ struct XRNETSERVER_API ip_address
 	}m_data;
 	void		set(LPCSTR src_string);
 	xr_string	to_string()	const;
+  void	to_buf(char* buf, int count)	const;
 
 	bool operator == (const ip_address& other) const
 	{

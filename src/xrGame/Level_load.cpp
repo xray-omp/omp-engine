@@ -37,8 +37,10 @@ BOOL CLevel::Load_GameSpecific_Before()
 		ai().game_graph				(xr_new<CGameGraph>(*m_chunk));
 	}
 
-	if (FS.exist(fn_game,"$level$","level.ai") && !net_Hosts.empty())
-		ai().load						(net_SessionName());
+	if (!ai().get_alife() && FS.exist(fn_game, "$level$", "level.ai") && HasSessionName())
+	{
+		ai().load(net_SessionName());
+	}
 
 	if (!g_dedicated_server && !ai().get_alife() && ai().get_game_graph() && FS.exist(fn_game, "$level$", "level.game")) {
 		IReader							*stream = FS.r_open		(fn_game);
