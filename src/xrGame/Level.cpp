@@ -49,6 +49,7 @@
 #include "demoplay_control.h"
 #include "demoinfo.h"
 #include "CustomDetector.h"
+#include "string_table.h"
 
 #include "../xrphysics/iphworld.h"
 #include "../xrphysics/console_vars.h"
@@ -1213,7 +1214,7 @@ void CLevel::OnAlifeSimulatorLoaded()
 
 void CLevel::OnSessionTerminate		(LPCSTR reason)
 {
-	MainMenu()->OnSessionTerminate(reason);
+	MainMenu()->OnSessionTerminate(CStringTable().translate(reason).c_str());
 }
 
 u32	GameID()
