@@ -132,6 +132,8 @@ void game_sv_freemp::OnEvent(NET_Packet &P, u16 type, u32 time, ClientID sender)
 
 void game_sv_freemp::Update()
 {
+	inherited::Update();
+
 	if (Phase() != GAME_PHASE_INPROGRESS)
 	{
 		OnRoundStart();

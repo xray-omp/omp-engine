@@ -25,6 +25,8 @@ game_PlayerState::game_PlayerState(NET_Packet* account_info)
 	experience_New		= 0;
 
 	flags__				= 0;
+	ping = 0;
+
 	m_bCurrentVoteAgreed= 2;
 	RespawnTime			= 0;
 	m_bPayForSpawn		= false;
