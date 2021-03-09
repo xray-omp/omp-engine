@@ -7,6 +7,11 @@
 #include "level.h"
 #include "xr_level_controller.h"
 
+#include "ui/UIStatic.h"
+#include "ui/UIXmlInit.h"
+
+BOOL g_cl_draw_mp_statistic = FALSE;
+
 CUIGameFMP::CUIGameFMP()
 {
 	m_game = NULL;
@@ -14,6 +19,33 @@ CUIGameFMP::CUIGameFMP()
 
 CUIGameFMP::~CUIGameFMP()
 {
+}
+
+void CUIGameFMP::Init(int stage)
+{
+	if (stage == 0)
+	{
+		//shared
+		m_stats = xr_new<CUITextWnd>();
+		m_stats->SetAutoDelete(true);
+
+		inherited::Init(stage);
+	}
+	else if (stage == 1)
+	{
+		//unique
+		CUIXml uiXml;
+		uiXml.Load(CONFIG_PATH, UI_PATH, "ui_game_fmp.xml");
+
+		CUIXmlInit::InitWindow(uiXml, "global", 0, m_window);
+		CUIXmlInit::InitTextWnd(uiXml, "stats", 0, m_stats);
+	}
+	else if (stage == 2)
+	{
+		//after
+		inherited::Init(stage);
+		m_window->AttachChild(m_stats);
+	}
 }
 
 void CUIGameFMP::SetClGame(game_cl_GameState * g)
@@ -26,6 +58,59 @@ void CUIGameFMP::SetClGame(game_cl_GameState * g)
 void CUIGameFMP::HideShownDialogs()
 {
 	inherited::HideShownDialogs();
+}
+
+void _BCL CUIGameFMP::OnFrame()
+{
+	inherited::OnFrame();
+
+
+	if (g_cl_draw_mp_statistic && Level().game->local_player)
+	{
+		IClientStatistic& stats = Level().GetStatistic();
+
+		string1024 outstr;
+		if (UseDirectPlay())
+		{
+			xr_sprintf(
+				outstr,
+				"ping: %u/%u\\n"
+				"in/out: %.1f/%.2f KB/s\\n"
+				"packets dropped: %u\\n"
+				"packets retried: %u\\n",
+				Level().game->local_player->ping,
+				stats.getPing(),
+				stats.getReceivedPerSec() / 1000.0f,
+				stats.getSendedPerSec() / 1000.0f,
+				stats.getDroppedCount(),
+				stats.getRetriedCount()
+			);
+		}
+		else
+		{
+			xr_sprintf(
+				outstr,
+				"ping: %u/%u\\n"
+				"in/out: %.1f/%.2f KB/s\\n"
+				"quality local: %.2f\\n"
+				"quality remote: %.2f\\n",
+				Level().game->local_player->ping,
+				stats.getPing(),
+				stats.getReceivedPerSec() / 1000.0f,
+				stats.getSendedPerSec() / 1000.0f,
+				stats.getQualityLocal(),
+				stats.getQualityRemote()
+			);
+		}
+
+		m_stats->SetTextST(outstr);
+		m_stats->Enable(true);
+	}
+	else if (m_stats->IsEnabled())
+	{
+		m_stats->SetTextST("");
+		m_stats->Enable(false);
+	}
 }
 
 bool CUIGameFMP::IR_UIOnKeyboardPress(int dik)

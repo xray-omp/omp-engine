@@ -10,6 +10,8 @@ struct SteamNetworkingQuickConnectionStatus;
 
 class XRNETSERVER_API IClientStatistic
 {
+	float				qualityLocal = 0;
+	float				qualityRemote = 0;
 	u32					mps_recive, mps_receive_base;
 	u32					mps_send, mps_send_base;
 	u32					dwBaseTime;
@@ -28,7 +30,9 @@ public:
 	IC u32	getMPS_Receive() { return mps_recive; }
 	IC u32	getMPS_Send() { return mps_send; }
 	IC u32	getReceivedPerSec() { return dwBytesReceivedPerSec; }
-	IC u32	getSendedPerSec() { return dwBytesSendedPerSec; }
+	IC u32	getSendedPerSec() { return dwBytesSendedPerSec; }	
+	IC float	getQualityLocal() { return qualityLocal; }
+	IC float	getQualityRemote() { return qualityRemote; }
 
 	IC void	Clear() { CTimer* timer = device_timer; ZeroMemory(this, sizeof(*this)); device_timer = timer; dwBaseTime = TimeGlobal(device_timer); }
 
