@@ -67,6 +67,16 @@ struct	MSYS_PING
 	u32			dwTime_ClientReceive;
 };
 
+struct	MSYS_CLIENT_DATA
+{
+	u32 sign1;	// 0x02281488;
+	u32 sign2;	// 0x01488228;
+
+	string64		name;
+	string64		pass;
+	u32					process_id;
+};
+
 struct	MSYS_GAME_DESCRIPTION
 {
   u32 sign1;	// 0x02281488;

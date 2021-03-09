@@ -44,17 +44,6 @@ SteamNetClient::~SteamNetClient()
 
 #pragma region connect / disconnect
 
-bool SteamNetClient::SetIdentity(SteamNetworkingIdentity& identity, ClientConnectionOptions& opt) const
-{
-	NET_Packet P;
-	P.write_start();
-	P.w_stringZ(opt.user_name);
-	P.w_stringZ(opt.user_pass);
-	P.w_stringZ(opt.server_pass);
-	P.w_u32(GetCurrentProcessId());
-	return identity.SetGenericBytes(P.B.data, P.B.count);
-}
-
 bool SteamNetClient::CreateConnection(ClientConnectionOptions & connectOpt)
 {
 	m_pInterface = SteamNetworkingSockets();
@@ -64,22 +53,23 @@ bool SteamNetClient::CreateConnection(ClientConnectionOptions & connectOpt)
 		// server client
 		SteamNetworkingIdentity identity;
 		m_pInterface->GetIdentity(&identity);
-		R_ASSERT2(identity.IsLocalHost(), "[SteamNetClient] Interface is initialized and identity is not localhost!");
+		R_ASSERT2(identity.IsLocalHost(), "! [SteamNetClient] Interface is initialized and identity is not localhost!");
 		m_bServerClient = true;
 	}
 	else
 	{
 		SteamNetworkingIdentity identity;
-		if (!SetIdentity(identity, connectOpt))
+		identity.Clear();
+		if (!identity.SetGenericString(connectOpt.server_pass))
 		{
-			Msg("[SteamNetClient] Can't create an identity");
+			Msg("! [SteamNetClient] server password is too long!");
 			return false;
 		}
 
 		SteamDatagramErrMsg errMsg;
 		if (!GameNetworkingSockets_Init(&identity, errMsg))
 		{
-			Msg("[SteamNetClient] GameNetworkingSockets_Init failed.  %s", errMsg);
+			Msg("! [SteamNetClient] GameNetworkingSockets_Init failed.  %s", errMsg);
 			return false;
 		}
 
@@ -87,7 +77,7 @@ bool SteamNetClient::CreateConnection(ClientConnectionOptions & connectOpt)
 
 		if (m_pInterface == nullptr)
 		{
-			Msg("[SteamNetClient] Server interface is NULL");
+			Msg("! [SteamNetClient] Server interface is NULL");
 			return false;
 		}
 	}
@@ -116,9 +106,12 @@ bool SteamNetClient::CreateConnection(ClientConnectionOptions & connectOpt)
 	m_hConnection = m_pInterface->ConnectByIPAddress(serverAddr, 1, &opt);
 	if (m_hConnection == k_HSteamNetConnection_Invalid)
 	{
-		Msg("[SteamNetClient] Failed to create connection");
+		Msg("! [SteamNetClient] Failed to create connection");
 		return false;
 	}
+
+	m_user_name = connectOpt.user_name;
+	m_user_pass = connectOpt.user_pass;
 
 	Msg("- [SteamNetClient] connect created");
 	thread_spawn(steam_net_update_client, "snetwork-update-client", 0, this);
@@ -145,6 +138,9 @@ void SteamNetClient::DestroyConnection()
 		m_hConnection = k_HSteamNetConnection_Invalid;
 	}
 	m_pInterface = nullptr;
+
+	m_user_name.clear();
+	m_user_pass.clear();
 
 	// if no server client
 	if (!m_bServerClient)
@@ -239,8 +235,6 @@ void SteamNetClient::OnSteamNetConnectionStatusChanged(SteamNetConnectionStatusC
 			Msg("[SteamNetClient] ProblemDetectedLocally");
 		}
 
-		Msg("Disconnect reason: [%d] %s", pInfo->m_info.m_eEndReason, pInfo->m_info.m_szEndDebug);
-
 		net_Connected = EnmConnectionFails;
 		net_Disconnected = TRUE;
 
@@ -275,6 +269,7 @@ void SteamNetClient::OnSteamNetConnectionStatusChanged(SteamNetConnectionStatusC
 	break;
 	case k_ESteamNetworkingConnectionState_Connected:
 		Msg("[SteamNetClient] Connected to server");
+		SendClientData();
 		break;
 	case k_ESteamNetworkingConnectionState_None:
 		// NOTE: We will get callbacks here when we destroy connections.  You can ignore these.
@@ -289,6 +284,20 @@ void SteamNetClient::OnSteamNetConnectionStatusChanged(SteamNetConnectionStatusC
 }
 
 #pragma endregion
+
+// -----------------------------------------------------------------------------
+
+void SteamNetClient::SendClientData()
+{
+	MSYS_CLIENT_DATA client_data;
+	client_data.sign1 = 0x02281488;
+	client_data.sign2 = 0x01488228;
+	client_data.process_id = GetCurrentProcessId();
+	xr_strcpy(client_data.name, m_user_name.c_str());
+	xr_strcpy(client_data.pass, m_user_pass.c_str());
+
+	SendTo_LL(&client_data, sizeof(MSYS_CLIENT_DATA), net_flags(TRUE, TRUE, FALSE, FALSE));
+}
 
 // -----------------------------------------------------------------------------
 

@@ -111,13 +111,11 @@ struct SClientConnectData
 	ClientID		clientID;
 	string64		name;
 	string64		pass;
-	string64		server_pass; // only for steam
 	u32				process_id;
 
 	SClientConnectData()
 	{
 		name[0] = pass[0] = 0;
-		server_pass[0] = 0;
 		process_id = 0;
 	}
 };

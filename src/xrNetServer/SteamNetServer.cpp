@@ -33,7 +33,7 @@ SteamNetServer::SteamNetServer(CTimer* timer, BOOL	dedicated)
 {
 	m_players.reserve((dedicated) ? GetMaxPlayers() + 1 : GetMaxPlayers()); // 
 	m_server_password.reserve(64);
-	m_awaiting_clients.clear();
+	m_pending_clients.clear();
 }
 
 // -----------------------------------------------------------------------------
@@ -129,8 +129,6 @@ void SteamNetServer::DestroyConnection()
 		return;
 	}
 
-	m_awaiting_clients.clear();
-
 	DisconnectAll();
 
 	if (m_hListenSock != k_HSteamListenSocket_Invalid)
@@ -199,16 +197,16 @@ void SteamNetServer::PollIncomingMessages()
 
 		MSYS_PING*	m_ping = (MSYS_PING*)m_data;
 
-		if ((m_size > 2 * sizeof(u32)) && (m_ping->sign1 == 0x12071980) && (m_ping->sign2 == 0x26111975))
+		if (m_size == sizeof(MSYS_PING) && m_ping->sign1 == 0x12071980 && m_ping->sign2 == 0x26111975)
 		{
-			// this is system message
-			if (m_size == sizeof(MSYS_PING))
-			{
-				// ping - save server time and reply
-				m_ping->dwTime_Server = TimerAsync(device_timer);
-				ClientID ID; ID.set(m_sender);
-				BaseServer::SendTo_Buf(ID, m_data, m_size, net_flags(FALSE, FALSE, TRUE, TRUE));
-			}
+			// ping - save server time and reply
+			m_ping->dwTime_Server = TimerAsync(device_timer);
+			ClientID ID; ID.set(m_sender);
+			BaseServer::SendTo_Buf(ID, m_data, m_size, net_flags(FALSE, FALSE, TRUE, TRUE));
+		}
+		else if (m_size == sizeof(MSYS_CLIENT_DATA) && m_ping->sign1 == 0x02281488 && m_ping->sign2 == 0x01488228)
+		{ // client data message
+			OnClientDataReceived(pIncomingMsg->m_conn, pIncomingMsg->m_identityPeer, (MSYS_CLIENT_DATA*)m_data);
 		}
 		else
 		{
@@ -235,7 +233,6 @@ void SteamNetServer::ProcessConnection(SteamNetConnectionStatusChangedCallback_t
 	// Add to connection list
 	m_players.push_back(pInfo->m_hConn);
 
-
 	ip_address ip;
 	string64 ip_str;
 	GetIpAddress(pInfo->m_info, ip);
@@ -252,42 +249,25 @@ void SteamNetServer::ProcessConnection(SteamNetConnectionStatusChangedCallback_t
 	}
 
 	// First connected client is SV_Client so if it is NULL then this server client tries to connect ;)
-	if (SV_Client && !m_ip_filter.is_ip_present(ip.m_data.data))
+	bool bServerClient = !SV_Client && pInfo->m_info.m_identityRemote.IsLocalHost();
+
+	if (!bServerClient && !m_ip_filter.is_ip_present(ip.m_data.data))
 	{
 		Msg("[SteamNetServer] Close connection. Ip address is not present [%s]", ip_str);
 		CloseConnection(pInfo->m_hConn, EUnknownReason);
 		return;
 	}
 
-	bool isServerClient = pInfo->m_info.m_identityRemote.IsLocalHost();
-
-	// Setup cl data
-	SClientConnectData cl_data;
-	cl_data.clientID.set(pInfo->m_hConn); // set clientId
-
-	if (isServerClient)
+	// Check server password
+	if (!bServerClient)
 	{
-		xr_strcpy(cl_data.name, "ServerAdmin");
-		xr_strcpy(cl_data.pass, "pass");
-		cl_data.process_id = GetCurrentProcessId();
-	}
-	else
-	{
-		bool ok = ParseClientConnectionData(pInfo->m_info.m_identityRemote, cl_data);
-		if (!ok)
+		LPCSTR pServerPass = pInfo->m_info.m_identityRemote.GetGenericString();
+		if (pServerPass != NULL && xr_strcmp(m_server_password.c_str(), pServerPass) != 0)
 		{
-			Msg("[SteamNetServer] Bad client connection data");
-			CloseConnection(pInfo->m_hConn, EUnknownReason);
+			Msg("[SteamNetServer] Close connection. Incorrect server password");
+			CloseConnection(pInfo->m_hConn, EInvalidPassword);
 			return;
 		}
-	}
-
-	// Check server password
-	if (!isServerClient && xr_strcmp(m_server_password.c_str(), cl_data.server_pass) != 0)
-	{
-		Msg("[SteamNetServer] Close connection. Incorrect server password");
-		CloseConnection(pInfo->m_hConn, EInvalidPassword);
-		return;
 	}
 
 	// Try to accept the connection.
@@ -308,31 +288,59 @@ void SteamNetServer::ProcessConnection(SteamNetConnectionStatusChangedCallback_t
 		CloseConnection(pInfo->m_hConn, EUnknownReason);
 		return;
 	}
+}
 
-	if (!m_bServerClientConnected)
+void SteamNetServer::AddPendingClient(SClientConnectData & cl_data)
+{
+	auto pending_client_it = std::find_if(m_pending_clients.cbegin(), m_pending_clients.cend(),
+		[&](const auto &data) {
+			return data.clientID == cl_data.clientID;
+		}
+	);
+	if (pending_client_it == m_pending_clients.cend())
 	{
-		if (isServerClient)
-		{
-			FinishConnection(cl_data);
-			m_bServerClientConnected = true;
-
-			// Finish connection for all awaiting clients
-			if (!m_awaiting_clients.empty())
-			{
-				for (auto &data : m_awaiting_clients)
-					FinishConnection(data);
-
-				m_awaiting_clients.clear();
-			}
-		}
-		else
-		{
-			// Add to awaiting clients
-			m_awaiting_clients.push_back(cl_data);
-		}
+		m_pending_clients.push_back(cl_data);
 	}
+}
 
-	FinishConnection(cl_data);
+void SteamNetServer::HandlePendingClients()
+{
+	if (m_pending_clients.empty())
+		return;
+
+	for (auto &cl_data : m_pending_clients)
+		FinishConnection(cl_data);
+
+	m_pending_clients.clear();
+}
+
+void SteamNetServer::OnClientDataReceived(HSteamNetConnection connection, SteamNetworkingIdentity &identity, MSYS_CLIENT_DATA* data)
+{
+	SClientConnectData cl_data;
+	cl_data.clientID.set(connection); // set clientId
+	cl_data.process_id = data->process_id;
+
+	if (identity.IsLocalHost() && data->process_id == GetCurrentProcessId())
+	{ // if server client
+		xr_strcpy(cl_data.name, "ServerAdmin");
+		xr_strcpy(cl_data.pass, "pass");
+
+		FinishConnection(cl_data);
+		m_bServerClientConnected = true;
+		Msg("- [SteamNetServer] server client connected");
+
+		HandlePendingClients(); // Finish connection for all pending clients
+	}
+	else
+	{
+		xr_strcpy(cl_data.name, data->name);
+		xr_strcpy(cl_data.pass, data->pass);
+
+		if (m_bServerClientConnected)
+			FinishConnection(cl_data);
+		else
+			AddPendingClient(cl_data);
+	}
 }
 
 void SteamNetServer::FinishConnection(SClientConnectData &cl_data)
@@ -348,6 +356,7 @@ void SteamNetServer::FinishConnection(SClientConnectData &cl_data)
 
 	_SendTo_LL(cl_data.clientID, &sys_gd, sizeof(sys_gd), net_flags(TRUE, TRUE, FALSE, FALSE));
 }
+
 
 void SteamNetServer::OnSteamNetConnectionStatusChanged(SteamNetConnectionStatusChangedCallback_t * pInfo)
 {
@@ -412,8 +421,14 @@ void SteamNetServer::DisconnectAll()
 		DestroyCleint(connection);
 	}
 	m_players.clear();
-}
 
+	for (auto &cl_data : m_pending_clients)
+	{
+		m_pInterface->CloseConnection(cl_data.clientID.value(), EServerShutdown, nullptr, false);
+	}
+	m_pending_clients.clear();
+}
+ 
 bool SteamNetServer::DisconnectClient(IClient * C, LPCSTR Reason)
 {
 	if (!C) return false;
@@ -425,11 +440,25 @@ bool SteamNetServer::DisconnectClient(IClient * C, LPCSTR Reason)
 
 void SteamNetServer::CloseConnection(HSteamNetConnection connection, enmDisconnectReason nReason, LPCSTR sReason)
 {
-	auto found = std::find(m_players.cbegin(), m_players.cend(), connection);
-	if (found != m_players.cend())
+	auto player_it = std::find(m_players.cbegin(), m_players.cend(), connection);
+	if (player_it != m_players.cend())
 	{
-		m_players.erase(found);
+		m_players.erase(player_it);
 		m_pInterface->CloseConnection(connection, nReason, sReason, false);
+	}
+
+	if (!m_pending_clients.empty())
+	{
+		auto pending_client_it = std::find_if(m_pending_clients.cbegin(), m_pending_clients.cend(),
+			[&](const auto &cl_data) {
+				return cl_data.clientID == connection;
+			}
+		);
+		if (pending_client_it != m_pending_clients.cend())
+		{
+			m_pending_clients.erase(pending_client_it);
+			m_pInterface->CloseConnection(connection, nReason, sReason, false);
+		}
 	}
 }
 
@@ -450,28 +479,6 @@ void SteamNetServer::DestroyCleint(ClientID clientId)
 }
 
 #pragma endregion
-
-// -----------------------------------------------------------------------------
-
-bool SteamNetServer::ParseClientConnectionData(SteamNetworkingIdentity& identity, SClientConnectData& out)
-{
-	NET_Packet P;
-
-	int size = identity.m_cbSize;
-	if (size <= 0)
-	{
-		return false;
-	}
-
-	P.construct(identity.GetGenericBytes(size), static_cast<unsigned int>(size));
-	P.read_start();
-	P.r_stringZ(out.name);
-	P.r_stringZ(out.pass);
-	P.r_stringZ(out.server_pass);
-	P.r_u32(out.process_id);
-
-	return true;
-}
 
 // -----------------------------------------------------------------------------
 

@@ -16,6 +16,9 @@ private:
 	ISteamNetworkingSockets*  m_pInterface = nullptr;
 	HSteamNetConnection		    m_hConnection = k_HSteamNetConnection_Invalid;
 
+	xr_string									m_user_name = "";
+	xr_string									m_user_pass = "";
+
 	bool											m_bServerClient = false;
 	bool											m_bGameDescriptionRecieved = false;
 
@@ -27,6 +30,8 @@ private:
 	IC bool                 IsConnectionCreated() const { return m_pInterface != nullptr; }
 	IC bool									GameDescriptionReceived() const { return m_bGameDescriptionRecieved; }
 
+	void										SendClientData();
+
 	void                    Update();
 	void                    OnSteamNetConnectionStatusChanged(SteamNetConnectionStatusChangedCallback_t *pInfo);
 
@@ -34,7 +39,6 @@ private:
 
 	void					          PollConnectionStateChanges();
 	void					          PollIncomingMessages();
-	bool					          SetIdentity(SteamNetworkingIdentity& identity, ClientConnectionOptions& opt) const;
 
 protected:
 	virtual bool            IsConnectionInit() override { return m_pInterface != nullptr; }
