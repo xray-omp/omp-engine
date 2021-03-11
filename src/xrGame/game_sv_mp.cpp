@@ -28,6 +28,9 @@
 #include "alife_graph_registry.h"
 #include "alife_time_manager.h"
 
+#include "ai_space.h"
+#include "level_graph.h"
+
 u32		g_dwMaxCorpses = 10;
 //-----------------------------------------------------------------
 BOOL		g_sv_mp_bSpectator_FreeFly		= FALSE;
@@ -629,6 +632,50 @@ void	game_sv_mp::SpawnPlayer(ClientID id, LPCSTR N)
 
 	signal_Syncronize();
 }
+
+bool game_sv_mp::SpawnItem(LPCSTR section, u16 parent)
+{
+	if (!pSettings->section_exist(section))
+	{
+		Msg("! WARNING section \"%s\" doesnt exist", section);
+		return false;
+	}
+
+	CSE_Abstract *E = spawn_begin(section);
+	E->ID_Parent = parent;
+	spawn_end(E, parent);
+
+	return true;
+};
+
+bool game_sv_mp::SpawnItemToPos(LPCSTR section, Fvector3 position)
+{
+	if (!pSettings->section_exist(section))
+	{
+		Msg("! WARNING section \"%s\" doesnt exist", section);
+		return false;
+	}
+	u32 LV = ai().get_level_graph()->vertex_id(position);
+
+	CSE_Abstract *E = spawn_begin(section);
+
+	if (E->cast_human_abstract() || E->cast_monster_abstract())
+	{
+		if (ai().get_level_graph()->valid_vertex_id(LV))
+			alife().spawn_item(section, position, ai().get_level_graph()->vertex_id(position), 0, 0xffff);
+		else
+			Msg("! Level vertex incorrect");
+
+		F_entity_Destroy(E);
+	}
+	else
+	{
+		E->o_Position = position;
+		spawn_end(E, m_server->GetServerClient()->ID);
+	}
+
+	return true;
+};
 
 void game_sv_mp::AllowDeadBodyRemove(ClientID id, u16 GameID)
 {
