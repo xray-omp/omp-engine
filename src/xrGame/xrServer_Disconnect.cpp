@@ -11,6 +11,8 @@ void xrServer::Disconnect()
 		xr_delete(m_file_transfers);
 	}
 
+	script_server_events.clear();
+
 	inherited::Disconnect	();
 	SLS_Clear				();
 	xr_delete				(game);

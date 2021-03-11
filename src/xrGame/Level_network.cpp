@@ -119,6 +119,8 @@ void CLevel::net_Stop		()
 {
 	Msg							("- Disconnect");
 
+	script_client_events.clear();
+
 	if(CurrentGameUI())
 	{
 		CurrentGameUI()->HideShownDialogs();

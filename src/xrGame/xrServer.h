@@ -14,6 +14,7 @@
 #include "secure_messaging.h"
 #include "xrServer_updates_compressor.h"
 #include "xrClientsPool.h"
+#include "script_event.h"
 
 #ifdef DEBUG
 //. #define SLOW_VERIFY_ENTITIES
@@ -91,6 +92,8 @@ private:
 	xr_vector<u16>				conn_spawned_ids;
 	cheaters_t					m_cheaters;
 	
+	xr_deque<ScriptEvent>		script_server_events;
+
 	file_transfer::server_site*	m_file_transfers;
 	clientdata_proxy*			m_screenshot_proxies[MAX_PLAYERS_COUNT*2];
 	void	initialize_screenshot_proxies();
@@ -286,6 +289,16 @@ public:
 			bool			verify_entities		() const;
 			void			verify_entity		(const CSE_Abstract *entity) const;
 #endif
+
+
+	// scrip events
+private:
+	void					OnScriptEvent(NET_Packet & P, ClientID sender);
+
+public:
+	ScriptEvent*	GetLastServerScriptEvent();
+	void					PopLastServerScriptEvent();
+	u32						GetSizeServerScriptEvent();
 };
 
 

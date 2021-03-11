@@ -19,6 +19,9 @@
 
 #include "game_cl_base.h"
 
+// Pavel: this include is required
+#include "script_event.h"
+
 class	CHUDManager;
 class	CParticlesObject;
 class	xrServer;
@@ -394,6 +397,16 @@ public:
 	void			init_compression			();
 	void			deinit_compression			();
 			
+
+	// script events
+private:
+	xr_deque<NET_Packet>		script_client_events;
+
+public:
+	NET_Packet*							GetLastClientScriptEvent();
+	void										PopLastClientScriptEvent();
+	u32											GetSizeClientScriptEvent();
+
 
 	DECLARE_SCRIPT_REGISTER_FUNCTION
 };

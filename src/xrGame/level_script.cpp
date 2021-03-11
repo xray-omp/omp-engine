@@ -727,6 +727,58 @@ int get_g_actor_id()
 	return Actor()->ID();
 }
 
+// script events
+
+void send_script_event_to_server(NET_Packet& P)
+{
+	Level().Send(P, net_flags(TRUE, TRUE));
+}
+
+NET_Packet* get_last_client_event()
+{
+	return Level().GetLastClientScriptEvent();
+}
+
+void pop_last_client_event()
+{
+	Level().PopLastClientScriptEvent();
+}
+
+u32 get_size_client_events()
+{
+	return Level().GetSizeClientScriptEvent();
+}
+
+
+void send_script_event_to_client(u32 cleintId, NET_Packet& P)
+{
+	R_ASSERT2(OnServer(), "Avaliable only on server");
+	Level().Server->SendTo(ClientID(cleintId), P, net_flags(TRUE, TRUE));
+}
+
+void send_script_event_broadcast(NET_Packet& P)
+{
+	R_ASSERT2(OnServer(), "Avaliable only on server");
+	Level().Server->SendBroadcast(BroadcastCID, P, net_flags(TRUE, TRUE));
+}
+
+ScriptEvent* get_last_server_event()
+{
+	return Level().Server->GetLastServerScriptEvent();
+}
+
+void pop_last_server_event()
+{
+	Level().Server->PopLastServerScriptEvent();
+}
+
+u32 get_size_server_events()
+{
+	return Level().Server->GetSizeServerScriptEvent();
+}
+
+
+
 #pragma optimize("s",on)
 void CLevel::script_register(lua_State *L)
 {
@@ -832,6 +884,22 @@ void CLevel::script_register(lua_State *L)
 		def("get_g_actor_id", &get_g_actor_id)
 	],
 	
+
+	module(L, "script_events")
+	[
+		def("send_to_server", &send_script_event_to_server),
+		def("send_to_client", &send_script_event_to_client),
+		def("send_broadcast", &send_script_event_broadcast),
+
+		def("get_last_client_event", &get_last_client_event),
+		def("pop_last_client_event", &pop_last_client_event),
+		def("get_size_client_events", &get_size_client_events),
+
+		def("get_last_server_event", &get_last_server_event),
+		def("pop_last_server_event", &pop_last_server_event),
+		def("get_size_server_events", &get_size_server_events)
+	];
+
 	module(L,"actor_stats")
 	[
 		def("add_points",						&add_actor_points),
