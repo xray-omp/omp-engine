@@ -714,6 +714,18 @@ void print_msg(LPCSTR str)
 	Msg("[lua] %s", str);
 }
 
+CScriptGameObject *get_object_by_client(u32 clientID)
+{
+	xrClientData* xrCData = Level().Server->ID_to_client(clientID);
+	if (!xrCData || !xrCData->owner) return NULL;
+
+	CGameObject* pGameObject = smart_cast<CGameObject*>(Level().Objects.net_Find(xrCData->owner->ID));
+	if (!pGameObject)
+		return NULL;
+
+	return pGameObject->lua_game_object();
+}
+
 int get_local_player_id()
 {
 	return Game().local_player->GameID;
@@ -880,6 +892,7 @@ void CLevel::script_register(lua_State *L)
 		def("game_id",							&GameID),
 
 		// new for mp
+		def("get_object_by_client", &get_object_by_client),
 		def("get_local_player_id", &get_local_player_id),
 		def("get_g_actor_id", &get_g_actor_id)
 	],
