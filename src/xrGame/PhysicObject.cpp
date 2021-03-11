@@ -10,6 +10,7 @@
 #include "../xrEngine/cf_dynamic_mesh.h"
 #include "PHSynchronize.h"
 #include "game_object_space.h"
+#include "script_game_object.h"
 //#include "../xrphysics/PhysicsShellAnimator.h"
 #include "moving_bones_snd_player.h"
 #include "../xrphysics/extendedgeom.h"
@@ -350,7 +351,12 @@ void CPhysicObject::UpdateCL()
 	
 	if (!IsGameTypeSingle())
 	{
-		Interpolate();
+		CGameObject const* const game_object = smart_cast<CGameObject const*>(this);
+		VERIFY(game_object);
+		if (game_object->lua_game_object() && !game_object->lua_game_object()->m_door)
+		{
+			Interpolate();
+		}
 	}
 
 	m_anim_script_callback.update( *this );
