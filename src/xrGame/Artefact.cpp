@@ -116,7 +116,7 @@ void CArtefact::OnH_A_Chield()
 	inherited::OnH_A_Chield		();
 
 	StopLights();
-	if (IsGameTypeSingle())
+	if (IsGameTypeSingle() || Game().Type() == eGameIDFreeMp || Game().Type() == eGameIDRolePlay)
 	{
 		SwitchAfParticles(false);
 	}
