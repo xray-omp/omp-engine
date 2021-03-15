@@ -904,6 +904,8 @@
     <ClInclude Include="cover_point_inline.h" />
     <ClInclude Include="cta_game_artefact.h" />
     <ClInclude Include="cta_game_artefact_activation.h" />
+    <ClInclude Include="game_cl_roleplay.h" />
+    <ClInclude Include="game_sv_roleplay.h" />
     <ClInclude Include="net_physics_state.h" />
     <ClInclude Include="script_event.h" />
     <ClInclude Include="UIGameFMP.h" />
@@ -1672,6 +1674,7 @@
     <ClInclude Include="UIGameCustom.h" />
     <ClInclude Include="UIGameDM.h" />
     <ClInclude Include="UIGameMP.h" />
+    <ClInclude Include="UIGameRP.h" />
     <ClInclude Include="UIGameSP.h" />
     <ClInclude Include="UIGameTDM.h" />
     <ClInclude Include="UIPanelsClassFactory.h" />
@@ -3049,6 +3052,8 @@
     </ClCompile>
     <ClCompile Include="cta_game_artefact.cpp" />
     <ClCompile Include="cta_game_artefact_activation.cpp" />
+    <ClCompile Include="game_cl_roleplay.cpp" />
+    <ClCompile Include="game_sv_roleplay.cpp" />
     <ClCompile Include="net_physics_state.cpp" />
     <ClCompile Include="script_event.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">pch_script.h</PrecompiledHeaderFile>
@@ -4877,6 +4882,7 @@
     </ClCompile>
     <ClCompile Include="UIGameDM.cpp" />
     <ClCompile Include="UIGameMP.cpp" />
+    <ClCompile Include="UIGameRP.cpp" />
     <ClCompile Include="UIGameSP.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">pch_script.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>

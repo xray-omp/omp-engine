@@ -207,6 +207,8 @@ LPCSTR GameTypeToString(EGameIDs gt, bool bShort)
 		break;
 	case eGameIDFreeMp:
 		return (bShort) ? "fmp" : "freemp";
+	case eGameIDRolePlay:
+		return (bShort) ? "rp" : "roleplay";
 	default :
 		return		"---";
 	}
@@ -231,6 +233,9 @@ EGameIDs ParseStringToGameType(LPCSTR str)
 					else
 						if (!xr_strcmp(str, "freemp") || !xr_strcmp(str, "fmp"))
 							return eGameIDFreeMp;
+						else
+							if (!xr_strcmp(str, "roleplay") || !xr_strcmp(str, "rp"))
+								return eGameIDRolePlay;
 						else 
 							return eGameIDNoGame; //EGameIDs
 }

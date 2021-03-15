@@ -401,19 +401,22 @@ void game_sv_GameState::Create					(shared_str &options)
 							(type != rptActorSpawn), 
 							"Problem with CTA Team indexes. Propably you have added rpoint of team 0 for cta game type.");
 					}
-					// HACK. USE DM RP POINT FOR FREE MP
-					if (!(GameType & eGameIDTeamDeathmatch) && (Type() == eGameIDFreeMp))
+
+					
+					if ((GameType & eGameIDTeamDeathmatch) && (Type() == eGameIDFreeMp || Type() == eGameIDRolePlay))
 					{
-						if ((!(GameType & eGameIDDeathmatch) && (Type() == eGameIDDeathmatch)) ||
-							(!(GameType & eGameIDTeamDeathmatch) && (Type() == eGameIDTeamDeathmatch)) ||
-							(!(GameType & eGameIDArtefactHunt) && (Type() == eGameIDArtefactHunt)) ||
-							(!(GameType & eGameIDCaptureTheArtefact) && (Type() == eGameIDCaptureTheArtefact)) ||
-							(!(GameType & eGameIDFreeMp) && (Type() == eGameIDFreeMp))
-							)
-						{
-							continue;
-						};
+						// HACK! WE CAN USE TDM RPOINT FOR FREEMP AND ROLEPLAY GAME TYPES
 					}
+					else if ((!(GameType & eGameIDDeathmatch) && (Type() == eGameIDDeathmatch)) ||
+						(!(GameType & eGameIDTeamDeathmatch) && (Type() == eGameIDTeamDeathmatch)) ||
+						(!(GameType & eGameIDArtefactHunt) && (Type() == eGameIDArtefactHunt)) ||
+						(!(GameType & eGameIDCaptureTheArtefact) && (Type() == eGameIDCaptureTheArtefact)) ||
+						(!(GameType & eGameIDFreeMp) && (Type() == eGameIDFreeMp)) ||
+						(!(GameType & eGameIDRolePlay) && (Type() == eGameIDRolePlay))
+						)
+					{
+						continue;
+					};
 				};
 				switch (type)
 				{

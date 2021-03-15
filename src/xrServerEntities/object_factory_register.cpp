@@ -161,6 +161,7 @@
 #	include "game_sv_ArtefactHunt.h"
 #	include "game_sv_capture_the_artefact.h"
 #	include "game_sv_freemp.h"
+#	include "game_sv_roleplay.h"
 
 #	include "game_cl_single.h"
 #	include "game_cl_deathmatch.h"
@@ -168,11 +169,13 @@
 #	include "game_cl_ArtefactHunt.h"
 #	include	"game_cl_capture_the_artefact.h"
 #	include "game_cl_freemp.h"
+#	include "game_cl_roleplay.h"
 
 #	include "UIGameSP.h"
 #	include "UIGameAHunt.h"
 #	include "UIGameCTA.h"
 #	include "UIGameFMP.h"
+#	include "UIGameRP.h"
 #	include	"climableobject.h"
 #	include "space_restrictor.h"
 #	include "smart_zone.h"
@@ -209,6 +212,7 @@ void CObjectFactory::register_classes	()
 	add<game_sv_ArtefactHunt>									(CLSID_SV_GAME_ARTEFACTHUNT		,"game_sv_artefact_hunt");
 	add<game_sv_CaptureTheArtefact>									(CLSID_SV_GAME_CAPTURETHEARTEFACT	,"game_sv_capture_the_artefact");
 	add<game_sv_freemp>											(CLSID_SV_GAME_FREE_MP, "game_sv_freemp");
+	add<game_sv_roleplay>											(CLSID_SV_GAME_ROLEPLAY, "game_sv_roleplay");
 #endif	//	BENCHMARK_BUILD
 	//Client Game type
 #ifndef NO_SINGLE
@@ -220,6 +224,7 @@ void CObjectFactory::register_classes	()
 	add<game_cl_ArtefactHunt>									(CLSID_CL_GAME_ARTEFACTHUNT		,"game_cl_artefact_hunt");
 	add<game_cl_CaptureTheArtefact>									(CLSID_CL_GAME_CAPTURETHEARTEFACT	,"game_cl_capture_the_artefact");
 	add<game_cl_freemp>											(CLSID_CL_GAME_FREE_MP, "game_cl_freemp");
+	add<game_cl_roleplay>										(CLSID_CL_GAME_ROLEPLAY, "game_cl_roleplay");
 #endif	//	BENCHMARK_BUILD
 
 
@@ -229,6 +234,7 @@ void CObjectFactory::register_classes	()
 	add<CUIGameAHunt>											(CLSID_GAME_UI_ARTEFACTHUNT		,"game_ui_artefact_hunt");
 	add<CUIGameCTA>												(CLSID_GAME_UI_CAPTURETHEARTEFACT	,"game_ui_capture_the_artefact");
 	add<CUIGameFMP>												(CLSID_GAME_UI_FREEMP, "game_ui_freemp");
+	add<CUIGameRP>													(CLSID_GAME_UI_ROLEPLAY, "game_ui_roleplay");
 
 #	ifndef NO_SINGLE
 		ADD_MP(CActor,CActorMP,CSE_ALifeCreatureActor,CSE_ActorMP	,CLSID_OBJECT_ACTOR				,"actor");

@@ -12,6 +12,7 @@ enum ERPGameType{		// [0..255]
 	rpgtGameArtefactHunt,
 	rpgtGameCaptureTheArtefact,
 	rpgtFreeMp,
+	rpgtRolePlay,
 	rpgtGameCount,
 };
 
@@ -22,6 +23,7 @@ xr_token rpoint_game_type[]={
 	{ "ArtefactHunt",		rpgtGameArtefactHunt		},
 	{ "CaptureTheArtefact",	rpgtGameCaptureTheArtefact	},
 	{ "FreeMp",				rpgtFreeMp					},
+	{ "Roleplay",			rpgtRolePlay				},
 	{ 0,					0	}
 };
 
@@ -57,11 +59,14 @@ bool GameTypeChooser::LoadLTX(CInifile& ini, LPCSTR sect_name, bool bOldFormat)
             case rpgtGameCaptureTheArtefact:
                 m_GameType.set(eGameIDCaptureTheArtefact,TRUE);
                 break;
-			case rpgtGameCaptureTheArtefact:
-				m_GameType.set(eGameIDCaptureTheArtefact, TRUE);
-				break;
 			case rpgtFreeMp:
 				m_GameType.set(eGameIDFreeMp, TRUE);
+				break;
+			case rpgtRolePlay:
+				m_GameType.set(eGameIDRolePlay, TRUE);
+				break;
+			default:
+				R_ASSERT(0);
 				break;
         }
     }else
