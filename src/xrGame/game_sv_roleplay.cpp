@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "game_sv_roleplay.h"
+#include "clsid_game.h"
 
 game_sv_roleplay::game_sv_roleplay()
 {
@@ -13,6 +14,35 @@ game_sv_roleplay::~game_sv_roleplay()
 void game_sv_roleplay::Create(shared_str & options)
 {
 	inherited::Create(options);
+	LoadSettings();
+}
+
+void game_sv_roleplay::LoadSettings()
+{
+	string4096 items_str;
+	string256 item_name;
+	string32 sect;
+
+	m_teamSettings.clear();
+
+	m_uTeamCount = (u8)READ_IF_EXISTS(pSettings, r_u32, "roleplay_settings", "team_count", 0);
+
+	for (u8 team_index = 1; team_index < m_uTeamCount + 1; team_index++)
+	{
+		xr_sprintf(sect, "roleplay_team_%d", team_index);
+
+		s32 money = pSettings->r_s32(sect, "start_money");
+		m_teamSettings[team_index].StartMoney = money;
+
+		xr_strcpy(items_str, pSettings->r_string(sect, "start_items"));
+		u32 count = _GetItemCount(items_str);
+		for (u32 t = 0; t < count; ++t)
+		{
+			_GetItem(items_str, t, item_name);
+			m_teamSettings[team_index].StartItems.push_back(item_name);
+		};
+	}
+}
 
 void game_sv_roleplay::OnEvent(NET_Packet & tNetPacket, u16 type, u32 time, ClientID sender)
 {
@@ -28,11 +58,32 @@ void game_sv_roleplay::OnPlayerSelectTeam(NET_Packet& P, ClientID sender)
 	
 	if (ps->team == team) return;
 
+	// set team for player
 	ps->team = u8(team & 0x00ff);
 
 	KillPlayer(sender, ps->GameID);
 	RespawnPlayer(sender, true);
+	
+	xrClientData*	xrCData = (xrClientData*)m_server->ID_to_client(sender);
+	if (!xrCData) return;
 
+	CSE_ALifeCreatureActor	*pA = smart_cast<CSE_ALifeCreatureActor*>(xrCData->owner);
+	if (!pA) return;
+
+	if (m_teamSettings.count(ps->team) == 0) return;
+		
+	auto teamSettings = m_teamSettings[ps->team];
+
+	// spawn start items
+	for (auto &item : teamSettings.StartItems)
+	{
+		SpawnWeapon4Actor(pA->ID, item.c_str(), 0, ps->pItemList);
+	}
+	// set start money
+	ps->money_for_round = teamSettings.StartMoney;
+
+	signal_Syncronize();
+}
 
 void game_sv_roleplay::OnPlayerReady(ClientID id_who)
 {

@@ -1,9 +1,22 @@
 #pragma once
 #include "game_sv_freemp.h"
 
+struct TeamSpawnSect
+{
+	s32 StartMoney;
+	xr_vector<xr_string> StartItems;
+};
+
 class game_sv_roleplay : public game_sv_freemp
 {
 	typedef game_sv_freemp inherited;
+
+private:
+	xr_map<u16, TeamSpawnSect> m_teamSettings;
+	u8 m_uTeamCount = 0;
+
+private:
+	void									LoadSettings();
 
 public:
 												game_sv_roleplay();
