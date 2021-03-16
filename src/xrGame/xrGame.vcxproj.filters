@@ -11096,6 +11096,9 @@
     <ClCompile Include="ui\UISpawnMenuRP.cpp">
       <Filter>UI\Multiplayer\Roleplay</Filter>
     </ClCompile>
+    <ClCompile Include="game_sv_roleplay_drop_items.cpp">
+      <Filter>Core\Server\Games\server\roleplay</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="ai\monsters\chimera\chimera_attack_state.h">
