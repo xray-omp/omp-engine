@@ -2506,6 +2506,9 @@
     <Filter Include="UI\GameTypes\Roleplay">
       <UniqueIdentifier>{bff9e9c8-931c-4321-b0d5-9b1ebf07f842}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UI\Multiplayer\Roleplay">
+      <UniqueIdentifier>{da488458-c041-4176-a2e8-5994dc36ea74}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="mt_config.h">
@@ -7416,6 +7419,9 @@
     <ClInclude Include="UIGameRP.h">
       <Filter>UI\GameTypes\Roleplay</Filter>
     </ClInclude>
+    <ClInclude Include="ui\UISpawnMenuRP.h">
+      <Filter>UI\Multiplayer\Roleplay</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="damage_manager.cpp">
@@ -11086,6 +11092,9 @@
     </ClCompile>
     <ClCompile Include="UIGameRP.cpp">
       <Filter>UI\GameTypes\Roleplay</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\UISpawnMenuRP.cpp">
+      <Filter>UI\Multiplayer\Roleplay</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

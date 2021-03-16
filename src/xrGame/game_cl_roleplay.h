@@ -9,10 +9,19 @@ class game_cl_roleplay : public game_cl_freemp
 
 private:
 	CUIGameRP									*m_game_ui;
+	u8												m_uTeamCount = 0;
+
+protected:
+	bool											m_bTeamSelected = false;
+
+private:
+	void											TryShowSpawnMenu();
 
 public:
 														game_cl_roleplay();
 	virtual										~game_cl_roleplay();
+
+	virtual u8								GetTeamCount() { return m_uTeamCount; };
 
 	virtual CUIGameCustom*		createGameUI();
 	virtual void							SetGameUI(CUIGameCustom*);
@@ -20,5 +29,9 @@ public:
 	virtual void							OnConnected();
 
 	virtual void							shedule_Update(u32 dt);
+
+	virtual void							OnTeamSelect(int team);
+
+	virtual bool							OnKeyboardPress(int key);
 };
 

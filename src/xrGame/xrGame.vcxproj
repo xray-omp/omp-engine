@@ -1804,6 +1804,7 @@
     <ClInclude Include="ui\UISecondTaskWnd.h" />
     <ClInclude Include="ui\UIServerInfo.h" />
     <ClInclude Include="ui\UISkinSelector.h" />
+    <ClInclude Include="ui\UISpawnMenuRP.h" />
     <ClInclude Include="ui\UISpawnWnd.h" />
     <ClInclude Include="ui\UISpeechMenu.h" />
     <ClInclude Include="ui\UISpinNum.h" />
@@ -5248,6 +5249,7 @@
     <ClCompile Include="ui\UISecondTaskWnd.cpp" />
     <ClCompile Include="ui\UIServerInfo.cpp" />
     <ClCompile Include="ui\UISkinSelector.cpp" />
+    <ClCompile Include="ui\UISpawnMenuRP.cpp" />
     <ClCompile Include="ui\UISpawnWnd.cpp" />
     <ClCompile Include="ui\UISpeechMenu.cpp" />
     <ClCompile Include="ui\UISpinNum.cpp" />
