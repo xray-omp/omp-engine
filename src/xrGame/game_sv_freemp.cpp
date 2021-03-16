@@ -79,17 +79,14 @@ void game_sv_freemp::OnPlayerReady(ClientID id_who)
 	{
 		xrClientData*	xrCData = (xrClientData*)m_server->ID_to_client(id_who);
 		game_PlayerState*	ps = get_id(id_who);
-		if (ps->IsSkip())					break;
 
-		if (!(ps->testFlag(GAME_PLAYER_FLAG_VERY_VERY_DEAD)))	break;
+		if (ps->IsSkip())
+			break;
 
-		xrClientData* xrSCData = (xrClientData*)m_server->GetServerClient();
+		if (!(ps->testFlag(GAME_PLAYER_FLAG_VERY_VERY_DEAD)))
+			break;
 
-		CSE_Abstract* pOwner = xrCData->owner;
-
-		RespawnPlayer(id_who, false);
-		pOwner = xrCData->owner;
-
+		RespawnPlayer(id_who, true);
 	} break;
 
 	default:

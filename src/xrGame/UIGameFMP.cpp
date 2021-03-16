@@ -23,6 +23,9 @@ CUIGameFMP::~CUIGameFMP()
 
 void CUIGameFMP::Init(int stage)
 {
+	CUIXml uiXml;
+	uiXml.Load(CONFIG_PATH, UI_PATH, "ui_game_fmp.xml");
+
 	if (stage == 0)
 	{
 		//shared
@@ -30,15 +33,14 @@ void CUIGameFMP::Init(int stage)
 		m_stats->SetAutoDelete(true);
 
 		inherited::Init(stage);
+
+		CUIXmlInit::InitWindow(uiXml, "global", 0, m_window);
+		CUIXmlInit::InitTextWnd(uiXml, "stats", 0, m_stats);
 	}
 	else if (stage == 1)
 	{
 		//unique
-		CUIXml uiXml;
-		uiXml.Load(CONFIG_PATH, UI_PATH, "ui_game_fmp.xml");
 
-		CUIXmlInit::InitWindow(uiXml, "global", 0, m_window);
-		CUIXmlInit::InitTextWnd(uiXml, "stats", 0, m_stats);
 	}
 	else if (stage == 2)
 	{

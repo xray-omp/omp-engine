@@ -13,6 +13,10 @@ game_sv_roleplay::~game_sv_roleplay()
 void game_sv_roleplay::Create(shared_str & options)
 {
 	inherited::Create(options);
+
+void game_sv_roleplay::OnEvent(NET_Packet & tNetPacket, u16 type, u32 time, ClientID sender)
+{
+	inherited::OnEvent(tNetPacket, type, time, sender);
 }
 
 void game_sv_roleplay::OnPlayerSelectTeam(NET_Packet& P, ClientID sender)
@@ -28,9 +32,11 @@ void game_sv_roleplay::OnPlayerSelectTeam(NET_Packet& P, ClientID sender)
 
 	KillPlayer(sender, ps->GameID);
 	RespawnPlayer(sender, true);
-};
 
-void game_sv_roleplay::OnEvent(NET_Packet & tNetPacket, u16 type, u32 time, ClientID sender)
+
+void game_sv_roleplay::OnPlayerReady(ClientID id_who)
 {
-	inherited::OnEvent(tNetPacket, type, time, sender);
+	// process GAME_EVENT_PLAYER_READY
+	inherited::OnPlayerReady(id_who);
+}
 }

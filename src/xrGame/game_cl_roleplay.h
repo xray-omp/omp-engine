@@ -16,6 +16,10 @@ protected:
 
 private:
 	void											TryShowSpawnMenu();
+	void											TrySwitchJumpCaption();
+
+protected:
+	bool											CanRespawn();
 
 public:
 														game_cl_roleplay();

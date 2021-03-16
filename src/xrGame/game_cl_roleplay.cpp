@@ -41,6 +41,17 @@ void game_cl_roleplay::OnConnected()
 	m_game_ui = smart_cast<CUIGameRP*>(CurrentGameUI());
 }
 
+bool game_cl_roleplay::CanRespawn()
+{
+	CGameObject *pObject = smart_cast<CGameObject*>(Level().CurrentEntity());
+	if (!pObject) return false;
+	
+	// If we are an actor and we are dead
+	return !!smart_cast<CActor*>(pObject) &&
+					local_player &&
+					local_player->testFlag(GAME_PLAYER_FLAG_VERY_VERY_DEAD);
+}
+
 void game_cl_roleplay::TryShowSpawnMenu()
 {
 	if (g_dedicated_server)
@@ -52,11 +63,27 @@ void game_cl_roleplay::TryShowSpawnMenu()
 	}
 }
 
+void game_cl_roleplay::TrySwitchJumpCaption()
+{
+	if (g_dedicated_server)
+		return;
+
+	if (!m_game_ui->SpawnMenu()->IsShown() && CanRespawn())
+	{
+		m_game_ui->SetPressJumpMsgCaption("mp_press_jump2start");
+	}
+	else
+	{
+		m_game_ui->SetPressJumpMsgCaption(nullptr);
+	}
+}
+
 void game_cl_roleplay::shedule_Update(u32 dt)
 {
 	inherited::shedule_Update(dt);
 
 	TryShowSpawnMenu();
+	TrySwitchJumpCaption();
 }
 
 void game_cl_roleplay::OnTeamSelect(int team)
@@ -83,6 +110,19 @@ bool game_cl_roleplay::OnKeyboardPress(int key)
 			m_game_ui->SpawnMenu()->ShowDialog(true);
 		}
 		return true;
+	}
+	else if (kJUMP == key)
+	{
+		if (CanRespawn())
+		{
+			CGameObject* GO = smart_cast<CGameObject*>(Level().CurrentControlEntity());
+			NET_Packet P;
+			GO->u_EventGen(P, GE_GAME_EVENT, GO->ID());
+			P.w_u16(GAME_EVENT_PLAYER_READY);
+			GO->u_EventSend(P);
+			return true;
+		}
+		return false;
 	}
 	return inherited::OnKeyboardPress(key);
 }
