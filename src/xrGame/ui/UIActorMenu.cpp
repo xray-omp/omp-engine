@@ -861,8 +861,14 @@ void CUIActorMenu::UpdateActorMP()
 	xr_sprintf( buf, "%d RU", money );
 	m_ActorMoney->SetText( buf );
 
-	m_ActorCharacterInfo->InitCharacterMP( Game().local_player->getName(), "ui_npc_u_nebo_1" );
-
+	if (Game().Type() == eGameIDFreeMp || Game().Type() == eGameIDRolePlay)
+	{
+		m_ActorCharacterInfo->InitCharacterMP(m_pActorInvOwner);
+	}
+	else
+	{
+		m_ActorCharacterInfo->InitCharacterMP(Game().local_player->getName(), "ui_npc_u_nebo_1");
+	}
 }
 
 bool CUIActorMenu::CanSetItemToList(PIItem item, CUIDragDropListEx* l, u16& ret_slot)
