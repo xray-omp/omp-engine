@@ -2,7 +2,7 @@
 #include "level_bullet_manager.h"
 #include "game_base_kill_type.h"
 
-#define STAT_TEAM_COUNT 3
+#define STAT_TEAM_COUNT 32
 
 struct game_PlayerState;
 
