@@ -4,6 +4,7 @@
 #include "UIGameRP.h"
 #include "ui/UISpawnMenuRP.h"
 #include "game_base_menu_events.h"
+#include "actor_mp_client.h"
 
 game_cl_roleplay::game_cl_roleplay()
 {
@@ -84,4 +85,9 @@ bool game_cl_roleplay::OnKeyboardPress(int key)
 		return true;
 	}
 	return inherited::OnKeyboardPress(key);
+}
+
+void game_cl_roleplay::OnSetCurrentControlEntity(CObject * O)
+{
+
 }

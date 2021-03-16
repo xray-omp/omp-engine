@@ -119,4 +119,6 @@ public:
 
 	virtual		bool				IsPlayerInTeam			(game_PlayerState* ps, ETeam team) {return ps->team == team;};
 	virtual		void				OnConnected				();
+
+	virtual		void				OnSetCurrentControlEntity(CObject *O) {};
 };

@@ -150,6 +150,7 @@ void CLevel::g_sv_Spawn		(CSE_Abstract* E)
 				}
 				SetControlEntity	(O);
 				SetEntity			(O);	//do not switch !!!
+				Game().OnSetCurrentControlEntity(O);
 			}
 		}
 

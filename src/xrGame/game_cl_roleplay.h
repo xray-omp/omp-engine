@@ -33,5 +33,7 @@ public:
 	virtual void							OnTeamSelect(int team);
 
 	virtual bool							OnKeyboardPress(int key);
+
+	virtual void							OnSetCurrentControlEntity(CObject *O);
 };
 
