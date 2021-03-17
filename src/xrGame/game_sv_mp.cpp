@@ -7,6 +7,7 @@
 #include "level.h"
 #include "xrserver_objects_alife_monsters.h"
 #include "actor.h"
+#include "actor_mp_client.h"
 #include "../xrEngine/XR_IOConsole.h"
 #include "../xrEngine/igame_persistent.h"
 #include "date_time.h"
@@ -250,7 +251,7 @@ struct real_sender
 void	game_sv_mp::KillPlayer				(ClientID id_who, u16 GameID)
 {
 	CObject* pObject =  Level().Objects.net_Find(GameID);
-	if (!pObject || !smart_cast<CActor*>(pObject)) return;
+	if (!pObject || !smart_cast<CActorMP*>(pObject)) return;
 	// Remove everything	
 	xrClientData* xrCData	=	m_server->ID_to_client(id_who);
 #ifdef DEBUG
@@ -273,7 +274,7 @@ void	game_sv_mp::KillPlayer				(ClientID id_who, u16 GameID)
 			xrCData->ps->m_bClearRun = false;
 	};
 	//-------------------------------------------------------
-	CActor* pActor = smart_cast <CActor*>(pObject);
+	CActorMP* pActor = smart_cast <CActorMP*>(pObject);
 	if (pActor)
 	{
 		if (!pActor->g_Alive())
