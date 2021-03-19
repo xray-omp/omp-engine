@@ -843,6 +843,8 @@ CPHDestroyable*		CAI_Stalker::		ph_destroyable	()
 
 void CAI_Stalker::shedule_Update		( u32 DT )
 {
+	if (!IsGameTypeSingle() && OnClient()) return;
+
 	START_PROFILE("stalker")
 	START_PROFILE("stalker/schedule_update")
 	VERIFY2				(getEnabled()||PPhysicsShell(), *cName());

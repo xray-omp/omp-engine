@@ -317,6 +317,8 @@ void CCustomMonster::net_Import(NET_Packet& P)
 
 void CCustomMonster::shedule_Update	( u32 DT )
 {
+	if (!IsGameTypeSingle() && OnClient()) return;
+
 	VERIFY				(!g_Alive() || processing_enabled());
 	// Queue shrink
 	VERIFY				(_valid(Position()));
