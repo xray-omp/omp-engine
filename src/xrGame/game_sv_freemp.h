@@ -17,8 +17,11 @@ public:
 	virtual		bool				UseSKin() const { return false; }
 
 	virtual		LPCSTR				type_name() const { return "freemp"; };
-				void __stdcall		net_Relcase(CObject* O) {};
-				
+	void __stdcall		net_Relcase(CObject* O) {};
+
+	// helper functions
+	void									AddMoneyToPlayer(game_PlayerState* ps, s32 amount);
+
 
 	virtual		void				OnPlayerReady(ClientID id_who);
 	virtual		void				OnPlayerConnect(ClientID id_who);
