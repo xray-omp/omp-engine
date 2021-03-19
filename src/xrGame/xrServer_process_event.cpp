@@ -245,6 +245,8 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 	case GE_BURER_GRAVI_PARTICLES:
 	case GE_BURER_GRAVI_WAVE:
 	case GE_BURER_SHIELD:
+	case GE_BLOODSUCKER_VAMPIRE_START:
+	case GE_BLOODSUCKER_VAMPIRE_STOP:
 	case GE_CONTROLLER_PSY_FIRE:
 	case GE_CHANGE_POS:
 		{			

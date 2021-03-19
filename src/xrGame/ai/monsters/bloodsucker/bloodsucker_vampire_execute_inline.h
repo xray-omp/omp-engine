@@ -7,6 +7,7 @@
 // #include "../../../../xrEngine/CameraBase.h"
 //#include "../../../ActorCondition.h"
 #include "../../../HudManager.h"
+#include "../../../level.h"
 
 #define TEMPLATE_SPECIALIZATION template <\
 	typename _Object\
@@ -24,7 +25,18 @@ void CStateBloodsuckerVampireExecuteAbstract::initialize()
 {
 	inherited::initialize					();
 
-	object->CControlledActor::install		();
+	CActor *actor;
+
+	if (IsGameTypeSingle())
+		object->CControlledActor::install();
+	else
+	{
+		actor = const_cast<CActor *>(smart_cast<const CActor*>(object->EnemyMan.get_enemy()));
+		if (actor)
+			object->CControlledActor::install(actor);
+		else
+			return;
+	}
 
 	look_head				();
 
@@ -36,14 +48,21 @@ void CStateBloodsuckerVampireExecuteAbstract::initialize()
 	object->m_hits_before_vampire	= 0;
 	object->m_sufficient_hits_before_vampire_random	=	-1 + (rand()%3);
 
-	HUD().SetRenderable				(false);
-	NET_Packet			P;
-	Actor()->u_EventGen	(P, GEG_PLAYER_WEAPON_HIDE_STATE, Actor()->ID());
-	P.w_u16				(INV_STATE_BLOCK_ALL);
-	P.w_u8				(u8(true));
-	Actor()->u_EventSend(P);
+	if (IsGameTypeSingle())
+	{
+		HUD().SetRenderable(false);
+		NET_Packet			P;
+		Actor()->u_EventGen(P, GEG_PLAYER_WEAPON_HIDE_STATE, Actor()->ID());
+		P.w_u16(INV_STATE_BLOCK_ALL);
+		P.w_u8(u8(true));
+		Actor()->u_EventSend(P);
 
-	Actor()->set_inventory_disabled	(true);
+		Actor()->set_inventory_disabled(true);
+	}
+	else
+	{
+		object->sendToStartVampire(actor);
+	}
 
 	m_effector_activated			= false;
 }
@@ -124,7 +143,10 @@ void CStateBloodsuckerVampireExecuteAbstract::show_hud()
 TEMPLATE_SPECIALIZATION
 void CStateBloodsuckerVampireExecuteAbstract::cleanup()
 {
-	Actor()->set_inventory_disabled	(false);
+	if (IsGameTypeSingle())
+		Actor()->set_inventory_disabled(false);
+	else
+		object->sendToStopVampire();
 	
 	if ( object->com_man().ta_is_active() )
 		object->com_man().ta_deactivate();
@@ -132,7 +154,8 @@ void CStateBloodsuckerVampireExecuteAbstract::cleanup()
 	if (object->CControlledActor::is_controlling())
 		object->CControlledActor::release		();
 
-	show_hud();
+	if (IsGameTypeSingle())
+		show_hud();
 }
 
 TEMPLATE_SPECIALIZATION
@@ -185,7 +208,6 @@ bool CStateBloodsuckerVampireExecuteAbstract::check_start_conditions()
 		return false;
 
 	const CActor *actor = smart_cast<const CActor *>(enemy);
-	
 	VERIFY(actor);
 
 	if ( actor->input_external_handler_installed() )

@@ -65,6 +65,8 @@ CAI_Bloodsucker::CAI_Bloodsucker()
 	m_force_visibility_state		=	unset;
 	m_runaway_invisible_time		=	0;
 
+	m_client_effector				=	false;
+
 	using namespace						detail::bloodsucker;
 }
 
@@ -571,6 +573,23 @@ void CAI_Bloodsucker::shedule_Update(u32 dt)
 	}
 
 	if (m_alien_control.active())	sound().play(eAlien);
+
+	if (IsGameTypeSingle() || OnServer())
+		return;
+
+	if (!CControlledActor::is_turning() && !m_client_effector) {
+		IKinematics *pK = smart_cast<IKinematics*>(Visual());
+		Fmatrix bone_transform;
+		bone_transform = pK->LL_GetTransform(pK->LL_BoneID("bip01_head"));
+
+		Fmatrix global_transform;
+		global_transform.mul_43(XFORM(), bone_transform);
+
+		CControlledActor::look_point(global_transform.c);
+		sound().play(CAI_Bloodsucker::eVampireSucking);
+		ActivateVampireEffector();
+		m_client_effector = true;
+	}
 }
 
 void CAI_Bloodsucker::Die(CObject* who)
@@ -851,6 +870,81 @@ void   CAI_Bloodsucker::release_stand_sleep_animation ()
 {
 	anim().clear_override_animation();
 
+}
+
+void CAI_Bloodsucker::sendToStartVampire(CActor* pA)
+{
+	NET_Packet	tmp_packet;
+	CGameObject::u_EventGen(tmp_packet, GE_BLOODSUCKER_VAMPIRE_START, ID());
+	//tmp_packet.w_u16(pA->ID());
+	CSE_Abstract* e_who = Level().Server->ID_to_entity(pA->ID());
+	xrClientData* xrCData = e_who->owner;
+	Level().Server->SendTo(xrCData->ID, tmp_packet, net_flags(TRUE, TRUE));
+}
+
+void CAI_Bloodsucker::sendToStopVampire()
+{
+	NET_Packet	tmp_packet;
+	CGameObject::u_EventGen(tmp_packet, GE_BLOODSUCKER_VAMPIRE_STOP, ID());
+	//tmp_packet.w_u16(CControlledActor::m_actor->ID());
+	CSE_Abstract* e_who = Level().Server->ID_to_entity(CControlledActor::m_actor->ID());
+	xrClientData* xrCData = e_who->owner;
+	Level().Server->SendTo(xrCData->ID, tmp_packet, net_flags(TRUE, TRUE));
+}
+
+#include "../../../HudManager.h"
+void CAI_Bloodsucker::OnEvent(NET_Packet& P, u16 type)
+{
+	inherited::OnEvent(P, type);
+
+	switch (type)
+	{
+		case GE_BLOODSUCKER_VAMPIRE_START: {
+			if (Actor())
+			{
+				CControlledActor::install(Actor());
+				IKinematics *pK = smart_cast<IKinematics*>(Visual());
+				Fmatrix bone_transform;
+				bone_transform = pK->LL_GetTransform(pK->LL_BoneID("bip01_head"));
+
+				Fmatrix global_transform;
+				global_transform.mul_43(XFORM(), bone_transform);
+
+				CControlledActor::look_point(global_transform.c);
+
+				HUD().SetRenderable(false);
+				NET_Packet			P;
+				Actor()->u_EventGen(P, GEG_PLAYER_WEAPON_HIDE_STATE, Actor()->ID());
+				P.w_u16(INV_STATE_BLOCK_ALL);
+				P.w_u8(u8(true));
+				Actor()->u_EventSend(P);
+
+				sound().play(CAI_Bloodsucker::eVampireGrasp);
+				m_client_effector = false;
+				Actor()->set_inventory_disabled(true);
+			}
+		break;
+		}
+		case GE_BLOODSUCKER_VAMPIRE_STOP: {
+			if (Actor())
+			{
+				if (CControlledActor::is_controlling())
+					CControlledActor::release();
+
+				HUD().SetRenderable(true);
+				NET_Packet			P;
+				Actor()->u_EventGen(P, GEG_PLAYER_WEAPON_HIDE_STATE, Actor()->ID());
+				P.w_u16(INV_STATE_BLOCK_ALL);
+				P.w_u8(u8(false));
+				Actor()->u_EventSend(P);
+
+				sound().play(CAI_Bloodsucker::eVampireHit);
+				Actor()->set_inventory_disabled(false);
+			}
+			break;
+		}
+	break;
+	}
 }
 
 #ifdef DEBUG

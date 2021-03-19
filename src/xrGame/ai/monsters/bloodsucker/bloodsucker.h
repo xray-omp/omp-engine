@@ -28,6 +28,8 @@ public:
 	virtual	void			Load					(LPCSTR section);
 	virtual	void			Hit						(SHit* pHDS);
 
+	virtual void			OnEvent					(NET_Packet& P, u16 type);
+
 	virtual	void			CheckSpecParams			(u32 spec_params);
 	virtual bool			ability_invisibility	() {return true;}
 	virtual bool			ability_pitch_correction() {return false;}
@@ -109,6 +111,8 @@ private:
 	bool					m_drag_anim_jump;
 	bool					m_animated;
 	static void				animation_end_jump		(CBlend* B);
+
+	bool					m_client_effector;
 
 
 			void			LoadVampirePPEffector	(LPCSTR section);	
@@ -234,6 +238,9 @@ public:
 	int				m_sufficient_hits_before_vampire_random;
 	virtual void	on_attack_on_run_hit	();
 	bool			done_enough_hits_before_vampire ();
+
+	void			sendToStartVampire(CActor* pA);
+	void			sendToStopVampire();
 
 	DECLARE_SCRIPT_REGISTER_FUNCTION
 };
