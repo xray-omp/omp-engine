@@ -21,7 +21,6 @@ protected:
 	CUIStatic*							m_pCaption;
 	CUIStatic*							m_pBackground;
 	CUIScrollView*					m_pTextDesc;
-	xr_vector<CUIStatic*>		m_pFrames;
 	xr_vector<CUIStatix*>		m_pImages;
 
 public:

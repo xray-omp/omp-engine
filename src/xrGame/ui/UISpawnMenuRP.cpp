@@ -31,8 +31,6 @@ CUISpawnMenuRP::CUISpawnMenuRP()
 
 	for (u8 i = 0; i < team_buttons_count; i++)
 	{
-		m_pFrames.push_back(xr_new<CUIStatic>());
-		AttachChild(m_pFrames.back());
 		m_pImages.push_back(xr_new<CUIStatix>());
 		AttachChild(m_pImages.back());
 	}
@@ -40,9 +38,6 @@ CUISpawnMenuRP::CUISpawnMenuRP()
 
 CUISpawnMenuRP::~CUISpawnMenuRP()
 {
-	for (u32 i = 0; i < m_pFrames.size(); i++)
-		xr_delete(m_pFrames[i]);
-
 	for (u32 i = 0; i < m_pImages.size(); i++)
 		xr_delete(m_pImages[i]);
 }
@@ -58,13 +53,10 @@ void CUISpawnMenuRP::Init()
 	CUIXmlInit::InitScrollView(xml_doc, "team_selector:text_desc", 0, m_pTextDesc);
 
 	string32 node;
-	for (u8 i = 0; i < team_buttons_count; i++)
+	for (u8 i = 1; i <= team_buttons_count; i++)
 	{
-		xr_sprintf(node, "team_selector:image_frames_%d", i);
-		CUIXmlInit::InitStatic(xml_doc, node, 0, m_pFrames[i]);
-
 		xr_sprintf(node, "team_selector:image_%d", i);
-		CUIXmlInit::InitStatic(xml_doc, node, 0, m_pImages[i]);
+		CUIXmlInit::InitStatic(xml_doc, node, 0, m_pImages[i - 1]);
 	}
 }
 
