@@ -70,6 +70,10 @@ bool   anti_aim_ability::can_detect ()
 	Fvector	const	self_dir		=	m_object->Direction();
 	float			angle			=	angle_between_vectors(self2enemy, self_dir);
 
+	if (!IsGameTypeSingle() && m_object->Position().distance_to(enemy->Position()) > 20) {
+		return false;
+	}
+
 	return								angle < deg2rad(70.f);
 }
 

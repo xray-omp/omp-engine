@@ -1,4 +1,5 @@
 #pragma once
+#include "../../../level.h"
 
 template <typename Object>
 CStateBurerAttackGravi<Object>::CStateBurerAttackGravi(Object *obj) : inherited(obj)
@@ -126,14 +127,19 @@ void CStateBurerAttackGravi<Object>::ExecuteGraviContinue()
 template <typename Object>
 void CStateBurerAttackGravi<Object>::ExecuteGraviFire()
 {
-	Fvector from_pos;
-	Fvector target_pos;
-	from_pos						=	object->Position();	
-	from_pos.y						+=	0.5f;
-	target_pos						=	object->EnemyMan.get_enemy()->Position();	
-	target_pos.y					+=	0.5f;
-
-	object->m_gravi_object.activate		(object->EnemyMan.get_enemy(), from_pos, target_pos);
+	if (IsGameTypeSingle()) {
+		Fvector from_pos;
+		Fvector target_pos;
+		from_pos = object->Position();
+		from_pos.y += 0.5f;
+		target_pos = object->EnemyMan.get_enemy()->Position();
+		target_pos.y += 0.5f;
+		object->m_gravi_object.activate(object->EnemyMan.get_enemy(), from_pos, target_pos);
+	}
+	else
+	{
+		object->StartGraviMP();
+	}
 
 	object->StopGraviPrepare			();
 	object->sound().play				(CBurer::eMonsterSoundGraviAttack);
