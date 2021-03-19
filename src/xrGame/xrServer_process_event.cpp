@@ -241,6 +241,7 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 		{
 			SendBroadcast	(BroadcastCID, P, net_flags(TRUE, TRUE));
 		}break;
+	case GE_PSEUDO_GIGANT_KICK:
 	case GE_CHANGE_POS:
 		{			
 			SendTo		(SV_Client->ID, P, net_flags(TRUE, TRUE));

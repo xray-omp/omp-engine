@@ -15,6 +15,7 @@
 #include "../../../detail_path_manager.h"
 #include "../../../CharacterPhysicsSupport.h"
 #include "../control_path_builder_base.h"
+#include "../../../actor_mp_client.h"
 
 
 CPseudoGigant::CPseudoGigant()
@@ -245,9 +246,9 @@ void CPseudoGigant::on_activate_control(ControlCom::EControlType type)
 void CPseudoGigant::on_threaten_execute()
 {
 	// разбросить объекты
-	m_nearest.clear_not_free		();
-	Level().ObjectSpace.GetNearest	(m_nearest,Position(), 15.f, NULL); 
-	for (u32 i=0;i<m_nearest.size();i++) {
+	m_nearest.clear_not_free();
+	Level().ObjectSpace.GetNearest(m_nearest, Position(), 15.f, NULL);
+	for (u32 i = 0; i < m_nearest.size(); i++) {
 		CPhysicsShellHolder  *obj = smart_cast<CPhysicsShellHolder *>(m_nearest[i]);
 		if (!obj || !obj->m_pPhysicsShell) continue;
 
@@ -257,54 +258,116 @@ void CPseudoGigant::on_threaten_execute()
 		pos.y += 2.f;
 		dir.sub(pos, Position());
 		dir.normalize();
-		obj->m_pPhysicsShell->applyImpulse(dir,20 * obj->m_pPhysicsShell->getMass());
+		obj->m_pPhysicsShell->applyImpulse(dir, 20 * obj->m_pPhysicsShell->getMass());
 	}
 
-	// играть звук
-	Fvector		pos;
-	pos.set		(Position());
-	pos.y		+= 0.1f;
-	m_sound_threaten_hit.play_at_pos(this,pos);
 
-	// играть партиклы
-	PlayParticles(m_kick_particles, pos, Direction());
-	
-	CActor *pA = const_cast<CActor *>(smart_cast<const CActor *>(EnemyMan.get_enemy()));
-	if (!pA) return;
-	if ((pA->MovingState() & ACTOR_DEFS::mcJump) != 0) return;
+	if (IsGameTypeSingle())
+	{
+		// играть звук
+		Fvector		pos;
+		pos.set(Position());
+		pos.y += 0.1f;
+		m_sound_threaten_hit.play_at_pos(this, pos);
 
-	float dist_to_enemy = pA->Position().distance_to(Position());
-	float			hit_value;
-	hit_value		= m_kick_damage - m_kick_damage * dist_to_enemy / m_threaten_dist_max;
-	clamp			(hit_value,0.f,1.f);
+		// играть партиклы
+		PlayParticles(m_kick_particles, pos, Direction());
 
-	// запустить эффектор
-	Actor()->Cameras().AddCamEffector(xr_new<CMonsterEffectorHit>(m_threaten_effector.ce_time,m_threaten_effector.ce_amplitude * hit_value,m_threaten_effector.ce_period_number,m_threaten_effector.ce_power * hit_value));
-	Actor()->Cameras().AddPPEffector(xr_new<CMonsterEffector>(m_threaten_effector.ppi, m_threaten_effector.time, m_threaten_effector.time_attack, m_threaten_effector.time_release, hit_value));
+		CActor *pA = const_cast<CActor *>(smart_cast<const CActor *>(EnemyMan.get_enemy()));
+		if (!pA) return;
+		if ((pA->MovingState() & ACTOR_DEFS::mcJump) != 0) return;
 
-	// развернуть камеру
-	if (pA->cam_Active()) {
-		pA->cam_Active()->Move(Random.randI(2) ? kRIGHT : kLEFT, Random.randF(0.3f * hit_value)); 
-		pA->cam_Active()->Move(Random.randI(2) ? kUP	: kDOWN, Random.randF(0.3f * hit_value)); 
+		float dist_to_enemy = pA->Position().distance_to(Position());
+		float			hit_value;
+		hit_value = m_kick_damage - m_kick_damage * dist_to_enemy / m_threaten_dist_max;
+		clamp(hit_value, 0.f, 1.f);
+
+		// запустить эффектор
+		Actor()->Cameras().AddCamEffector(xr_new<CMonsterEffectorHit>(m_threaten_effector.ce_time, m_threaten_effector.ce_amplitude * hit_value, m_threaten_effector.ce_period_number, m_threaten_effector.ce_power * hit_value));
+		Actor()->Cameras().AddPPEffector(xr_new<CMonsterEffector>(m_threaten_effector.ppi, m_threaten_effector.time, m_threaten_effector.time_attack, m_threaten_effector.time_release, hit_value));
+
+		// развернуть камеру
+		if (pA->cam_Active()) {
+			pA->cam_Active()->Move(Random.randI(2) ? kRIGHT : kLEFT, Random.randF(0.3f * hit_value));
+			pA->cam_Active()->Move(Random.randI(2) ? kUP : kDOWN, Random.randF(0.3f * hit_value));
+		}
+
+		Actor()->lock_accel_for(m_time_kick_actor_slow_down);
+
+		// Нанести хит
+		NET_Packet	l_P;
+		SHit		HS;
+
+		HS.GenHeader(GE_HIT, pA->ID());														//	u_EventGen	(l_P,GE_HIT, pA->ID());
+		HS.whoID = (ID());														//	l_P.w_u16	(ID());
+		HS.weaponID = (ID());														//	l_P.w_u16	(ID());
+		HS.dir = (Fvector().set(0.f, 1.f, 0.f));									//	l_P.w_dir	(Fvector().set(0.f,1.f,0.f));
+		HS.power = (hit_value);													//	l_P.w_float	(m_kick_damage);
+		HS.boneID = (smart_cast<IKinematics*>(pA->Visual())->LL_GetBoneRoot());	//	l_P.w_s16	(smart_cast<IKinematics*>(pA->Visual())->LL_GetBoneRoot());
+		HS.p_in_bone_space = (Fvector().set(0.f, 0.f, 0.f));									//	l_P.w_vec3	(Fvector().set(0.f,0.f,0.f));
+		HS.impulse = (80 * pA->character_physics_support()->movement()->GetMass());						//	l_P.w_float	(20 * pA->movement_control()->GetMass());
+		HS.hit_type = (ALife::eHitTypeStrike);										//	l_P.w_u16	( u16(ALife::eHitTypeWound) );
+		HS.Write_Packet(l_P);
+		u_EventSend(l_P);
 	}
-
-	Actor()->lock_accel_for	(m_time_kick_actor_slow_down);
+	else
+	{
 	
-	// Нанести хит
-	NET_Packet	l_P;
-	SHit		HS;
+		struct SendFunctor
+		{
+			CPseudoGigant*	pObj;
 
-	HS.GenHeader		(GE_HIT, pA->ID());														//	u_EventGen	(l_P,GE_HIT, pA->ID());
-	HS.whoID			= (ID());														//	l_P.w_u16	(ID());
-	HS.weaponID			= (ID());														//	l_P.w_u16	(ID());
-	HS.dir				= (Fvector().set(0.f,1.f,0.f));									//	l_P.w_dir	(Fvector().set(0.f,1.f,0.f));
-	HS.power			= (hit_value);													//	l_P.w_float	(m_kick_damage);
-	HS.boneID			= (smart_cast<IKinematics*>(pA->Visual())->LL_GetBoneRoot());	//	l_P.w_s16	(smart_cast<IKinematics*>(pA->Visual())->LL_GetBoneRoot());
-	HS.p_in_bone_space	= (Fvector().set(0.f,0.f,0.f));									//	l_P.w_vec3	(Fvector().set(0.f,0.f,0.f));
-	HS.impulse			= (80 * pA->character_physics_support()->movement()->GetMass());						//	l_P.w_float	(20 * pA->movement_control()->GetMass());
-	HS.hit_type			= ( ALife::eHitTypeStrike);										//	l_P.w_u16	( u16(ALife::eHitTypeWound) );
-	HS.Write_Packet		(l_P);
-	u_EventSend			(l_P);	
+			SendFunctor(CPseudoGigant* obj) :
+				pObj(obj)
+			{}
+			void operator()(IClient* client)
+			{
+				xrClientData* CL = static_cast<xrClientData*>(client);
+				if (!CL->owner)
+					return;
+				CActorMP* pA = smart_cast<CActorMP*>(Level().Objects.net_Find(CL->owner->ID));
+				if (!pA)
+					return;
+
+				NET_Packet	tmp_packet;
+				CGameObject::u_EventGen(tmp_packet, GE_PSEUDO_GIGANT_KICK, pObj->ID());
+				Level().Server->SendTo(client->ID, tmp_packet, net_flags(TRUE, TRUE));
+
+				if ((pA->MovingState() & ACTOR_DEFS::mcJump) != 0) return;
+
+				Fvector pos = pObj->Position();
+
+				// check distance to enemy
+				float dist = pA->Position().distance_to(pObj->Position());
+
+				if ((dist > pObj->m_threaten_dist_max) || (dist < pObj->m_threaten_dist_min))
+					return;
+
+				float	hit_value;
+				hit_value = pObj->m_kick_damage - pObj->m_kick_damage * dist / pObj->m_threaten_dist_max;
+				clamp(hit_value, 0.f, 1.f);
+
+				// Нанести хит
+				NET_Packet	l_P;
+				SHit		HS;
+
+				HS.GenHeader(GE_HIT, pA->ID());														//	u_EventGen	(l_P,GE_HIT, pA->ID());
+				HS.whoID = (pObj->ID());														//	l_P.w_u16	(ID());
+				HS.weaponID = (pObj->ID());														//	l_P.w_u16	(ID());
+				HS.dir = (Fvector().set(0.f, 1.f, 0.f));									//	l_P.w_dir	(Fvector().set(0.f,1.f,0.f));
+				HS.power = (hit_value);													//	l_P.w_float	(m_kick_damage);
+				HS.boneID = (smart_cast<IKinematics*>(pA->Visual())->LL_GetBoneRoot());	//	l_P.w_s16	(smart_cast<IKinematics*>(pA->Visual())->LL_GetBoneRoot());
+				HS.p_in_bone_space = (Fvector().set(0.f, 0.f, 0.f));									//	l_P.w_vec3	(Fvector().set(0.f,0.f,0.f));
+				HS.impulse = (80 * pA->character_physics_support()->movement()->GetMass());						//	l_P.w_float	(20 * pA->movement_control()->GetMass());
+				HS.hit_type = (ALife::eHitTypeStrike);										//	l_P.w_u16	( u16(ALife::eHitTypeWound) );
+				HS.Write_Packet(l_P);
+				u_EventSend(l_P);
+			}
+		};
+
+		SendFunctor temp_functor(this);
+		Level().Server->ForEachClientDo(temp_functor);
+	}
 }
 
 void CPseudoGigant::HitEntityInJump		(const CEntity *pEntity) 
@@ -330,3 +393,48 @@ void CPseudoGigant::TranslateActionToPathParams()
 	path().enable_path			();
 }
 
+void CPseudoGigant::OnEvent(NET_Packet& P, u16 type)
+{
+	inherited::OnEvent(P, type);
+
+	switch (type)
+	{
+	case GE_PSEUDO_GIGANT_KICK:
+		CActor *pA = Actor();
+		if (!pA) break;
+
+		// играть звук
+		Fvector		pos;
+		pos.set(Position());
+		pos.y += 0.1f;
+		m_sound_threaten_hit.play_at_pos(this, pos);
+
+		// играть партиклы
+		PlayParticles(m_kick_particles, pos, Direction());
+
+		float dist_to_enemy = pA->Position().distance_to(Position());
+
+		if ((dist_to_enemy > m_threaten_dist_max) || (dist_to_enemy < m_threaten_dist_min))
+			break;
+
+		if ((pA->MovingState() & ACTOR_DEFS::mcJump) != 0) break;
+
+		float			hit_value;
+		hit_value = m_kick_damage - m_kick_damage * dist_to_enemy / m_threaten_dist_max;
+		clamp(hit_value, 0.f, 1.f);
+
+		// запустить эффектор
+		Actor()->Cameras().AddCamEffector(xr_new<CMonsterEffectorHit>(m_threaten_effector.ce_time, m_threaten_effector.ce_amplitude * hit_value, m_threaten_effector.ce_period_number, m_threaten_effector.ce_power * hit_value));
+		Actor()->Cameras().AddPPEffector(xr_new<CMonsterEffector>(m_threaten_effector.ppi, m_threaten_effector.time, m_threaten_effector.time_attack, m_threaten_effector.time_release, hit_value));
+
+		// развернуть камеру
+		if (pA->cam_Active()) {
+			pA->cam_Active()->Move(Random.randI(2) ? kRIGHT : kLEFT, Random.randF(0.3f * hit_value));
+			pA->cam_Active()->Move(Random.randI(2) ? kUP : kDOWN, Random.randF(0.3f * hit_value));
+		}
+
+		Actor()->lock_accel_for(m_time_kick_actor_slow_down);
+
+		break;
+	}
+}
