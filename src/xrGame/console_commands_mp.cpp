@@ -2201,6 +2201,59 @@ public:
 	}
 };
 
+
+class CCC_GiveMoneyToPlayer : public IConsole_Command {
+public:
+	CCC_GiveMoneyToPlayer(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = false; };
+
+	virtual void	Execute(LPCSTR args)
+	{
+		if (!g_pGameLevel || !Level().Server) return;
+
+		game_sv_mp* srv = smart_cast<game_sv_mp*>(Level().Server->game);
+		if (!srv) return;
+
+		string1024 buff;
+		exclude_raid_from_args(args, buff, sizeof(buff));
+
+		ClientID client_id(0);
+		u32 tmp_client_id;
+		s32 money;
+
+		if (sscanf_s(buff, "%u %d", &tmp_client_id, &money) != 2)
+		{
+			Msg("! ERROR: bad command parameters.");
+			Msg("Give money to player. Format: \"sv_give_money <player session id> <money>\"");
+			return;
+		}
+		client_id.set(tmp_client_id);
+
+		xrClientData* CL = static_cast<xrClientData*>(Level().Server->GetClientByID(client_id));
+
+		if (CL && CL->ps && (CL != Level().Server->GetServerClient()))
+		{
+			s64 total_money = CL->ps->money_for_round;
+			total_money += money;
+
+			if (total_money < 0)
+				total_money = 0;
+
+			if (total_money > std::numeric_limits<s32>().max())
+			{
+				Msg("! The limit of the maximum amount of money has been exceeded");
+				return;
+			}
+
+			CL->ps->money_for_round = s32(total_money);
+			srv->signal_Syncronize();
+		}
+		else
+		{
+			Msg("! Can't give money to client %u", client_id.value());
+		}
+	}
+};
+
 void register_mp_console_commands()
 {
 	CMD1(CCC_SpawnToInventory,		"sv_spawn_to_player_inv");
@@ -2209,6 +2262,8 @@ void register_mp_console_commands()
 	CMD1(CCC_GSpawn,				"g_spawn"				);
 	CMD1(CCC_GSpawnToInventorySelf,	"g_spawn_to_self_inv"	);
 	CMD1(CCC_GSpawnToInventory,		"g_spawn_to_inv"		);
+
+	CMD1(CCC_GiveMoneyToPlayer, "sv_give_money");
 
 	CMD1(CCC_Restart,				"g_restart"				);
 	CMD1(CCC_RestartFast,			"g_restart_fast"		);
