@@ -52,17 +52,40 @@ bool CControllerPsyHit::check_start_conditions()
 	if (m_man->is_captured_pure())	
 		return false;
 	
-	if (Actor()->Cameras().GetCamEffector(eCEControllerPsyHit))	
-		return						false;
+	if (IsGameTypeSingle()) {
+		if (Actor()->Cameras().GetCamEffector(eCEControllerPsyHit))
+			return						false;
 
-	if ( !see_enemy() )
-		return						false;
+		if (!see_enemy())
+			return						false;
 
-	if ( !tube_ready() )
-		return						false;
+		if (!tube_ready())
+			return						false;
 
- 	if (m_object->Position().distance_to(Actor()->Position()) < m_min_tube_dist) 
- 		return						false;
+		if (m_object->Position().distance_to(Actor()->Position()) < m_min_tube_dist)
+			return						false;
+	}
+	else
+	{
+		CActor *pA = const_cast<CActor *>(smart_cast<const CActor*>(m_object->EnemyMan.get_enemy()));
+		if (pA) {
+			if (pA->Cameras().GetCamEffector(eCEControllerPsyHit))
+				return						false;
+
+			if (!see_enemy(pA))
+				return						false;
+
+			if (!tube_ready())
+				return						false;
+
+			if (m_object->Position().distance_to(pA->Position()) < m_min_tube_dist)
+				return						false;
+
+			m_actor = pA;
+		}
+		else
+			return false;
+	}
 
 	return							true;
 }
@@ -80,13 +103,24 @@ void CControllerPsyHit::activate()
 	SControlDirectionData			*ctrl_dir = (SControlDirectionData*)m_man->data(this, ControlCom::eControlDir); 
 	VERIFY							(ctrl_dir);
 	ctrl_dir->heading.target_speed	= 3.f;
-	ctrl_dir->heading.target_angle	= m_man->direction().angle_to_target(Actor()->Position());
+	if(IsGameTypeSingle())
+		ctrl_dir->heading.target_angle	= m_man->direction().angle_to_target(Actor()->Position());
+	else
+		ctrl_dir->heading.target_angle = m_man->direction().angle_to_target(m_actor->Position());
 
 	//////////////////////////////////////////////////////////////////////////
 	m_current_index					= 0;
 	play_anim						();
 
 	m_blocked						= false;
+
+	if (!IsGameTypeSingle()) {
+		NET_Packet	tmp_packet;
+		CGameObject::u_EventGen(tmp_packet, GE_CONTROLLER_PSY_FIRE, m_object->ID());
+		tmp_packet.w_u16(m_actor->ID());
+		tmp_packet.w_u8(0);
+		Level().Server->SendBroadcast(BroadcastCID, tmp_packet, net_flags(TRUE, TRUE));
+	}
 
 	set_sound_state					(ePrepare);
 }
@@ -99,10 +133,19 @@ void CControllerPsyHit::deactivate()
 	if (m_blocked) {
 		NET_Packet			P;
 
-		Actor()->u_EventGen	(P, GEG_PLAYER_WEAPON_HIDE_STATE, Actor()->ID());
-		P.w_u16				(INV_STATE_BLOCK_ALL);
-		P.w_u8				(u8(false));
-		Actor()->u_EventSend(P);
+		if (IsGameTypeSingle()) {
+			Actor()->u_EventGen(P, GEG_PLAYER_WEAPON_HIDE_STATE, Actor()->ID());
+			P.w_u16(INV_STATE_BLOCK_ALL);
+			P.w_u8(u8(false));
+			Actor()->u_EventSend(P);
+		}
+		else
+		{
+			m_actor->u_EventGen(P, GEG_PLAYER_WEAPON_HIDE_STATE, m_actor->ID());
+			P.w_u16(INV_STATE_BLOCK_ALL);
+			P.w_u8(u8(false));
+			m_actor->u_EventSend(P);
+		}
 	}
 
 	set_sound_state(eNone);
@@ -187,6 +230,11 @@ bool CControllerPsyHit::see_enemy ()
 // 	return false;
 }
 
+bool CControllerPsyHit::see_enemy(CActor* pA)
+{
+	return	m_object->EnemyMan.see_enemy_now(pA);
+}
+
 bool CControllerPsyHit::check_conditions_final()
 {
 	if (!m_object->g_Alive())						
@@ -198,16 +246,32 @@ bool CControllerPsyHit::check_conditions_final()
 // 	if (m_object->EnemyMan.get_enemy() != Actor())	
 // 		return false;
 	
- 	if (!m_object->EnemyMan.is_enemy(Actor()))
- 		return false;
+	if (IsGameTypeSingle()) {
+		if (!m_object->EnemyMan.is_enemy(Actor()))
+			return false;
 
-	if (!Actor()->g_Alive())						
-		return false;
+		if (!Actor()->g_Alive())
+			return false;
 
-	if ( m_object->Position().distance_to_xz(Actor()->Position()) < m_min_tube_dist - 2 )
-		return false;
+		if (m_object->Position().distance_to_xz(Actor()->Position()) < m_min_tube_dist - 2)
+			return false;
+	}
+	else
+	{
+		if (!m_object->EnemyMan.is_enemy(m_actor))
+			return false;
+
+		if (!m_actor->g_Alive())
+			return false;
+
+		if (m_object->Position().distance_to_xz(m_actor->Position()) < m_min_tube_dist - 2)
+			return false;
+	}
 	
-	return	see_enemy();
+	if (IsGameTypeSingle())
+		return see_enemy();
+	else
+		return see_enemy(m_actor);
 }
 
 void CControllerPsyHit::death_glide_start()
@@ -217,57 +281,79 @@ void CControllerPsyHit::death_glide_start()
 		return;
 	}
 	
-	HUD().SetRenderable(false);
-
-	if ( CController* controller = smart_cast<CController*>(m_object) )
+	if (IsGameTypeSingle())
 	{
-		controller->CControlledActor::install	();
-		controller->CControlledActor::dont_need_turn();
+		HUD().SetRenderable(false);
+
+		if (CController* controller = smart_cast<CController*>(m_object))
+		{
+			controller->CControlledActor::install();
+			controller->CControlledActor::dont_need_turn();
+		}
+
+		// Start effector
+		CEffectorCam* ce = Actor()->Cameras().GetCamEffector(eCEControllerPsyHit);
+		VERIFY(!ce);
+
+		Fvector src_pos = Actor()->cam_Active()->vPosition;
+		Fvector target_pos = m_object->Position();
+		target_pos.y += 1.2f;
+
+		Fvector				dir;
+		dir.sub(target_pos, src_pos);
+
+		float dist = dir.magnitude();
+		dir.normalize();
+
+
+		float const actor_psy_immunity = Actor()->conditions().GetHitImmunity(ALife::eHitTypeTelepatic);
+
+		target_pos.mad(src_pos, dir, 0.01f + actor_psy_immunity * (dist - 4.8f));
+
+
+		float const base_fov = g_fov;
+		float const dest_fov = g_fov - (g_fov - 10.f)*actor_psy_immunity;
+
+		Actor()->Cameras().AddCamEffector(xr_new<CControllerPsyHitCamEffector>(eCEControllerPsyHit, src_pos, target_pos,
+			m_man->animation().motion_time(m_stage[1], m_object->Visual()),
+			base_fov, dest_fov));
+
+		smart_cast<CController *>(m_object)->draw_fire_particles();
+
+		dir.sub(src_pos, target_pos);
+		dir.normalize();
+		float h, p;
+		dir.getHP(h, p);
+		dir.setHP(h, p + PI_DIV_3);
+		Actor()->character_physics_support()->movement()->ApplyImpulse(dir, Actor()->GetMass() * 530.f);
+
+		set_sound_state(eStart);
+	}
+	else
+	{
+		NET_Packet	tmp_packet;
+		CGameObject::u_EventGen(tmp_packet, GE_CONTROLLER_PSY_FIRE, m_object->ID());
+		tmp_packet.w_u16(m_actor->ID());
+		tmp_packet.w_u8(1);
+		Level().Server->SendBroadcast(BroadcastCID, tmp_packet, net_flags(TRUE, TRUE));
 	}
 
-	// Start effector
-	CEffectorCam* ce = Actor()->Cameras().GetCamEffector(eCEControllerPsyHit);
-	VERIFY(!ce);
-	
-	Fvector src_pos		= Actor()->cam_Active()->vPosition;
-	Fvector target_pos	= m_object->Position();
-	target_pos.y		+= 1.2f;
-	
-	Fvector				dir;
-	dir.sub				(target_pos,src_pos);
-	
-	float dist			= dir.magnitude();
-	dir.normalize		();
+	if (IsGameTypeSingle()) {
+		NET_Packet			P;
+		Actor()->u_EventGen(P, GEG_PLAYER_WEAPON_HIDE_STATE, Actor()->ID());
+		P.w_u16(INV_STATE_BLOCK_ALL);
+		P.w_u8(u8(true));
+		Actor()->u_EventSend(P);
+	}
+	else
+	{
+		NET_Packet			P;
+		m_actor->u_EventGen(P, GEG_PLAYER_WEAPON_HIDE_STATE, m_actor->ID());
+		P.w_u16(INV_STATE_BLOCK_ALL);
+		P.w_u8(u8(true));
+		m_actor->u_EventSend(P);
+	}
 
-
-	float const actor_psy_immunity	=	Actor()->conditions().GetHitImmunity(ALife::eHitTypeTelepatic);
-
-	target_pos.mad		(src_pos,dir, 0.01f + actor_psy_immunity*(dist-4.8f) );
-
-
-	float const base_fov	=	g_fov;
-	float const dest_fov	=	g_fov - (g_fov-10.f)*actor_psy_immunity;
-	
-	Actor()->Cameras().AddCamEffector(xr_new<CControllerPsyHitCamEffector>(eCEControllerPsyHit, src_pos,target_pos, 
-										m_man->animation().motion_time(m_stage[1], m_object->Visual()),
-										base_fov, dest_fov));
-
-	smart_cast<CController *>(m_object)->draw_fire_particles();
-
-	dir.sub(src_pos,target_pos);
-	dir.normalize();
-	float h,p;
-	dir.getHP(h,p);
-	dir.setHP(h,p+PI_DIV_3);
-	Actor()->character_physics_support()->movement()->ApplyImpulse(dir,Actor()->GetMass() * 530.f);
-
-	set_sound_state					(eStart);
-
-	NET_Packet			P;
-	Actor()->u_EventGen	(P, GEG_PLAYER_WEAPON_HIDE_STATE, Actor()->ID());
-	P.w_u16				(INV_STATE_BLOCK_ALL);
-	P.w_u8				(u8(true));
-	Actor()->u_EventSend(P);
 	
 	m_blocked			= true;
 
@@ -276,22 +362,35 @@ void CControllerPsyHit::death_glide_start()
 	SControlDirectionData			*ctrl_dir = (SControlDirectionData*)m_man->data(this, ControlCom::eControlDir); 
 	VERIFY							(ctrl_dir);
 	ctrl_dir->heading.target_speed	= 3.f;
-	ctrl_dir->heading.target_angle	= m_man->direction().angle_to_target(Actor()->Position());
+	if(IsGameTypeSingle())
+		ctrl_dir->heading.target_angle	= m_man->direction().angle_to_target(Actor()->Position());
+	else
+		ctrl_dir->heading.target_angle = m_man->direction().angle_to_target(m_actor->Position());
 
 	//////////////////////////////////////////////////////////////////////////
 }
 
 void CControllerPsyHit::death_glide_end()
 {
-	CController *monster = smart_cast<CController *>(m_object);
-	monster->draw_fire_particles();
+	if (IsGameTypeSingle()) {
+		CController *monster = smart_cast<CController *>(m_object);
+		monster->draw_fire_particles();
 
-	monster->m_sound_tube_hit_left.play_at_pos(Actor(), Fvector().set(-1.f, 0.f, 1.f), sm_2D);
-	monster->m_sound_tube_hit_right.play_at_pos(Actor(), Fvector().set(1.f, 0.f, 1.f), sm_2D);
+		monster->m_sound_tube_hit_left.play_at_pos(Actor(), Fvector().set(-1.f, 0.f, 1.f), sm_2D);
+		monster->m_sound_tube_hit_right.play_at_pos(Actor(), Fvector().set(1.f, 0.f, 1.f), sm_2D);
 
-	m_object->Hit_Psy		(Actor(), monster->m_tube_damage);
+
+		m_object->Hit_Psy(Actor(), monster->m_tube_damage);
+	}
+	else 
+	{
+		CController *monster = smart_cast<CController *>(m_object);
+		m_object->Hit_Psy(m_actor, monster->m_tube_damage);
+	}
+
 
 	m_time_last_tube	=	Device.dwTimeGlobal;
+
 	stop					();
 }
 
@@ -338,22 +437,41 @@ void CControllerPsyHit::hit()
 {
 	//CController *monster	= smart_cast<CController *>(m_object);
 	
-	set_sound_state			(eHit);
+	if (!IsGameTypeSingle()) {
+		NET_Packet	tmp_packet;
+		CGameObject::u_EventGen(tmp_packet, GE_CONTROLLER_PSY_FIRE, m_object->ID());
+		tmp_packet.w_u16(m_actor->ID());
+		tmp_packet.w_u8(3);
+		Level().Server->SendBroadcast(BroadcastCID, tmp_packet, net_flags(TRUE, TRUE));
+	}
+	else
+		set_sound_state			(eHit);
 	//m_object->Hit_Psy		(Actor(), monster->m_tube_damage);
 }
 
 void CControllerPsyHit::stop ()
 {
-	HUD().SetRenderable(true);
+	if (IsGameTypeSingle())
+	{
+		HUD().SetRenderable(true);
 
-	if ( CController* controller = smart_cast<CController*>(m_object) )
-		if ( controller->CControlledActor::is_controlling() )
-			controller->CControlledActor::release();
+		if (CController* controller = smart_cast<CController*>(m_object))
+			if (controller->CControlledActor::is_controlling())
+				controller->CControlledActor::release();
 
-	// Stop camera effector
-	CEffectorCam* ce = Actor()->Cameras().GetCamEffector(eCEControllerPsyHit);
-	if (ce)
-		Actor()->Cameras().RemoveCamEffector(eCEControllerPsyHit);
+		// Stop camera effector
+		CEffectorCam* ce = Actor()->Cameras().GetCamEffector(eCEControllerPsyHit);
+		if (ce)
+			Actor()->Cameras().RemoveCamEffector(eCEControllerPsyHit);
+	}
+	else
+	{
+		NET_Packet	tmp_packet;
+		CGameObject::u_EventGen(tmp_packet, GE_CONTROLLER_PSY_FIRE, m_object->ID());
+		tmp_packet.w_u16(m_actor->ID());
+		tmp_packet.w_u8(2);
+		Level().Server->SendBroadcast(BroadcastCID, tmp_packet, net_flags(TRUE, TRUE));
+	}
 }
 
 void CControllerPsyHit::on_death()

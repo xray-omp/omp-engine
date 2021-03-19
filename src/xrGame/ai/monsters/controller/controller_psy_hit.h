@@ -1,6 +1,7 @@
 #pragma once
 #include "../control_combase.h"
 #include "../../../../Include/xrRender/KinematicsAnimated.h"
+#include "../../../actor.h"
 
 class CPsyHitEffectorCam;
 class CPsyHitEffectorPP;	
@@ -13,6 +14,7 @@ class CControllerPsyHit : public CControl_ComCustom<> {
 
 	CPsyHitEffectorCam	*m_effector_cam;
 	CPsyHitEffectorPP	*m_effector_pp;
+	CActor				*m_actor;
 
 	enum ESoundState{
 		ePrepare,
@@ -55,5 +57,6 @@ private:
 			void	hit						();
 			bool	check_conditions_final	();
 			bool	see_enemy				();
+			bool	see_enemy				(CActor* pA);
 };
 
