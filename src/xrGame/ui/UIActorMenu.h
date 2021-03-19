@@ -300,6 +300,7 @@ protected:
 	void						UpdatePrices				();
 	bool						CanMoveToPartner			(PIItem pItem);
 	void						TransferItems				(CUIDragDropListEx* pSellList, CUIDragDropListEx* pBuyList, CTrade* pTrade, bool bBuying);
+	void						TransferItemsMp				(CUIDragDropListEx* pSellList, CUIDragDropListEx* pBuyList, CTrade* pTrade, bool bBuying);
 
 public:
 								CUIActorMenu				();

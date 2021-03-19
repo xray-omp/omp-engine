@@ -11099,6 +11099,9 @@
     <ClCompile Include="game_sv_roleplay_drop_items.cpp">
       <Filter>Core\Server\Games\server\roleplay</Filter>
     </ClCompile>
+    <ClCompile Include="game_sv_freemp_trade.cpp">
+      <Filter>Core\Server\Games\server\freemp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="ai\monsters\chimera\chimera_attack_state.h">

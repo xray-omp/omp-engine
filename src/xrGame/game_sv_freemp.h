@@ -35,4 +35,6 @@ public:
 	virtual		void				Update();
 
 	virtual		BOOL				OnTouch(u16 eid_who, u16 eid_what, BOOL bForced = FALSE);
+
+	virtual		void				OnPlayerTrade(NET_Packet &P, ClientID const & clientID);
 };
