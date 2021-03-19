@@ -843,7 +843,12 @@ CPHDestroyable*		CAI_Stalker::		ph_destroyable	()
 
 void CAI_Stalker::shedule_Update		( u32 DT )
 {
-	if (!IsGameTypeSingle() && OnClient()) return;
+	if (!IsGameTypeSingle() && OnClient())
+	{
+		// Вызываем апдейт биндера на клиентах
+		CScriptBinder::shedule_Update(DT);
+		return;
+	}
 
 	START_PROFILE("stalker")
 	START_PROFILE("stalker/schedule_update")

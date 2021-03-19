@@ -317,7 +317,17 @@ void CCustomMonster::net_Import(NET_Packet& P)
 
 void CCustomMonster::shedule_Update	( u32 DT )
 {
-	if (!IsGameTypeSingle() && OnClient()) return;
+	if (!IsGameTypeSingle() && OnClient())
+	{
+		// Вызываем апдейт биндера на клиентах
+		CScriptBinder::shedule_Update(DT);
+
+		float dt = float(DT) / 1000.f;
+		if (dt > 3) return;
+
+		m_dwCurrentTime = Device.dwTimeGlobal;
+		return;
+	}
 
 	VERIFY				(!g_Alive() || processing_enabled());
 	// Queue shrink
