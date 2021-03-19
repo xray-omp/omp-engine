@@ -154,6 +154,9 @@ bool CTelekinesis::is_active_object(CPhysicsShellHolder *obj)
 
 void CTelekinesis::schedule_update()
 {
+	if (!IsGameTypeSingle() && !OnServer())
+		return;
+
 	if (!active) return;
 
 	// обновить состояние объектов

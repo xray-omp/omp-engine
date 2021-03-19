@@ -182,11 +182,11 @@ void CTelekineticObject::release()
 
 		// включить гравитацию
 		object->m_pPhysicsShell->set_ApplyByGravity(TRUE);
-		if (OnServer()) 
+		if (IsGameTypeSingle() || OnServer()) 
 		{
-		// приложить небольшую силу для того, чтобы объект начал падать
-		object->m_pPhysicsShell->applyImpulse(dir_inv, 0.5f * object->m_pPhysicsShell->getMass());
-	}
+			// приложить небольшую силу для того, чтобы объект начал падать
+			object->m_pPhysicsShell->applyImpulse(dir_inv, 0.5f * object->m_pPhysicsShell->getMass());
+		}
 	//state = TS_None;
 	switch_state(TS_None);
 }
