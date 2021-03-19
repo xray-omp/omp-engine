@@ -351,8 +351,8 @@ void CBaseMonster::UpdateCL()
 
 		update_pos_by_grouping_behaviour();
 	}
-
-	control().update_frame();
+	if(IsGameTypeSingle() || OnServer())
+		control().update_frame();
 
 	m_pPhysics_support->in_UpdateCL();
 }
@@ -381,7 +381,8 @@ void CBaseMonster::shedule_Update(u32 dt)
 	m_base_aura.update_schedule();
 	m_radiation_aura.update_schedule();
 
-	control().update_schedule	();
+	if (IsGameTypeSingle() || OnServer())
+		control().update_schedule	();
 
 	Morale.update_schedule		(dt);
 
