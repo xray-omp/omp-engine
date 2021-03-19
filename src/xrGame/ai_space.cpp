@@ -209,7 +209,8 @@ void CAI_Space::set_alife				(CALifeSimulator *alife_simulator)
 
 void CAI_Space::game_graph				(CGameGraph *game_graph)
 {
-	VERIFY					(m_alife_simulator);
+	//We dont have Alife Simulator on client
+	//VERIFY					(m_alife_simulator);
 	VERIFY					(game_graph);
 	VERIFY					(!m_game_graph);
 	m_game_graph			= game_graph;

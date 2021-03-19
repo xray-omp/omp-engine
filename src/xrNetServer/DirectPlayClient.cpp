@@ -61,7 +61,7 @@ bool DirectPlayClient::CreateConnection(ClientConnectionOptions & opt)
 
 	// Initialize IDirectPlay8Client object.
 #ifdef DEBUG
-	R_CHK(NET->Initialize(this, Handler, 0));
+	R_CHK(NET->Initialize(this, client_net_handler, 0));
 #else 
 	R_CHK(NET->Initialize(this, client_net_handler, DPNINITIALIZE_DISABLEPARAMVAL));
 #endif
