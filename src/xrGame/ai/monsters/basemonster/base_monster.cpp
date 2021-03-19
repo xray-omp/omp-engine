@@ -112,6 +112,9 @@ CBaseMonster::CBaseMonster() :	m_psy_aura(this, "psy"),
 	m_first_tick_enemy_inaccessible			=	0;
 	m_last_tick_enemy_inaccessible			=	0;
 	m_first_tick_object_not_at_home			=	0;
+
+	u_last_motion_idx = u16(-1);
+	u_last_motion_slot = u16(-1);
 }
 
 #pragma warning (pop)

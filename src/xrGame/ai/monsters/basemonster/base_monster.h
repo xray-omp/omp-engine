@@ -126,8 +126,11 @@ public:
 
 	//NET MP simple Sync
 
-	u16				u_last_motion_idx;
-	u16				u_last_motion_slot;
+	u16						u_last_motion_idx;
+	u16						u_last_motion_slot;
+	//
+	u8						u_monster_flag;
+
 
 	//save/load server serialization
 	virtual void			save							(NET_Packet &output_packet) {inherited::save(output_packet);}
@@ -291,7 +294,6 @@ private:
 
 			void							postprocess_packet(monster_interpolation::net_update_A &packet);
 			void							CalculateInterpolationParams();
-			void							ApplyAnimation(u16 motion_idx, u8 motion_slot);
 			virtual void					make_Interpolation();
 // for interpolation
 
@@ -301,7 +303,7 @@ protected:
 	CControlPathBuilder			*m_movement_manager;
 protected:
 	virtual CMovementManager	*create_movement_manager();
-
+	void						ApplyAnimation(u16 motion_idx, u8 motion_slot);
 // members
 public:
 	void			set_force_anti_aim	(bool force_anti_aim) { m_force_anti_aim = force_anti_aim; }

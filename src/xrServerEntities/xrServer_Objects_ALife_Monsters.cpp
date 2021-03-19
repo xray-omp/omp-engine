@@ -1942,6 +1942,7 @@ void CSE_ALifeMonsterBase::UPDATE_Read	(NET_Packet	&tNetPacket)
 
 		tNetPacket.r_u16(u_motion_idx);
 		tNetPacket.r_u8(u_motion_slot);
+		tNetPacket.r_u8(u_moster_flag);
 		set_health(f_health);
 	}
 }
@@ -1973,6 +1974,7 @@ void CSE_ALifeMonsterBase::UPDATE_Write	(NET_Packet	&tNetPacket)
 
 		tNetPacket.w_u16(u_motion_idx);
 		tNetPacket.w_u8(u_motion_slot);
+		tNetPacket.w_u8(u_moster_flag);
 	}
 }
 

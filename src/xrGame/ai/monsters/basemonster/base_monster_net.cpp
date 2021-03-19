@@ -90,9 +90,28 @@ void CBaseMonster::net_Export(NET_Packet& P)
 		//P.w_angle8(movement().m_body.current.roll);
 		P.w_angle8(movement().m_body.current.yaw);			   
 
+		
 		IKinematicsAnimated* ik_anim_obj = smart_cast<IKinematicsAnimated*>(Visual());
-		P.w_u16(ik_anim_obj->ID_Cycle_Safe(m_anim_base->cur_anim_info().name).idx);
-		P.w_u8(ik_anim_obj->ID_Cycle_Safe(m_anim_base->cur_anim_info().name).slot);
+		CControl_Com* capturer = control().get_capturer(ControlCom::eControlAnimation);
+
+		if (capturer && capturer->ced() != NULL)
+		{
+			control().get_capturer(ControlCom::eControlAnimation);
+			SControlAnimationData *ctrl_anim = (SControlAnimationData*)control().data(capturer, ControlCom::eControlAnimation);
+			VERIFY(ctrl_anim);
+
+			P.w_u16(ctrl_anim->global.get_motion().idx);
+			P.w_u8(ctrl_anim->global.get_motion().slot);
+			P.w_u8(1);
+			if(m_bInterpolate)
+				m_bInterpolate = false;
+		}
+		else
+		{
+			P.w_u16(ik_anim_obj->ID_Cycle_Safe(m_anim_base->cur_anim_info().name).idx);
+			P.w_u8(ik_anim_obj->ID_Cycle_Safe(m_anim_base->cur_anim_info().name).slot);
+			P.w_u8(0);
+		}
 	}
 }
 
@@ -147,7 +166,7 @@ void CBaseMonster::net_Import(NET_Packet& P)
 		setVisible(TRUE);
 		setEnabled(TRUE);
 	} 
-	else // MP net_export
+	else // MP net_import
 	{
 		net_physics_state physics_state;
 		SRotation fv_direction;
@@ -177,6 +196,7 @@ void CBaseMonster::net_Import(NET_Packet& P)
 
 		P.r_u16(u_motion_idx);
 		P.r_u8(u_motion_slot);
+		P.r_u8(u_monster_flag);
 
 		SetfHealth(f_health);
 
@@ -281,8 +301,6 @@ void CBaseMonster::PH_B_CrPr()
 		pIStart->o_torso.pitch = angle_normalize(movement().m_body.current.pitch);
 		pIStart->o_torso.roll = angle_normalize(movement().m_body.current.roll);
 
-		//pIStart->head.pitch = angle_normalize(movement().m_head.current.pitch);
-		//pIStart->head.yaw = angle_normalize(movement().m_head.current.yaw);
 
 		CPHSynchronize* pSyncObj = NULL;
 		pSyncObj = PHGetSyncItem(0);
@@ -369,13 +387,8 @@ void CBaseMonster::CalculateInterpolationParams()
 	pSyncObj = PHGetSyncItem(0);
 
 	monster_interpolation::InterpData* pIStart = &IStart;
-	//monster_interpolation::InterpData* pIRec = &IRec;
 	monster_interpolation::InterpData* pIEnd = &IEnd;
 
-	//pIRec->Pos = RecalculatedState.position;
-	//pIRec->Vel = RecalculatedState.linear_vel;
-	//pIRec->o_torso = NET_A_Last.o_torso;
-	//pIRec->head = NET_A_Last.head;
 
 	pIEnd->Pos = PredictedState.position;
 	pIEnd->Vel = PredictedState.linear_vel;
@@ -505,9 +518,12 @@ void CBaseMonster::ApplyAnimation(u16 motion_idx, u8 motion_slot)
 		motion.slot = motion_slot;
 		if (motion.valid())
 		{
-			CStepManager::on_animation_start(motion, ik_anim_obj->LL_PlayCycle(ik_anim_obj->LL_GetMotionDef(motion)->bone_or_part, motion, TRUE,
+			u16 bone_or_part = ik_anim_obj->LL_GetMotionDef(motion)->bone_or_part;
+			if (bone_or_part == u16(-1)) bone_or_part = ik_anim_obj->LL_PartID("default");
+
+			CStepManager::on_animation_start(motion, ik_anim_obj->LL_PlayCycle(bone_or_part, motion, TRUE,
 				ik_anim_obj->LL_GetMotionDef(motion)->Accrue(), ik_anim_obj->LL_GetMotionDef(motion)->Falloff(),
-				ik_anim_obj->LL_GetMotionDef(motion)->Speed(), FALSE, 0, 0, 0));
+				ik_anim_obj->LL_GetMotionDef(motion)->Speed(), u_monster_flag, 0, 0, 0));
 		}
 	}
 }
@@ -543,10 +559,6 @@ void CBaseMonster::make_Interpolation()
 			NewPos.lerp(IStart.Pos, IEnd.Pos, factor);
 
 			VERIFY2(_valid(renderable.xform), *cName());
-
-			//movement().m_body.current.pitch = angle_lerp(IStart.o_torso.pitch, IEnd.o_torso.pitch, factor);
-			//movement().m_body.current.roll = angle_lerp(IStart.o_torso.roll, IEnd.o_torso.roll, factor);
-			//movement().m_body.current.yaw = angle_lerp(IStart.o_torso.yaw, IEnd.o_torso.yaw, factor);
 
 			float& yaw = movement().m_body.current.yaw;
 			float& pitch = movement().m_body.current.pitch;

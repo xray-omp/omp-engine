@@ -446,7 +446,8 @@ SERVER_ENTITY_DECLARE_BEGIN2(CSE_ALifeMonsterBase,CSE_ALifeMonsterAbstract,CSE_P
 	float							f_health;
 	u16								m_spec_object_id;
 	u16								u_motion_idx;
-	u8								u_motion_slot;	   
+	u8								u_motion_slot;
+	u8								u_moster_flag;
 	u8								phSyncFlag = 0;
 
 									CSE_ALifeMonsterBase	(LPCSTR caSection);				// constructor for variable initialization
