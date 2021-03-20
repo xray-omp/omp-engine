@@ -845,8 +845,7 @@ void CAI_Stalker::shedule_Update		( u32 DT )
 {
 	if (!IsGameTypeSingle() && OnClient())
 	{
-		// Вызываем апдейт биндера на клиентах
-		CScriptBinder::shedule_Update(DT);
+		inherited::shedule_Update(DT);
 		return;
 	}
 

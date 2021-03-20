@@ -319,8 +319,7 @@ void CCustomMonster::shedule_Update	( u32 DT )
 {
 	if (!IsGameTypeSingle() && OnClient())
 	{
-		// Âûçûâàåì àïäåéò áèíäåğà íà êëèåíòàõ
-		CScriptBinder::shedule_Update(DT);
+		inherited::shedule_Update(DT);
 
 		float dt = float(DT) / 1000.f;
 		if (dt > 3) return;
