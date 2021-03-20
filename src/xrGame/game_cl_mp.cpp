@@ -286,13 +286,6 @@ void game_cl_mp::GetActiveVoting()
 	u_EventSend		(P);
 }
 
-u32		Color_Teams_u32[3]	= {color_rgba(255,240,190,255), color_rgba(64,255,64,255), color_rgba(64,64,255,255)};
-LPSTR	Color_Teams[3]	= {"%c[255,255,240,190]", "%c[255,64,255,64]", "%c[255,64,64,255]"};
-char	Color_Main[]	= "%c[255,192,192,192]";
-u32		Color_Neutral_u32	= color_rgba(255,0,255,255);
-char	Color_Red[]	= "%c[255,255,1,1]";
-char	Color_Green[]	= "%c[255,1,255,1]";
-
 void game_cl_mp::TranslateGameMessage	(u32 msg, NET_Packet& P)
 {
 	string4096 Text;
@@ -491,10 +484,10 @@ void game_cl_mp::OnChatMessage(NET_Packet* P)
 //#endif
 	if(g_dedicated_server)	return;
 
-	if ( team < 0 || 2 < team )	{ team = 0; }
+	// if ( team < 0 || 2 < team )	{ team = 0; }
 	
 	LPSTR colPlayerName;
-	STRCONCAT(colPlayerName, Color_Teams[team], PlayerName, ":%c[default]");
+	STRCONCAT(colPlayerName, GetTeamColor(team), PlayerName, ":%c[default]");
 	if (Level().CurrentViewEntity() && CurrentGameUI())
 		CurrentGameUI()->m_pMessagesWnd->AddChatMessage(ChatMsg, colPlayerName);
 };
@@ -617,7 +610,7 @@ void game_cl_mp::OnPlayerVoted			(game_PlayerState* ps)
 
 	CStringTable st;
 	string1024 resStr;
-	xr_sprintf(resStr, "%s\"%s\" %s%s %s\"%s\"", Color_Teams[ps->team], ps->getName(), Color_Main, *st.translate("mp_voted"),
+	xr_sprintf(resStr, "%s\"%s\" %s%s %s\"%s\"", GetTeamColor(ps->team), ps->getName(), Color_Main, *st.translate("mp_voted"),
 		ps->m_bCurrentVoteAgreed ? Color_Green : Color_Red, *st.translate(ps->m_bCurrentVoteAgreed ? "mp_voted_yes" : "mp_voted_no"));
 	if(CurrentGameUI()) CurrentGameUI()->CommonMessageOut(resStr);
 }
@@ -780,7 +773,7 @@ void game_cl_mp::OnPlayerKilled			(NET_Packet& P)
 	//-----------------------------------------------------------
 	KillMessageStruct KMS;
 	KMS.m_victim.m_name = pPlayer->getName();
-	KMS.m_victim.m_color = Color_Teams_u32[ModifyTeam(pPlayer->team) + 1];
+	KMS.m_victim.m_color = GetTeamColor_u32(ModifyTeam(pPlayer->team) + 1);
 
 	KMS.m_killer.m_name = NULL;
 	KMS.m_killer.m_color = color_rgba(255,255,255,255);
@@ -846,7 +839,7 @@ void game_cl_mp::OnPlayerKilled			(NET_Packet& P)
 				if (pKiller)
 				{
 					KMS.m_killer.m_name = pKiller ? pKiller->getName() : *(pOKiller->cNameSect());
-					KMS.m_killer.m_color = pKiller ? Color_Teams_u32[ModifyTeam(pKiller->team) + 1] : Color_Neutral_u32;
+					KMS.m_killer.m_color = pKiller ? GetTeamColor_u32(ModifyTeam(pKiller->team) + 1) : Color_Neutral_u32;
 				};
 			};
 			//-------------------------------------------
@@ -965,7 +958,7 @@ void game_cl_mp::OnPlayerKilled			(NET_Packet& P)
 			if (pKiller)
 			{
 				KMS.m_killer.m_name = pKiller ? pKiller->getName() : *(pOKiller->cNameSect());
-				KMS.m_killer.m_color = pKiller ? Color_Teams_u32[ModifyTeam(pKiller->team) + 1] : Color_Neutral_u32;
+				KMS.m_killer.m_color = pKiller ? GetTeamColor_u32(ModifyTeam(pKiller->team) + 1) : Color_Neutral_u32;
 				//-----------------------------------------------------------------------				
 				Msg("%s died from bleeding, thanks to %s ", *KMS.m_victim.m_name, *KMS.m_killer.m_name);
 			}
@@ -1006,10 +999,16 @@ void	game_cl_mp::OnPlayerChangeName		(NET_Packet& P)
 	P.r_stringZ(NewName);
 
 	string1024 resStr;
-	xr_sprintf(resStr, "%s\"%s\" %s%s %s\"%s\"", Color_Teams[Team], OldName, Color_Main, *st.translate("mp_is_now"),Color_Teams[Team], NewName);
+	xr_sprintf(resStr, "%s\"%s\" %s%s %s\"%s\"", GetTeamColor(Team), OldName, Color_Main, *st.translate("mp_is_now"), GetTeamColor(Team), NewName);
 	if(CurrentGameUI()) CurrentGameUI()->CommonMessageOut(resStr);
-	Msg( NewName );
+
+	if(OnServer())
+	{
+		Msg("- Player \"%s\" changed name to \"%s\"", OldName, NewName);
+	}
+
 	//-------------------------------------------
+
 	CObject* pObj = Level().Objects.net_Find(ObjID);
 	if (pObj)
 	{

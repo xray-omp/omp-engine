@@ -121,6 +121,17 @@ class reward_event_generator;
 class game_cl_mp :public game_cl_GameState
 {
 	typedef game_cl_GameState	inherited;
+
+private:
+	u32		Color_Teams_u32[3] = { color_rgba(255,240,190,255), color_rgba(64,255,64,255), color_rgba(64,64,255,255) };
+	LPCSTR	Color_Teams[3] = { "%c[255,255,240,190]", "%c[255,64,255,64]", "%c[255,64,64,255]" };
+
+	LPCSTR Color_Main = "%c[255,192,192,192]";
+	LPCSTR Color_Red = "%c[255,255,1,1]";
+	LPCSTR Color_Green = "%c[255,1,255,1]";
+
+	u32		Color_Neutral_u32 = color_rgba(255, 0, 255, 255);
+
 protected:
 
 	CL_TEAM_DATA_LIST				TeamList;
@@ -141,7 +152,11 @@ protected:
 	CUIMessageBoxEx*				m_pMessageBox;
 	BOOL							m_bSpectatorSelected;
 		
-	
+
+protected:
+	virtual LPCSTR		GetTeamColor(u32 team) const { return Color_Teams[team]; }
+	virtual u32				GetTeamColor_u32(u32 team) const { return Color_Teams_u32[team]; }
+
 	virtual void			LoadTeamData			(const shared_str&	TeamName);
 	
 	virtual	void			ChatSay					(LPCSTR	phrase, bool bAll);
