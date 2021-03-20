@@ -485,10 +485,14 @@ u32 CUILines::GetColorFromText(const xr_string& str)const
 	comma2_pos = str.find(",", comma1_pos + 1);
 	comma3_pos = str.find(",", comma2_pos + 1);
 
-    R_ASSERT2(npos != comma1_pos, "CUISubLine::GetColorFromText -- can't find first comma");        
-	R_ASSERT2(npos != comma2_pos, "CUISubLine::GetColorFromText -- can't find second comma");
-	R_ASSERT2(npos != comma3_pos, "CUISubLine::GetColorFromText -- can't find third comma");
-	
+  // R_ASSERT2(npos != comma1_pos, "CUISubLine::GetColorFromText -- can't find first comma");        
+	// R_ASSERT2(npos != comma2_pos, "CUISubLine::GetColorFromText -- can't find second comma");
+	// R_ASSERT2(npos != comma3_pos, "CUISubLine::GetColorFromText -- can't find third comma");	
+
+	if (npos == comma1_pos || npos == comma2_pos || npos == comma3_pos)
+	{
+		return m_dwTextColor;
+	}
 
 	u32 a, r, g, b;
 	xr_string single_color;
