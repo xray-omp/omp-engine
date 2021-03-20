@@ -46,7 +46,7 @@ CUIListBoxItem* CUIListBox::AddTextItem(LPCSTR text)
 
 	pItem->SetWndSize				(Fvector2().set(GetDesiredChildWidth(), m_def_item_height));
 	pItem->SetTextColor				(m_text_color);
-	pItem->SetText					(CStringTable().translate(text).c_str());
+	pItem->SetText					(text);
 	pItem->GetTextItem()->SetWidth	(GetDesiredChildWidth());
 	return							pItem;
 }
