@@ -342,6 +342,7 @@ void CLevel::setup_game_flags()
 
 	g_game_flags[F_SPECTATOR_MOVEMENT_DISABLED] = eGameIDFreeMp | eGameIDRolePlay;
 	g_game_flags[F_SPECTATOR_ROTATION_DISABLED] = eGameIDFreeMp | eGameIDRolePlay;
+	g_game_flags[F_ITEMS_AUTO_PICKUP_DISABLED] = eGameIDFreeMp | eGameIDRolePlay;
 }
 
 shared_str	CLevel::name		() const

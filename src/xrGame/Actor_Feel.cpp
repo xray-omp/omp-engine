@@ -236,6 +236,7 @@ void	CActor::Check_for_AutoPickUp()
 	// mp only
 	if (!psActorFlags.test(AF_AUTOPICKUP))		return;
 	if (IsGameTypeSingle())						return;
+	if (CheckGameFlag(F_ITEMS_AUTO_PICKUP_DISABLED)) return;
 	if (Level().CurrentControlEntity() != this) return;
 	if (!g_Alive())								return;
 
