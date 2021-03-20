@@ -13,6 +13,8 @@ public:
 			game_cl_freemp();
 	virtual	~game_cl_freemp();
 
+	virtual LPCSTR		GetTeamColor(u32 /*team*/) const { return "%c[255,255,240,190]"; }
+	virtual u32				GetTeamColor_u32(u32 /*team*/) const { return color_rgba(255, 240, 190, 255); }
 
 	virtual CUIGameCustom* createGameUI();
 	virtual void SetGameUI(CUIGameCustom*);
