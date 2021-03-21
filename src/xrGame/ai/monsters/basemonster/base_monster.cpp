@@ -321,6 +321,72 @@ void CBaseMonster::update_enemy_accessible_and_at_home_info	()
 	}
 }
 
+extern    int        g_iCorpseRemove;
+
+bool CBaseMonster::NeedToDestroyObject() const
+{
+	if (IsGameTypeSingle() || OnClient())
+	{
+		return false;
+	}
+	else
+	{
+		if (g_Alive() || g_iCorpseRemove == -1 || TimePassedAfterDeath() < m_dwBodyRemoveTime)
+		{
+			return false;
+		}
+
+		if (Level().timeServer() - m_last_player_detection_time < m_near_players_delay_time)
+		{
+			return false;
+		}
+
+		if (HavePlayersNearby(10.f))
+		{
+			// добавляем время на продление "жизни трупа", если был игрок рядом
+			m_last_player_detection_time = Level().timeServer();
+			return false;
+		}
+			 	 
+		return true;
+	}
+}
+
+ALife::_TIME_ID CBaseMonster::TimePassedAfterDeath()  const
+{
+	if (!g_Alive())
+		return Level().timeServer() - GetLevelDeathTime();
+	else
+		return 0;
+}
+
+bool CBaseMonster::HavePlayersNearby(float distance) const
+{
+	bool have = false;
+	float distance_sqr = distance * distance;
+
+	auto i = Game().players.begin();
+	auto ie = Game().players.end();
+
+	for (; i != ie; ++i)
+	{
+		game_PlayerState* ps = i->second;
+		if (!ps) continue;
+
+		u16 id = ps->GameID;
+		CObject* pObject = Level().Objects.net_Find(id);
+		if (!pObject) continue;
+
+		if (this->Position().distance_to_sqr(pObject->Position()) < distance_sqr)
+		{
+			have = true;
+			break;
+		}
+	}
+
+	return have;
+}
+
 void CBaseMonster::UpdateCL()
 {
 #ifdef DEBUG

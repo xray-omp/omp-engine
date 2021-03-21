@@ -139,6 +139,9 @@ public:
 	virtual void			save							(NET_Packet &output_packet) {inherited::save(output_packet);}
 	virtual void			load							(IReader &input_packet)		{inherited::load(input_packet);}
 
+	virtual bool			NeedToDestroyObject() const;
+	virtual ALife::_TIME_ID	TimePassedAfterDeath() const;
+	virtual bool			HavePlayersNearby(float distance) const;
 
 	virtual void			UpdateCL						();
 	virtual void			shedule_Update					(u32 dt);
@@ -665,6 +668,10 @@ protected:
 //-------------------------------------------------------------------
 	float							m_fSkinArmor;
 	float							m_fHitFracMonster;
+
+	float							m_near_players_distance = 0;
+	mutable u32				m_last_player_detection_time = 0;
+	u32								m_near_players_delay_time = 0;
 
 private:
 	pcstr							m_head_bone_name;
