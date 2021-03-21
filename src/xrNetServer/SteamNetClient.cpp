@@ -46,6 +46,7 @@ SteamNetClient::~SteamNetClient()
 
 bool SteamNetClient::CreateConnection(ClientConnectionOptions & connectOpt)
 {
+	m_bWasConnected = false;
 	m_pInterface = SteamNetworkingSockets();
 
 	if (m_pInterface != nullptr)
@@ -241,7 +242,10 @@ void SteamNetClient::OnSteamNetConnectionStatusChanged(SteamNetConnectionStatusC
 		switch (pInfo->m_info.m_eEndReason)
 		{
 		case k_ESteamNetConnectionEnd_Misc_Timeout:
-			OnInvalidHost();
+			if (m_bWasConnected)
+				OnSessionTerminate("st_lost_connection");
+			else
+				OnInvalidHost();
 			break;
 		case EUnknownReason:
 			OnSessionTerminate("Unknown");
@@ -269,6 +273,7 @@ void SteamNetClient::OnSteamNetConnectionStatusChanged(SteamNetConnectionStatusC
 	break;
 	case k_ESteamNetworkingConnectionState_Connected:
 		Msg("[SteamNetClient] Connected to server");
+		m_bWasConnected = true;
 		SendClientData();
 		break;
 	case k_ESteamNetworkingConnectionState_None:

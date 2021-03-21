@@ -19,6 +19,7 @@ private:
 	xr_string									m_user_name = "";
 	xr_string									m_user_pass = "";
 
+	bool											m_bWasConnected = false;
 	bool											m_bServerClient = false;
 	bool											m_bGameDescriptionRecieved = false;
 
