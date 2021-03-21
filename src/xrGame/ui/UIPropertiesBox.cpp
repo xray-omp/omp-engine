@@ -3,6 +3,7 @@
 #include "../level.h"
 #include "UIListBoxItem.h"
 #include "UIXmlInit.h"
+#include "string_table.h"
 
 #define OFFSET_X (5.0f)
 #define OFFSET_Y (5.0f)
@@ -107,7 +108,7 @@ void CUIPropertiesBox::OnItemReceivedFocus(CUIWindow* w, void* d)
 
 bool CUIPropertiesBox::AddItem(LPCSTR  str, void* pData, u32 tag_value)
 {
-	CUIListBoxItem* itm		= m_UIListWnd.AddTextItem(str);
+	CUIListBoxItem* itm		= m_UIListWnd.AddTextItem(CStringTable().translate(str).c_str());
 	itm->SetTAG				(tag_value);
 	itm->SetData			(pData);
 	if (m_sub_property_box)
