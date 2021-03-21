@@ -77,7 +77,7 @@ void game_sv_roleplay::OnPlayerSelectTeam(NET_Packet& P, ClientID sender)
 	// spawn start items
 	for (auto &item : teamSettings.StartItems)
 	{
-		SpawnWeapon4Actor(pA->ID, item.c_str(), 0, ps->pItemList);
+		SpawnItemToActor(pA->ID, item.c_str());
 	}
 	// set start money
 	ps->money_for_round = teamSettings.StartMoney;
@@ -104,7 +104,7 @@ void game_sv_roleplay::RespawnPlayer(ClientID id_who, bool NoSpectator)
 	CSE_ALifeCreatureActor	*pA = smart_cast<CSE_ALifeCreatureActor*>(xrCData->owner);
 	if (!pA) return;
 	
-	SpawnWeapon4Actor(pA->ID, "mp_players_rukzak", 0, ps->pItemList);
+	SpawnItemToActor(pA->ID, "mp_players_rukzak");
 }
 
 BOOL game_sv_roleplay::OnTouch(u16 eid_who, u16 eid_what, BOOL bForced)
