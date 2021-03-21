@@ -1936,6 +1936,26 @@ void CSE_ALifeMonsterBase::UPDATE_Read	(NET_Packet	&tNetPacket)
 
 		tNetPacket.r_float(f_health);
 
+		// sounds synchronization
+		tNetPacket.r_u8(m_snd_sync_flag);
+		switch (m_snd_sync_flag)
+		{
+		case 0:
+			m_snd_sync_sound = 0;
+			m_snd_sync_sound_delay = 0;
+			break;
+		case 1:
+			tNetPacket.r_u8(m_snd_sync_sound);
+			m_snd_sync_sound_delay = 0;
+			break;
+		case 2:
+			tNetPacket.r_u8(m_snd_sync_sound);
+			tNetPacket.r_u32(m_snd_sync_sound_delay);
+			break;
+		default:
+			break;
+		}
+
 		tNetPacket.r_angle8(o_torso.pitch);
 		//tNetPacket.r_angle8(o_torso.roll);
 		tNetPacket.r_angle8(o_torso.yaw);
@@ -1967,6 +1987,22 @@ void CSE_ALifeMonsterBase::UPDATE_Write	(NET_Packet	&tNetPacket)
 		}
 
 		tNetPacket.w_float(get_health());
+
+		switch (m_snd_sync_flag)
+		{
+		case 0:
+			tNetPacket.w_u8(m_snd_sync_flag);
+			break;
+		case 1:
+			tNetPacket.w_u8(m_snd_sync_flag);
+			tNetPacket.w_u8(m_snd_sync_sound);
+			break;
+		case 2:
+			tNetPacket.w_u8(m_snd_sync_flag);
+			tNetPacket.w_u8(m_snd_sync_sound);
+			tNetPacket.w_u32(m_snd_sync_sound_delay);
+			break;
+		}
 
 		tNetPacket.w_angle8(o_torso.pitch);
 		//tNetPacket.w_angle8(o_torso.roll);

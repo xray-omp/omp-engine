@@ -564,6 +564,9 @@ void CBaseMonster::set_state_sound(u32 type, bool once)
 	
 		sound().play(type);
 	
+		m_sv_snd_sync_flag = monster_sound_play;
+		m_sv_snd_sync_sound = type;
+
 	} else {
 
 		// handle situation, when monster want to play attack sound for the first time
@@ -571,6 +574,9 @@ void CBaseMonster::set_state_sound(u32 type, bool once)
 			(m_prev_sound_type != MonsterSound::eMonsterSoundAggressive)) {
 			
 			sound().play(MonsterSound::eMonsterSoundAttackHit);
+
+			m_sv_snd_sync_flag = monster_sound_play;
+			m_sv_snd_sync_sound = MonsterSound::eMonsterSoundAttackHit;
 
 		} else {
 			// get count of monsters in squad
@@ -609,6 +615,10 @@ void CBaseMonster::set_state_sound(u32 type, bool once)
 			}
 
 			sound().play(type, 0, 0, delay);
+
+			m_sv_snd_sync_flag = monster_sound_play_with_delay;
+			m_sv_snd_sync_sound = type;
+			m_sv_snd_sync_sound_delay = delay;
 		} 
 	}
 

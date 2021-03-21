@@ -14,6 +14,7 @@
 #include "../../../PHMovementControl.h"
 #include "../../../../xrphysics/PhysicsShell.h"
 #include "../xrphysics/phvalide.h"
+#include "../../../sound_player.h"
 
 extern int g_cl_InterpolationType;
 
@@ -85,6 +86,8 @@ void CBaseMonster::net_Export(NET_Packet& P)
 		}
 
 		P.w_float(GetfHealth());
+
+		net_Export_Sounds(P);
 
 		P.w_angle8(movement().m_body.current.pitch);
 		//P.w_angle8(movement().m_body.current.roll);
@@ -190,6 +193,8 @@ void CBaseMonster::net_Import(NET_Packet& P)
 
 		P.r_float(f_health);
 
+		net_Import_Sounds(P);
+
 		P.r_angle8(fv_direction.pitch);
 		//P.r_angle8(fv_direction.roll);
 		P.r_angle8(fv_direction.yaw);
@@ -239,6 +244,62 @@ void CBaseMonster::net_Import(NET_Packet& P)
 	}
 }
 
+
+void CBaseMonster::net_Export_Sounds(NET_Packet& P)
+{
+	R_ASSERT(m_sv_snd_sync_sound < 255);
+
+	u8 sound_flag = m_sv_snd_sync_flag;
+	u8 sound_type = u8(m_sv_snd_sync_sound);
+	u32 sound_delay = m_sv_snd_sync_sound_delay;
+
+	switch (m_sv_snd_sync_flag)
+	{
+	case monster_sound_no:
+		P.w_u8(sound_flag);
+		break;
+	case monster_sound_play:
+		P.w_u8(sound_flag);
+		P.w_u8(sound_type);
+		break;
+	case monster_sound_play_with_delay:
+		P.w_u8(sound_flag);
+		P.w_u8(sound_type);
+		P.w_u32(sound_delay);
+		break;
+	default:
+		break;
+	}
+
+	m_sv_snd_sync_flag = monster_sound_no;
+	m_sv_snd_sync_sound = 0;
+	m_sv_snd_sync_sound_delay = 0;
+}
+
+
+void CBaseMonster::net_Import_Sounds(NET_Packet& P)
+{
+	u8 sound_flag = P.r_u8();
+	u8 sound_type;
+	u32 sound_delay;
+
+	switch (sound_flag)
+	{
+	case monster_sound_no:
+		break;
+	case monster_sound_play:
+		sound_type = P.r_u8();
+		sound().play(sound_type);
+		break;
+	case monster_sound_play_with_delay:
+		sound_type = P.r_u8();
+		sound_delay = P.r_u32();
+		sound().play(sound_type, 0, 0, sound_delay);
+		break;
+	default:
+		break;
+	}
+}
 
 void CBaseMonster::postprocess_packet(monster_interpolation::net_update_A &N_A)
 {

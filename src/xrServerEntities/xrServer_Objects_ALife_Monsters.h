@@ -450,6 +450,16 @@ SERVER_ENTITY_DECLARE_BEGIN2(CSE_ALifeMonsterBase,CSE_ALifeMonsterAbstract,CSE_P
 	u8								u_moster_flag;
 	u8								phSyncFlag = 0;
 
+	enum {
+		monster_sound_no = u32(0),
+		monster_sound_play,
+		monster_sound_play_with_delay
+	};
+
+	u8								m_snd_sync_flag = monster_sound_no;
+	u8								m_snd_sync_sound = 0;
+	u32								m_snd_sync_sound_delay = 0;
+
 									CSE_ALifeMonsterBase	(LPCSTR caSection);				// constructor for variable initialization
 	virtual							~CSE_ALifeMonsterBase	();
 	virtual	void					load					(NET_Packet &tNetPacket);

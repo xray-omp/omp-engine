@@ -124,6 +124,9 @@ public:
 	virtual void			net_Import						(NET_Packet& P);
 	virtual void			net_Relcase						(CObject *O);
 
+	virtual void			net_Export_Sounds(NET_Packet& P);
+	virtual void			net_Import_Sounds(NET_Packet& P);
+
 	//NET MP simple Sync
 
 	u16						u_last_motion_idx;
@@ -517,6 +520,19 @@ protected:
 	LPCSTR					m_critical_wound_anim_legs;
 
 	//////////////////////////////////////////////////////////////////////////
+
+	enum {
+		monster_sound_no = u32(0),
+		monster_sound_play,
+		monster_sound_play_with_delay
+	};
+
+	u8  m_sv_snd_sync_flag = monster_sound_no;
+	u32 m_sv_snd_sync_sound = 0;
+	u32 m_sv_snd_sync_sound_delay = 0;
+
+	//////////////////////////////////////////////////////////////////////////
+
 public:
 
 	virtual	char*			get_monster_class_name () = 0;
