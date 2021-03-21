@@ -47,6 +47,7 @@ CTorch::CTorch(void)
 	m_prev_hp.set				(0,0);
 	m_delta_h					= 0;
 	m_night_vision				= NULL;
+	m_bNightVisionOn = false;
 
 	// Disabling shift by x and z axes for 1st render, 
 	// because we don't have dynamic lighting in it. 
