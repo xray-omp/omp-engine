@@ -2296,25 +2296,25 @@ public:
 			Msg("! You don't have enough money!");
 			return;
 		}
-
-		xr_strlwr(name);
+		
+		xr_strlwr(_Trim(name));
 
 		bool wasSent = false;
 
 		for (auto &player : Game().players)
 		{
 			game_PlayerState *ps = player.second;
+			if (ps->GameID == Game().local_player->GameID)
+			{
+				continue;
+			}
+
 			string128 player_name;
 			xr_strcpy(player_name, ps->getName());
 			xr_strlwr(player_name);
 
-			if (strcmp(player_name, name) == 0)
+			if (xr_strcmp(player_name, name) == 0)
 			{
-				if (ps->GameID == Game().local_player->GameID)
-				{
-					break;
-				}
-
 				NET_Packet					P;
 				Game().u_EventGen(P, GE_GAME_EVENT, pActor->ID());
 				P.w_u16(GAME_EVENT_TRANSFER_MONEY);
@@ -2330,6 +2330,7 @@ public:
 		{
 			Msg("- The money was transferred successfully!");
 		}
+		else
 		{
 			Msg("! Failed to send money to player with name: \"%s\".", name);
 		}
