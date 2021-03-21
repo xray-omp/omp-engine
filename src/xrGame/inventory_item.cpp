@@ -22,7 +22,7 @@
 #include "ai_object_location.h"
 #include "object_broker.h"
 #include "../xrEngine/igame_persistent.h"
-
+#include "Artefact.h"
 
 #ifdef DEBUG
 #	include "debug_renderer.h"
@@ -1120,9 +1120,11 @@ void CInventoryItem::Interpolate()
 	net_updateInvData* p = NetSync();
 	CPHSynchronize* pSyncObj = object().PHGetSyncItem(0);
 
+	CArtefact* artefact = smart_cast<CArtefact*>(this);
+
 	//simple linear interpolation...
 	if (!object().H_Parent() &&
-		object().getVisible() &&
+		(object().getVisible() || artefact)&&
 		object().m_pPhysicsShell &&
 		!OnServer() &&
 		p->NET_IItem.size())
