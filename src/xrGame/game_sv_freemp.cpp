@@ -117,6 +117,28 @@ void game_sv_freemp::SpawnItemToActor(u16 actorId, LPCSTR name)
 	spawn_end(E, m_server->GetServerClient()->ID);
 }
 
+
+void game_sv_freemp::OnTransferMoney(NET_Packet & P, ClientID const & clientID)
+{
+	ClientID to;
+	s32 money;
+
+	P.r_clientID(to);
+	P.r_s32(money);
+
+	game_PlayerState* ps_from = get_id(clientID);
+	if (!ps_from) return;
+
+	game_PlayerState* ps_to = get_id(clientID);
+	if (!ps_from) return;
+
+	if (money <= 0 || ps_from->money_for_round < money) return;
+
+	AddMoneyToPlayer(ps_from, -money);
+	AddMoneyToPlayer(ps_to, money);
+}
+
+
 void game_sv_freemp::OnPlayerReady(ClientID id_who)
 {
 	switch (Phase())
@@ -171,6 +193,11 @@ void game_sv_freemp::OnEvent(NET_Packet &P, u16 type, u32 time, ClientID sender)
 	case GAME_EVENT_MP_TRADE:
 		{
 			OnPlayerTrade(P, sender);
+		}
+		break;
+	case GAME_EVENT_TRANSFER_MONEY:
+		{
+			OnTransferMoney(P, sender);
 		}
 		break;
 	default:

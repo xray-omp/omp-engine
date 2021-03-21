@@ -2254,6 +2254,88 @@ public:
 	}
 };
 
+
+class CCC_TransferMoney: public IConsole_Command {
+public:
+	CCC_TransferMoney(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = false; };
+
+	virtual void	Execute(LPCSTR args)
+	{
+		string4096 buff;
+		xr_strcpy(buff, args);
+
+		u32 len = xr_strlen(buff);
+		if (0 == len)
+			return;
+
+		if (IsGameTypeSingle()) return;
+		if (g_dedicated_server) return;
+		if (!(&Level())) return;
+		if (!(&Game())) return;
+		
+		if (!Game().local_player)
+			return;
+
+		if (Game().local_player && Game().local_player->testFlag(GAME_PLAYER_FLAG_VERY_VERY_DEAD))
+			return;
+
+		CActor *pActor = smart_cast<CActor*>(Level().CurrentControlEntity());
+		if (!pActor || !pActor->is_alive())
+			return;
+		
+		string128 name;
+		s32 money;
+
+		if (sscanf_s(args, "%d %s", &money, &name, sizeof(name)) != 2)
+		{
+			Msg("! Transfer money to player. Format: \"transfer_money <money> <player name>\"");
+			return;
+		}
+		if (Game().local_player->money_for_round < money)
+		{
+			Msg("! You don't have enough money!");
+			return;
+		}
+
+		xr_strlwr(name);
+
+		bool wasSent = false;
+
+		for (auto &player : Game().players)
+		{
+			game_PlayerState *ps = player.second;
+			string128 player_name;
+			xr_strcpy(player_name, ps->getName());
+			xr_strlwr(player_name);
+
+			if (strcmp(player_name, name) == 0)
+			{
+				if (ps->GameID == Game().local_player->GameID)
+				{
+					break;
+				}
+
+				NET_Packet					P;
+				Game().u_EventGen(P, GE_GAME_EVENT, pActor->ID());
+				P.w_u16(GAME_EVENT_TRANSFER_MONEY);
+				P.w_clientID(player.first); // to
+				P.w_s32(money); // money
+				Game().u_EventSend(P);
+				wasSent = true;
+				break;
+			}
+		}
+
+		if (wasSent)
+		{
+			Msg("- The money was transferred successfully!");
+		}
+		{
+			Msg("! Failed to send money to player with name: \"%s\".", name);
+		}
+	}
+};
+
 void register_mp_console_commands()
 {
 	CMD1(CCC_SpawnToInventory,		"sv_spawn_to_player_inv");
@@ -2264,6 +2346,7 @@ void register_mp_console_commands()
 	CMD1(CCC_GSpawnToInventory,		"g_spawn_to_inv"		);
 
 	CMD1(CCC_GiveMoneyToPlayer, "sv_give_money");
+	CMD1(CCC_TransferMoney, "transfer_money");
 
 	CMD1(CCC_Restart,				"g_restart"				);
 	CMD1(CCC_RestartFast,			"g_restart_fast"		);
