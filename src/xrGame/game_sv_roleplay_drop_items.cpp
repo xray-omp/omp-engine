@@ -106,6 +106,11 @@ void game_sv_roleplay::OnDetachPlayersBag(CSE_ActorMP *actor, CSE_Abstract *item
 	// may be there is a sense to move next invokation into the ProcessDeath method...
 	FillDeathActorRejectItems(actor, to_reject);
 
+	CLASS_ID S_PDA_CLASS = TEXT2CLSID("S_PDA");
+	CLASS_ID S_TORCH_CLASS = TEXT2CLSID("TORCH_S");
+	CLASS_ID S_BINOC_CLASS = TEXT2CLSID("WP_BINOC");
+	CLASS_ID S_KNIFE_CLASS = TEXT2CLSID("WP_KNIFE");
+
 	for (auto it = actor->children.cbegin(); it != it_e; ++it)
 	{
 		u16 ItemID = *it;
@@ -118,7 +123,11 @@ void game_sv_roleplay::OnDetachPlayersBag(CSE_ActorMP *actor, CSE_Abstract *item
 
 		if ((e_item->m_tClassID == CLSID_OBJECT_W_KNIFE) ||
 			(e_item->m_tClassID == CLSID_DEVICE_TORCH) ||
-			(e_item->m_tClassID == CLSID_IITEM_BOLT))
+			(e_item->m_tClassID == CLSID_IITEM_BOLT) ||
+			(e_item->m_tClassID == S_PDA_CLASS) ||
+			(e_item->m_tClassID == S_TORCH_CLASS) ||
+			(e_item->m_tClassID == S_BINOC_CLASS) ||
+			(e_item->m_tClassID == S_KNIFE_CLASS))
 		{
 			to_destroy.push_back(e_item);
 		}
