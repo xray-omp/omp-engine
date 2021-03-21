@@ -93,6 +93,30 @@ void game_sv_freemp::AddMoneyToPlayer(game_PlayerState * ps, s32 amount)
 	signal_Syncronize();
 }
 
+void game_sv_freemp::SpawnItemToActor(u16 actorId, LPCSTR name)
+{
+	if (!name) return;
+
+	CSE_Abstract *E = spawn_begin(name);
+	E->ID_Parent = actorId;
+	E->s_flags.assign(M_SPAWN_OBJECT_LOCAL);	// flags
+
+	CSE_ALifeItemWeapon		*pWeapon = smart_cast<CSE_ALifeItemWeapon*>(E);
+	if (pWeapon)
+	{
+		u16 ammo_magsize = pWeapon->get_ammo_magsize();
+		pWeapon->a_elapsed = ammo_magsize;
+	}
+
+	CSE_ALifeItemPDA *pPda = smart_cast<CSE_ALifeItemPDA*>(E);
+	if (pPda)
+	{
+		pPda->m_original_owner = actorId;
+	}
+
+	spawn_end(E, m_server->GetServerClient()->ID);
+}
+
 void game_sv_freemp::OnPlayerReady(ClientID id_who)
 {
 	switch (Phase())
