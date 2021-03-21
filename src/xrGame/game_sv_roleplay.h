@@ -5,6 +5,7 @@ struct TeamSpawnSect
 {
 	s32 StartMoney;
 	xr_vector<xr_string> StartItems;
+	xr_vector<xr_string> DefaultItems;
 };
 
 class game_sv_roleplay : public game_sv_freemp

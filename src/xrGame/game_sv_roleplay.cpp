@@ -41,6 +41,14 @@ void game_sv_roleplay::LoadSettings()
 			_GetItem(items_str, t, item_name);
 			m_teamSettings[team_index].StartItems.push_back(item_name);
 		};
+
+		xr_strcpy(items_str, pSettings->r_string(sect, "default_items"));
+		count = _GetItemCount(items_str);
+		for (u32 t = 0; t < count; ++t)
+		{
+			_GetItem(items_str, t, item_name);
+			m_teamSettings[team_index].DefaultItems.push_back(item_name);
+		};
 	}
 }
 
@@ -105,6 +113,14 @@ void game_sv_roleplay::RespawnPlayer(ClientID id_who, bool NoSpectator)
 	if (!pA) return;
 	
 	SpawnItemToActor(pA->ID, "mp_players_rukzak");
+
+	if (m_teamSettings.count(ps->team) == 0) return;
+
+	auto teamSettings = m_teamSettings[ps->team];
+	for (auto &item : teamSettings.DefaultItems)
+	{
+		SpawnItemToActor(pA->ID, item.c_str());
+	}
 }
 
 BOOL game_sv_roleplay::OnTouch(u16 eid_who, u16 eid_what, BOOL bForced)
