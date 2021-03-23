@@ -151,7 +151,7 @@ void CPHDestroyable::Destroy(u16 source_id/*=u16(-1)*/,LPCSTR section/*="ph_skel
 	}
 	xr_vector<shared_str>::iterator i=m_destroyed_obj_visual_names.begin(),e=m_destroyed_obj_visual_names.end();
 
-	if (IsGameTypeSingle())
+	if (true/*IsGameTypeSingle()*/)
 	{
 		for(;e!=i;i++)
 			GenSpawnReplace(source_id,section,*i);
@@ -338,20 +338,22 @@ void CPHDestroyable::NotificatePart(CPHDestroyableNotificate *dn)
 
 void CPHDestroyable::NotificateDestroy(CPHDestroyableNotificate *dn)
 {
-	VERIFY(m_depended_objects);
-	VERIFY(!physics_world()->Processing());
-	m_depended_objects--;
-	PhysicallyRemovePart(dn);
-	m_notificate_objects.push_back(dn);
-	if(!m_depended_objects)
+	if (OnServer())
 	{
-		xr_vector<CPHDestroyableNotificate*>::iterator i=m_notificate_objects.begin(),e=m_notificate_objects.end();
-		for(;i<e;i++)NotificatePart(*i);
-		PhysicallyRemoveSelf();
-		m_notificate_objects.clear();
-		m_flags.set(fl_released,TRUE);
+		VERIFY(m_depended_objects);
+		VERIFY(!physics_world()->Processing());
+		m_depended_objects--;
+		PhysicallyRemovePart(dn);
+		m_notificate_objects.push_back(dn);
+		if (!m_depended_objects)
+		{
+			xr_vector<CPHDestroyableNotificate*>::iterator i = m_notificate_objects.begin(), e = m_notificate_objects.end();
+			for (; i < e; i++)NotificatePart(*i);
+			PhysicallyRemoveSelf();
+			m_notificate_objects.clear();
+			m_flags.set(fl_released, TRUE);
+		}
 	}
-
 }
 
 void CPHDestroyable::SetFatalHit(const SHit& hit)
