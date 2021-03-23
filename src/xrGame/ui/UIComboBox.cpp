@@ -76,7 +76,7 @@ void CUIComboBox::InitComboBox(Fvector2 pos, float width)
 CUIListBoxItem* CUIComboBox::AddItem_(LPCSTR str, int _data)
 {
     R_ASSERT2			(m_bInited, "Can't add item to ComboBox before Initialization");
-	CUIListBoxItem* itm = m_list_box.AddTextItem(str);
+	CUIListBoxItem* itm = m_list_box.AddTextItem(CStringTable().translate(str).c_str());
 	itm->SetData		((void*)(__int64)_data);
 	return				itm;
 }
