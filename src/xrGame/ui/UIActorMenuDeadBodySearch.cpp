@@ -138,6 +138,10 @@ bool CUIActorMenu::ToDeadBodyBag(CUICellItem* itm, bool b_use_cursor_pos)
 		{
 			return false;
 		}
+		else if (smart_cast<CBaseMonster*>(m_pPartnerInvOwner))
+		{
+			return false;
+		}
 	}
 	else // box
 	{
