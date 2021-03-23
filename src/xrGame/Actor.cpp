@@ -1410,12 +1410,17 @@ void CActor::shedule_Update	(u32 DT)
 					}
 					else
 					{
+						// See also CUIActorMenu::CheckDistance()
+						bool checkDistance = (this->Position().distance_to(pEntityAlive->Position()) < 3.0f);
+
 						bool b_allow_drag = !!pSettings->line_exist("ph_capture_visuals",pEntityAlive->cNameVisual());
 						if ( b_allow_drag )
 						{
 							m_sDefaultObjAction = m_sDeadCharacterUseOrDragAction;
 						}
-						else if ( pEntityAlive->cast_inventory_owner() )
+						else if ( pEntityAlive->cast_inventory_owner() && checkDistance &&
+											(pEntityAlive->AlreadyDie() && pEntityAlive->GetLevelDeathTime() + 3000 < Device.dwTimeGlobal)
+							)
 						{
 							m_sDefaultObjAction = m_sDeadCharacterUseAction;
 						}
