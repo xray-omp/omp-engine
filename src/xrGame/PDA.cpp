@@ -110,7 +110,7 @@ BOOL CPda::feel_touch_contact(CObject* O)
 
 	if ( entity_alive && entity_alive->cast_base_monster() )
 	{
-		return TRUE;
+		return FALSE;
 	}
 	else if ( CInventoryOwner* pInvOwner = smart_cast<CInventoryOwner*>(O) )
 	{
