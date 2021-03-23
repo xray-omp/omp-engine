@@ -69,13 +69,23 @@ void CUIActorMenu::SetPartner(CInventoryOwner* io)
 		}
 		else
 		{
-			if (IsGameTypeSingle())
+			CBaseMonster* pMonster = smart_cast<CBaseMonster*>(m_pPartnerInvOwner);
+			if (pMonster)
 			{
-				m_PartnerCharacterInfo->InitCharacter(m_pPartnerInvOwner->object_id());
+				LPCSTR monster_tex_name = pSettings->r_string(pMonster->cNameSect(), "icon");
+				m_PartnerCharacterInfo->UIIcon().InitTexture(monster_tex_name);
+				m_PartnerCharacterInfo->UIIcon().SetStretchTexture(true);
 			}
 			else
 			{
-				m_PartnerCharacterInfo->InitCharacterMP(m_pPartnerInvOwner);
+				if (IsGameTypeSingle())
+				{
+					m_PartnerCharacterInfo->InitCharacter(m_pPartnerInvOwner->object_id());
+				}
+				else
+				{
+					m_PartnerCharacterInfo->InitCharacterMP(m_pPartnerInvOwner);
+				}
 			}
 		}
 

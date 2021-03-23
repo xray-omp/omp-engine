@@ -27,6 +27,7 @@
 #include "../monster_aura.h"
 
 #include "../../../../xrphysics/PHCharacter.h"
+#include "../../../inventoryowner.h"
 
 class CCharacterPhysicsSupport;
 class CMonsterCorpseCoverEvaluator;
@@ -77,7 +78,7 @@ namespace monster_interpolation {
 };
 
 
-class CBaseMonster : public CCustomMonster, public CStepManager
+class CBaseMonster : public CCustomMonster, public CStepManager, public CInventoryOwner
 {
 	typedef	CCustomMonster								inherited;
 	
@@ -99,6 +100,7 @@ public:
 	virtual CBaseMonster*				cast_base_monster			()	{return this;}
 
 	virtual CGameObject*				cast_game_object			() {return this;}
+	virtual CInventoryOwner*            cast_inventory_owner() { return this; }
 
 public:
 	
@@ -157,6 +159,8 @@ public:
 	virtual BOOL			feel_vision_isRelevant			(CObject* O);
 	virtual BOOL			feel_touch_on_contact			(CObject* O);
 	virtual BOOL			feel_touch_contact				(CObject *);
+
+	virtual bool			unlimited_ammo() { return false; }; // -_____-
 
 	virtual bool			useful							(const CItemManager *manager, const CGameObject *object) const;
 	virtual float			evaluate						(const CItemManager *manager, const CGameObject *object) const;
