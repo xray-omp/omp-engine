@@ -1422,7 +1422,14 @@ void CActor::shedule_Update	(u32 DT)
 											(pEntityAlive->AlreadyDie() && pEntityAlive->GetLevelDeathTime() + 3000 < Device.dwTimeGlobal)
 							)
 						{
-							m_sDefaultObjAction = m_sDeadCharacterUseAction;
+							if (!pEntityAlive->cast_base_monster())
+							{
+								m_sDefaultObjAction = m_sDeadCharacterUseAction;
+							}
+							else if (CheckGameFlag(F_MUTANTS_DEADBODY_SEARCH_ENABLED))
+							{
+									m_sDefaultObjAction = m_sDeadCharacterUseAction;
+							}
 						}
 					} // m_pPersonWeLookingAt
 				}

@@ -420,7 +420,14 @@ void CActor::ActorUse()
 						pEntityAliveWeLookingAt->GetLevelDeathTime() + 3000 < Device.dwTimeGlobal)
 						// 99.9% dead
 					{
-						CurrentGameUI()->StartCarBody(this, m_pPersonWeLookingAt);
+						if (!pEntityAliveWeLookingAt->cast_base_monster())
+						{
+							CurrentGameUI()->StartCarBody(this, m_pPersonWeLookingAt);
+						}
+						else if (CheckGameFlag(F_MUTANTS_DEADBODY_SEARCH_ENABLED))
+						{
+							CurrentGameUI()->StartCarBody(this, m_pPersonWeLookingAt);
+						}
 					}						
 				}
 			}
