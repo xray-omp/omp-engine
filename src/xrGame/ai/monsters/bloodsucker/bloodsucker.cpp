@@ -506,6 +506,7 @@ void   CAI_Bloodsucker::force_visibility_state (int state)
 void   CAI_Bloodsucker::update_invisibility ()
 {
 	if(CCustomMonster::use_simplified_visual())	return;
+	if (OnClient() && !IsGameTypeSingle()) return;
 
 	using namespace							detail::bloodsucker;
 
@@ -541,6 +542,78 @@ void   CAI_Bloodsucker::update_invisibility ()
 	else
 	{
 		set_visibility_state				(full_visibility);
+	}
+}
+
+u8 CAI_Bloodsucker::GetCustomSyncFlag() const
+{
+	Flags8 flag;
+	flag.zero();
+
+	switch (get_visibility_state())
+	{
+	case unset:
+		flag.set(f_unset, true);
+		break;
+	case no_visibility:
+		flag.set(f_no_visibility, true);
+		break;
+	case partial_visibility:
+		flag.set(f_partial_visibility, true);
+		break;
+	case full_visibility:
+		flag.set(f_full_visibility, true);
+		break;
+	default:
+		R_ASSERT(0);
+		break;
+	}
+
+	return flag.flags;
+}
+
+void CAI_Bloodsucker::ProcessCustomSyncFlag_CL(u8 flags)
+{
+	Flags8 flag;
+	flag.flags = flags;
+	
+	visibility_t new_state;
+
+	if (flag.test(f_no_visibility))
+	{
+		new_state = no_visibility;
+	}
+	else if (flag.test(f_partial_visibility))
+	{
+		new_state = partial_visibility;
+	}
+	else if (flag.test(f_full_visibility))
+	{
+		new_state = full_visibility;
+	}
+	else
+	{
+		new_state = unset;
+	}
+	
+	if (get_visibility_state() == new_state)
+		return;
+
+	m_visibility_state_last_changed_time = Device.dwTimeGlobal;
+
+	m_visibility_state = new_state;
+
+	if (m_visibility_state == full_visibility)
+	{
+		stop_invisible_predator();
+	}
+	else if (m_visibility_state == partial_visibility)
+	{
+		start_invisible_predator();
+	}
+	else
+	{
+		sound().play(CAI_Bloodsucker::eChangeVisibility);
 	}
 }
 

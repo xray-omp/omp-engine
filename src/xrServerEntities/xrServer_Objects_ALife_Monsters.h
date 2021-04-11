@@ -448,6 +448,7 @@ SERVER_ENTITY_DECLARE_BEGIN2(CSE_ALifeMonsterBase,CSE_ALifeMonsterAbstract,CSE_P
 	u16								u_motion_idx = 0;
 	u8								u_motion_slot = 0;
 	Flags8						m_flags;
+	u8								m_custom_flags = 0;
 	
 	enum snd_flags {
 		monster_sound_no = u32(0),
@@ -460,7 +461,8 @@ SERVER_ENTITY_DECLARE_BEGIN2(CSE_ALifeMonsterBase,CSE_ALifeMonsterAbstract,CSE_P
 		fSndNoSound = (1 << 1),
 		fSndPlayNoDelay = (1 << 2),
 		fSndPlayWithDelay = (1 << 3),
-		fAnimNoLoop = (1 << 4)
+		fAnimNoLoop = (1 << 4),
+		fHasCustomSyncFlag = (1 << 5)
 	};
 
 	u8								m_snd_sync_sound = 0;

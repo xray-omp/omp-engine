@@ -103,8 +103,15 @@ void CBaseMonster::net_Export(NET_Packet& P)
 			flags.set(sync_flags::fAnimNoLoop, true);
 		}		
 		
+		flags.set(sync_flags::fHasCustomSyncFlag, HasCustomSyncFlag());
+
 		// write flag
 		P.w_u8(flags.get()); // <--
+
+		if (flags.test(sync_flags::fHasCustomSyncFlag))
+		{
+			P.w_u8(GetCustomSyncFlag()); // <--
+		}
 
 		// write health
 		P.w_float(GetfHealth()); // <--
@@ -226,6 +233,7 @@ void CBaseMonster::net_Import(NET_Packet& P)
 	else // MP net_import
 	{
 		Flags8 flags;
+		u8 custom_flag;
 		float health;
 		Fvector fv_position;
 		net_physics_state physics_state;
@@ -241,6 +249,11 @@ void CBaseMonster::net_Import(NET_Packet& P)
 		setEnabled(TRUE);
 		
 		P.r_u8(flags.flags);
+
+		if (flags.test(sync_flags::fHasCustomSyncFlag))
+		{
+			P.r_u8(custom_flag);
+		}
 
 		P.r_float(health);
 
@@ -272,6 +285,10 @@ void CBaseMonster::net_Import(NET_Packet& P)
 		//P.r_u8(u_motion_slot);
 		
 
+		if (flags.test(sync_flags::fHasCustomSyncFlag))
+		{
+			ProcessCustomSyncFlag_CL(custom_flag);
+		}
 
 		// set health
 		SetfHealth(health);

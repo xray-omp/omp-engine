@@ -1925,6 +1925,11 @@ void CSE_ALifeMonsterBase::UPDATE_Read	(NET_Packet	&tNetPacket)
 	{
 		tNetPacket.r_u8(m_flags.flags);
 
+		if (m_flags.test(fHasCustomSyncFlag))
+		{
+			tNetPacket.r_u8(m_custom_flags);
+		}
+		
 		set_health(tNetPacket.r_float());
 
 		if (m_flags.test(fNeedPhysicSync))
@@ -1973,6 +1978,11 @@ void CSE_ALifeMonsterBase::UPDATE_Write	(NET_Packet	&tNetPacket)
 	else
 	{
 		tNetPacket.w_u8(m_flags.flags);
+
+		if (m_flags.test(fHasCustomSyncFlag))
+		{
+			tNetPacket.w_u8(m_custom_flags);
+		}
 
 		tNetPacket.w_float(get_health());
 

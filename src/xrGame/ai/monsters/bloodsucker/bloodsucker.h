@@ -79,6 +79,26 @@ public:
 
 			virtual bool    in_solid_state           ();
 
+
+	//--------------------------------------------------------------------
+	// Invisibility sync
+	//--------------------------------------------------------------------
+
+private:
+	//  enum visibility_t { unset = -1, no_visibility = 0, partial_visibility = 1, full_visibility = 2 };
+	enum sync_visibility_flags {
+		f_unset = (1 << 0),
+		f_no_visibility = (1 << 1),
+		f_partial_visibility = (1 << 2),
+		f_full_visibility = (1 << 3)
+	};
+
+public:
+			virtual bool			HasCustomSyncFlag() const { return true; }
+			virtual u8				GetCustomSyncFlag() const;
+			virtual void			ProcessCustomSyncFlag_CL(u8 flags);
+
+
 	//--------------------------------------------------------------------
 	// Vampire
 	//--------------------------------------------------------------------

@@ -132,6 +132,9 @@ public:
 	u16						u_last_motion_slot;
 	u8						u_last_motion_no_loop;
 
+	virtual bool			HasCustomSyncFlag() const { return false; }
+	virtual u8				GetCustomSyncFlag() const { return 0; }
+	virtual void			ProcessCustomSyncFlag_CL(u8 flags) {};
 
 	//save/load server serialization
 	virtual void			save							(NET_Packet &output_packet) {inherited::save(output_packet);}
