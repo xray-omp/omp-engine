@@ -15,6 +15,10 @@
 #include "../../../../xrphysics/PhysicsShell.h"
 #include "../xrphysics/phvalide.h"
 #include "../../../sound_player.h"
+#include "../../../../xrServerEntities/xrserver_objects_alife_monsters.h"
+
+using sync_flags = CSE_ALifeMonsterBase::sync_flags;
+using snd_flags = CSE_ALifeMonsterBase::snd_flags;
 
 extern int g_cl_InterpolationType;
 
@@ -68,12 +72,48 @@ void CBaseMonster::net_Export(NET_Packet& P)
 	}
 	else // MP net_export
 	{
-		CPHSynchronize* sync = PHGetSyncItem(0);
-		if (sync)
+		CPHSynchronize* pPhSync = PHGetSyncItem(0);
+		CControl_Com* pCapturer = control().get_capturer(ControlCom::eControlAnimation);
+
+		Flags8 flags;
+		flags.zero();
+		
+		// physics flag
+		flags.set(sync_flags::fNeedPhysicSync, !!pPhSync);
+
+		// sounds flags
+		switch (m_sv_snd_sync_flag)
 		{
-			P.w_u8(1);
+		case snd_flags::monster_sound_no:
+			flags.set(sync_flags::fSndNoSound, true);
+			break;
+		case snd_flags::monster_sound_play:
+			flags.set(sync_flags::fSndPlayNoDelay, true);
+			break;
+		case snd_flags::monster_sound_play_with_delay:
+			flags.set(sync_flags::fSndPlayWithDelay, true);
+			break;
+		default:
+			break;
+		}
+
+		// animation flag
+		if (pCapturer && pCapturer->ced() != NULL)
+		{
+			flags.set(sync_flags::fAnimNoLoop, true);
+		}		
+		
+		// write flag
+		P.w_u8(flags.get()); // <--
+
+		// write health
+		P.w_float(GetfHealth()); // <--
+
+		// write physics
+		if (flags.test(sync_flags::fNeedPhysicSync))
+		{
 			SPHNetState state;
-			sync->get_State(state);
+			pPhSync->get_State(state);
 
 			net_physics_state physics_state;
 			physics_state.fill(state, Level().timeServer());
@@ -81,40 +121,54 @@ void CBaseMonster::net_Export(NET_Packet& P)
 		}
 		else
 		{
-			P.w_u8(0);
-			P.w_vec3(Position());
+			P.w_vec3(Position()); // <--
 		}
 
-		P.w_float(GetfHealth());
-
-		net_Export_Sounds(P);
-
-		P.w_angle8(movement().m_body.current.pitch);
+		// write angles
+		P.w_angle8(movement().m_body.current.pitch); // <--
 		//P.w_angle8(movement().m_body.current.roll);
-		P.w_angle8(movement().m_body.current.yaw);			   
+		P.w_angle8(movement().m_body.current.yaw); // <--
 
-		
-		IKinematicsAnimated* ik_anim_obj = smart_cast<IKinematicsAnimated*>(Visual());
-		CControl_Com* capturer = control().get_capturer(ControlCom::eControlAnimation);
+		// write sounds
+		R_ASSERT(m_sv_snd_sync_sound < 255);
+		switch (m_sv_snd_sync_flag)
+		{
+		case snd_flags::monster_sound_no:
+			break;
+		case snd_flags::monster_sound_play:
+			P.w_u8(static_cast<u8>(m_sv_snd_sync_sound)); // <--
+			break;
+		case snd_flags::monster_sound_play_with_delay:
+			P.w_u8(static_cast<u8>(m_sv_snd_sync_sound)); // <--
+			P.w_u16(static_cast<u16>(m_sv_snd_sync_sound_delay / 1000)); // <--
+			break;
+		default:
+			break;
+		}  	
 
-		if (capturer && capturer->ced() != NULL)
+		// write animations
+		if (flags.test(sync_flags::fAnimNoLoop))
 		{
 			control().get_capturer(ControlCom::eControlAnimation);
-			SControlAnimationData *ctrl_anim = (SControlAnimationData*)control().data(capturer, ControlCom::eControlAnimation);
+			SControlAnimationData *ctrl_anim = (SControlAnimationData*)control().data(pCapturer, ControlCom::eControlAnimation);
 			VERIFY(ctrl_anim);
 
 			P.w_u16(ctrl_anim->global.get_motion().idx);
-			P.w_u8(ctrl_anim->global.get_motion().slot);
-			P.w_u8(1);
-			if(m_bInterpolate)
-				m_bInterpolate = false;
+			//P.w_u8(ctrl_anim->global.get_motion().slot);
+			R_ASSERT3(ctrl_anim->global.get_motion().slot == 0, "motion slot is not zero", this->cName().c_str());
 		}
 		else
 		{
+			IKinematicsAnimated* ik_anim_obj = smart_cast<IKinematicsAnimated*>(Visual());
 			P.w_u16(ik_anim_obj->ID_Cycle_Safe(m_anim_base->cur_anim_info().name).idx);
-			P.w_u8(ik_anim_obj->ID_Cycle_Safe(m_anim_base->cur_anim_info().name).slot);
-			P.w_u8(0);
+			//P.w_u8(ik_anim_obj->ID_Cycle_Safe(m_anim_base->cur_anim_info().name).slot);
+			R_ASSERT3(ik_anim_obj->ID_Cycle_Safe(m_anim_base->cur_anim_info().name).slot == 0, "motion slot is not zero", this->cName().c_str());
 		}
+
+		// reset sounds
+		m_sv_snd_sync_flag = snd_flags::monster_sound_no;
+		m_sv_snd_sync_sound = 0;
+		m_sv_snd_sync_sound_delay = 0;
 	}
 }
 
@@ -171,17 +225,26 @@ void CBaseMonster::net_Import(NET_Packet& P)
 	} 
 	else // MP net_import
 	{
+		Flags8 flags;
+		float health;
+		Fvector fv_position;
 		net_physics_state physics_state;
 		SRotation fv_direction;
-		Fvector fv_position;
-		float f_health;
+
+		u8 sound_type = 0;
+		u32 sound_delay = 0;
+
 		u16 u_motion_idx;
-		u8 u_motion_slot;
-		u8 phSyncFlag;
+		// u8 u_motion_slot;
 
-		P.r_u8(phSyncFlag);
+		setVisible(TRUE);
+		setEnabled(TRUE);
+		
+		P.r_u8(flags.flags);
 
-		if (phSyncFlag)
+		P.r_float(health);
+
+		if (flags.test(sync_flags::fNeedPhysicSync))
 		{
 			physics_state.read(P);
 			fv_position.set(physics_state.physics_position);
@@ -190,25 +253,31 @@ void CBaseMonster::net_Import(NET_Packet& P)
 		{
 			P.r_vec3(fv_position);
 		}
-
-		P.r_float(f_health);
-
-		net_Import_Sounds(P);
-
+		
 		P.r_angle8(fv_direction.pitch);
 		//P.r_angle8(fv_direction.roll);
 		P.r_angle8(fv_direction.yaw);
 
+		if (flags.test(sync_flags::fSndPlayNoDelay))
+		{
+			sound_type = P.r_u8();
+		}
+		else if (flags.test(sync_flags::fSndPlayWithDelay))
+		{
+			sound_type = P.r_u8();
+			sound_delay = P.r_u16() * 1000;
+		}
+
 		P.r_u16(u_motion_idx);
-		P.r_u8(u_motion_slot);
-		P.r_u8(u_monster_flag);
+		//P.r_u8(u_motion_slot);
+		
 
-		SetfHealth(f_health);
 
-		setVisible(TRUE);
-		setEnabled(TRUE);
-
-		if (phSyncFlag)
+		// set health
+		SetfHealth(health);
+		
+		// apply physics and position
+		if (flags.test(sync_flags::fNeedPhysicSync))
 		{
 			monster_interpolation::net_update_A N_A;
 			N_A.State.enabled = physics_state.physics_state_enabled;
@@ -236,68 +305,21 @@ void CBaseMonster::net_Import(NET_Packet& P)
 			{
 				PHUnFreeze();
 			}
-
 			NET_A.clear();
 		}
 
-		ApplyAnimation(u_motion_idx, u_motion_slot);
-	}
-}
-
-
-void CBaseMonster::net_Export_Sounds(NET_Packet& P)
-{
-	R_ASSERT(m_sv_snd_sync_sound < 255);
-
-	u8 sound_flag = m_sv_snd_sync_flag;
-	u8 sound_type = u8(m_sv_snd_sync_sound);
-	u32 sound_delay = m_sv_snd_sync_sound_delay;
-
-	switch (m_sv_snd_sync_flag)
-	{
-	case monster_sound_no:
-		P.w_u8(sound_flag);
-		break;
-	case monster_sound_play:
-		P.w_u8(sound_flag);
-		P.w_u8(sound_type);
-		break;
-	case monster_sound_play_with_delay:
-		P.w_u8(sound_flag);
-		P.w_u8(sound_type);
-		P.w_u32(sound_delay);
-		break;
-	default:
-		break;
-	}
-
-	m_sv_snd_sync_flag = monster_sound_no;
-	m_sv_snd_sync_sound = 0;
-	m_sv_snd_sync_sound_delay = 0;
-}
-
-
-void CBaseMonster::net_Import_Sounds(NET_Packet& P)
-{
-	u8 sound_flag = P.r_u8();
-	u8 sound_type;
-	u32 sound_delay;
-
-	switch (sound_flag)
-	{
-	case monster_sound_no:
-		break;
-	case monster_sound_play:
-		sound_type = P.r_u8();
-		sound().play(sound_type);
-		break;
-	case monster_sound_play_with_delay:
-		sound_type = P.r_u8();
-		sound_delay = P.r_u32();
-		sound().play(sound_type, 0, 0, sound_delay);
-		break;
-	default:
-		break;
+		// play sound
+		if (flags.test(sync_flags::fSndPlayNoDelay))
+		{
+			sound().play(sound_type);
+		}
+		else if (flags.test(sync_flags::fSndPlayWithDelay))
+		{
+			sound().play(sound_type, 0, 0, sound_delay);
+		}
+		
+		// apply animation
+		ApplyAnimation(u_motion_idx, 0, flags.test(sync_flags::fAnimNoLoop));
 	}
 }
 
@@ -567,7 +589,7 @@ void CBaseMonster::CalculateInterpolationParams()
 	if (m_pPhysicsShell) m_pPhysicsShell->NetInterpolationModeON();
 }
 
-void CBaseMonster::ApplyAnimation(u16 motion_idx, u8 motion_slot)
+void CBaseMonster::ApplyAnimation(u16 motion_idx, u8 motion_slot, bool noLoop)
 {
 	MotionID motion;
 	IKinematicsAnimated* ik_anim_obj = smart_cast<IKinematicsAnimated*>(Visual());
@@ -575,6 +597,7 @@ void CBaseMonster::ApplyAnimation(u16 motion_idx, u8 motion_slot)
 	{
 		u_last_motion_idx = motion_idx;
 		u_last_motion_slot = motion_slot;
+		u_last_motion_no_loop = noLoop;
 		motion.idx = motion_idx;
 		motion.slot = motion_slot;
 		if (motion.valid())
@@ -584,7 +607,7 @@ void CBaseMonster::ApplyAnimation(u16 motion_idx, u8 motion_slot)
 
 			CStepManager::on_animation_start(motion, ik_anim_obj->LL_PlayCycle(bone_or_part, motion, TRUE,
 				ik_anim_obj->LL_GetMotionDef(motion)->Accrue(), ik_anim_obj->LL_GetMotionDef(motion)->Falloff(),
-				ik_anim_obj->LL_GetMotionDef(motion)->Speed(), u_monster_flag, 0, 0, 0));
+				ik_anim_obj->LL_GetMotionDef(motion)->Speed(), noLoop, 0, 0, 0));
 		}
 	}
 }

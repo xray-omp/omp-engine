@@ -233,6 +233,7 @@ public:
 	virtual u32						ef_detector_type		() const;
 	virtual CSE_ALifeCreatureAbstract	*cast_creature_abstract		() {return this;};
 #ifdef XRGAME_EXPORTS
+
 	virtual	void					on_death				(CSE_Abstract *killer);
 	virtual void					on_spawn				();
 #endif
@@ -443,22 +444,27 @@ add_to_type_list(CSE_ALifeMonsterZombie)
 
 SERVER_ENTITY_DECLARE_BEGIN2(CSE_ALifeMonsterBase,CSE_ALifeMonsterAbstract,CSE_PHSkeleton)
 	net_physics_state				physics_state;
-	float							f_health;
 	u16								m_spec_object_id;
-	u16								u_motion_idx;
-	u8								u_motion_slot;
-	u8								u_moster_flag;
-	u8								phSyncFlag = 0;
-
-	enum {
+	u16								u_motion_idx = 0;
+	u8								u_motion_slot = 0;
+	Flags8						m_flags;
+	
+	enum snd_flags {
 		monster_sound_no = u32(0),
 		monster_sound_play,
 		monster_sound_play_with_delay
 	};
 
-	u8								m_snd_sync_flag = monster_sound_no;
+	enum sync_flags {
+		fNeedPhysicSync = (1 << 0),
+		fSndNoSound = (1 << 1),
+		fSndPlayNoDelay = (1 << 2),
+		fSndPlayWithDelay = (1 << 3),
+		fAnimNoLoop = (1 << 4)
+	};
+
 	u8								m_snd_sync_sound = 0;
-	u32								m_snd_sync_sound_delay = 0;
+	u16								m_snd_sync_sound_delay = 0;
 
 									CSE_ALifeMonsterBase	(LPCSTR caSection);				// constructor for variable initialization
 	virtual							~CSE_ALifeMonsterBase	();

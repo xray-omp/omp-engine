@@ -40,6 +40,7 @@
 #include "../../../ai_object_location.h"
 #include "../../../ai_space.h"
 #include "../../../../xrServerEntities/script_engine.h"
+#include "../../../../xrServerEntities/xrserver_objects_alife_monsters.h"
 
 #include "../anti_aim_ability.h"
 
@@ -53,6 +54,8 @@
 
 #pragma warning (disable:4355)
 #pragma warning (push)
+
+using snd_flags = CSE_ALifeMonsterBase::snd_flags;
 
 CBaseMonster::CBaseMonster() :	m_psy_aura(this, "psy"), 
 								m_fire_aura(this, "fire"), 
@@ -630,7 +633,7 @@ void CBaseMonster::set_state_sound(u32 type, bool once)
 	
 		sound().play(type);
 	
-		m_sv_snd_sync_flag = monster_sound_play;
+		m_sv_snd_sync_flag = snd_flags::monster_sound_play;
 		m_sv_snd_sync_sound = type;
 
 	} else {
@@ -641,7 +644,7 @@ void CBaseMonster::set_state_sound(u32 type, bool once)
 			
 			sound().play(MonsterSound::eMonsterSoundAttackHit);
 
-			m_sv_snd_sync_flag = monster_sound_play;
+			m_sv_snd_sync_flag = snd_flags::monster_sound_play;
 			m_sv_snd_sync_sound = MonsterSound::eMonsterSoundAttackHit;
 
 		} else {
@@ -682,7 +685,7 @@ void CBaseMonster::set_state_sound(u32 type, bool once)
 
 			sound().play(type, 0, 0, delay);
 
-			m_sv_snd_sync_flag = monster_sound_play_with_delay;
+			m_sv_snd_sync_flag = snd_flags::monster_sound_play_with_delay;
 			m_sv_snd_sync_sound = type;
 			m_sv_snd_sync_sound_delay = delay;
 		} 

@@ -724,7 +724,7 @@ void CAI_Bloodsucker::predator_start()
 		if (mid.valid() && u_last_motion_idx != u16(-1) && u_last_motion_slot != u16(-1)) {
 			u_last_motion_idx = NULL;
 			u_last_motion_slot = NULL;
-			ApplyAnimation(mid.idx, mid.slot);
+			ApplyAnimation(mid.idx, mid.slot, u_last_motion_no_loop);
 		}
 	}
 	
@@ -767,7 +767,7 @@ void CAI_Bloodsucker::predator_stop()
 		if (mid.valid() && u_last_motion_idx != u16(-1) && u_last_motion_slot != u16(-1)) {
 			u_last_motion_idx = NULL;
 			u_last_motion_slot = NULL;
-			ApplyAnimation(mid.idx, mid.slot);
+			ApplyAnimation(mid.idx, mid.slot, u_last_motion_no_loop);
 		}
 	}
 	

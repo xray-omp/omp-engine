@@ -126,15 +126,11 @@ public:
 	virtual void			net_Import						(NET_Packet& P);
 	virtual void			net_Relcase						(CObject *O);
 
-	virtual void			net_Export_Sounds(NET_Packet& P);
-	virtual void			net_Import_Sounds(NET_Packet& P);
-
 	//NET MP simple Sync
 
 	u16						u_last_motion_idx;
 	u16						u_last_motion_slot;
-	//
-	u8						u_monster_flag;
+	u8						u_last_motion_no_loop;
 
 
 	//save/load server serialization
@@ -313,7 +309,7 @@ protected:
 	CControlPathBuilder			*m_movement_manager;
 protected:
 	virtual CMovementManager	*create_movement_manager();
-	void						ApplyAnimation(u16 motion_idx, u8 motion_slot);
+	void						ApplyAnimation(u16 motion_idx, u8 motion_slot, bool noLoop);
 // members
 public:
 	void			set_force_anti_aim	(bool force_anti_aim) { m_force_anti_aim = force_anti_aim; }
@@ -527,14 +523,8 @@ protected:
 	LPCSTR					m_critical_wound_anim_legs;
 
 	//////////////////////////////////////////////////////////////////////////
-
-	enum {
-		monster_sound_no = u32(0),
-		monster_sound_play,
-		monster_sound_play_with_delay
-	};
-
-	u8  m_sv_snd_sync_flag = monster_sound_no;
+	
+	u8  m_sv_snd_sync_flag = 0;
 	u32 m_sv_snd_sync_sound = 0;
 	u32 m_sv_snd_sync_sound_delay = 0;
 

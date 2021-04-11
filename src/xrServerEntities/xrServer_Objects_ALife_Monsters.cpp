@@ -1889,7 +1889,7 @@ CSE_ALifeMonsterBase::CSE_ALifeMonsterBase	(LPCSTR caSection) : CSE_ALifeMonster
 {
     set_visual					(pSettings->r_string(caSection,"visual"));
 	m_spec_object_id			= 0xffff;
-	
+	m_flags.zero();
 }
 
 CSE_ALifeMonsterBase::~CSE_ALifeMonsterBase()
@@ -1923,8 +1923,11 @@ void CSE_ALifeMonsterBase::UPDATE_Read	(NET_Packet	&tNetPacket)
 	}
 	else
 	{
-		tNetPacket.r_u8(phSyncFlag);
-		if (phSyncFlag)
+		tNetPacket.r_u8(m_flags.flags);
+
+		set_health(tNetPacket.r_float());
+
+		if (m_flags.test(fNeedPhysicSync))
 		{
 			physics_state.read(tNetPacket);
 			o_Position.set(physics_state.physics_position);
@@ -1934,36 +1937,29 @@ void CSE_ALifeMonsterBase::UPDATE_Read	(NET_Packet	&tNetPacket)
 			o_Position.set(tNetPacket.r_vec3());
 		}
 
-		tNetPacket.r_float(f_health);
-
-		// sounds synchronization
-		tNetPacket.r_u8(m_snd_sync_flag);
-		switch (m_snd_sync_flag)
-		{
-		case 0:
-			m_snd_sync_sound = 0;
-			m_snd_sync_sound_delay = 0;
-			break;
-		case 1:
-			tNetPacket.r_u8(m_snd_sync_sound);
-			m_snd_sync_sound_delay = 0;
-			break;
-		case 2:
-			tNetPacket.r_u8(m_snd_sync_sound);
-			tNetPacket.r_u32(m_snd_sync_sound_delay);
-			break;
-		default:
-			break;
-		}
-
 		tNetPacket.r_angle8(o_torso.pitch);
 		//tNetPacket.r_angle8(o_torso.roll);
 		tNetPacket.r_angle8(o_torso.yaw);
 
+		// sounds synchronization
+		if (m_flags.test(sync_flags::fSndPlayNoDelay))
+		{
+			tNetPacket.r_u8(m_snd_sync_sound);
+			m_snd_sync_sound_delay = 0;
+		}
+		else if (m_flags.test(sync_flags::fSndPlayWithDelay))
+		{
+			tNetPacket.r_u8(m_snd_sync_sound);
+			tNetPacket.r_u16(m_snd_sync_sound_delay);
+		}
+		else
+		{
+			m_snd_sync_sound = 0;
+			m_snd_sync_sound_delay = 0;
+		}
+
 		tNetPacket.r_u16(u_motion_idx);
-		tNetPacket.r_u8(u_motion_slot);
-		tNetPacket.r_u8(u_moster_flag);
-		set_health(f_health);
+		//tNetPacket.r_u8(u_motion_slot);
 	}
 }
 
@@ -1976,8 +1972,11 @@ void CSE_ALifeMonsterBase::UPDATE_Write	(NET_Packet	&tNetPacket)
 	}
 	else
 	{
-		tNetPacket.w_u8(phSyncFlag);
-		if (phSyncFlag)
+		tNetPacket.w_u8(m_flags.flags);
+
+		tNetPacket.w_float(get_health());
+
+		if (m_flags.test(fNeedPhysicSync))
 		{
 			physics_state.write(tNetPacket);
 		}
@@ -1986,31 +1985,22 @@ void CSE_ALifeMonsterBase::UPDATE_Write	(NET_Packet	&tNetPacket)
 			tNetPacket.w_vec3(o_Position);
 		}
 
-		tNetPacket.w_float(get_health());
-
-		switch (m_snd_sync_flag)
-		{
-		case 0:
-			tNetPacket.w_u8(m_snd_sync_flag);
-			break;
-		case 1:
-			tNetPacket.w_u8(m_snd_sync_flag);
-			tNetPacket.w_u8(m_snd_sync_sound);
-			break;
-		case 2:
-			tNetPacket.w_u8(m_snd_sync_flag);
-			tNetPacket.w_u8(m_snd_sync_sound);
-			tNetPacket.w_u32(m_snd_sync_sound_delay);
-			break;
-		}
-
 		tNetPacket.w_angle8(o_torso.pitch);
 		//tNetPacket.w_angle8(o_torso.roll);
 		tNetPacket.w_angle8(o_torso.yaw);
 
+		if (m_flags.test(sync_flags::fSndPlayNoDelay))
+		{
+			tNetPacket.w_u8(m_snd_sync_sound);
+		}
+		else if (m_flags.test(sync_flags::fSndPlayWithDelay))
+		{
+			tNetPacket.w_u8(m_snd_sync_sound);
+			tNetPacket.w_u16(m_snd_sync_sound_delay);
+		}
+
 		tNetPacket.w_u16(u_motion_idx);
-		tNetPacket.w_u8(u_motion_slot);
-		tNetPacket.w_u8(u_moster_flag);
+		//tNetPacket.w_u8(u_motion_slot);
 	}
 }
 
