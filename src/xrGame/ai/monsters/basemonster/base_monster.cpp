@@ -118,6 +118,8 @@ CBaseMonster::CBaseMonster() :	m_psy_aura(this, "psy"),
 
 	u_last_motion_idx = u16(-1);
 	u_last_motion_slot = u16(-1);
+
+	m_bSkipCorrectionPrediction = false;
 }
 
 #pragma warning (pop)

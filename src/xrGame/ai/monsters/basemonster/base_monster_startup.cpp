@@ -355,6 +355,7 @@ BOOL CBaseMonster::net_Spawn (CSE_Abstract* DC)
 	m_bInInterpolation = false;
 	m_bInterpolate = false;
 	m_dwILastUpdateTime = 0;
+	m_bSkipCorrectionPrediction = true;
 
 	// spawn inventory item
 //	if (ai().get_alife()) {

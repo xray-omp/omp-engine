@@ -301,6 +301,8 @@ private:
 			u32								m_dwIEndTime;
 			u32								m_dwILastUpdateTime;
 
+			bool							m_bSkipCorrectionPrediction;
+
 			void							postprocess_packet(monster_interpolation::net_update_A &packet);
 			void							CalculateInterpolationParams();
 			virtual void					make_Interpolation();

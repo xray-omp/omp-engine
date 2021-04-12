@@ -294,7 +294,7 @@ void CBaseMonster::net_Import(NET_Packet& P)
 		SetfHealth(health);
 		
 		// apply physics and position
-		if (flags.test(sync_flags::fNeedPhysicSync))
+		if (flags.test(sync_flags::fNeedPhysicSync) && !m_bSkipCorrectionPrediction)
 		{
 			monster_interpolation::net_update_A N_A;
 			N_A.State.enabled = physics_state.physics_state_enabled;
@@ -323,6 +323,7 @@ void CBaseMonster::net_Import(NET_Packet& P)
 				PHUnFreeze();
 			}
 			NET_A.clear();
+			m_bSkipCorrectionPrediction = false;
 		}
 
 		// play sound
