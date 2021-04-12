@@ -406,7 +406,7 @@ void CBaseMonster::UpdateCL()
 	}
 #endif
 
-	if ( EatedCorpse && !CorpseMemory.is_valid_corpse(EatedCorpse) )
+	if ((IsGameTypeSingle() || OnServer()) && EatedCorpse && !CorpseMemory.is_valid_corpse(EatedCorpse) )
 	{
 		EatedCorpse = NULL;
 	}
@@ -423,7 +423,8 @@ void CBaseMonster::UpdateCL()
 		update_enemy_accessible_and_at_home_info();
 		CStepManager::update(false);
 
-		update_pos_by_grouping_behaviour();
+		if (IsGameTypeSingle() || OnServer())
+			update_pos_by_grouping_behaviour();
 	}
 	if(IsGameTypeSingle() || OnServer())
 		control().update_frame();
@@ -456,11 +457,11 @@ void CBaseMonster::shedule_Update(u32 dt)
 	m_radiation_aura.update_schedule();
 
 	if (IsGameTypeSingle() || OnServer())
-		control().update_schedule	();
-
-	Morale.update_schedule		(dt);
-
-	m_anomaly_detector->update_schedule();
+	{
+		control().update_schedule();
+		Morale.update_schedule(dt);
+		m_anomaly_detector->update_schedule();
+	}
 	
 	m_pPhysics_support->in_shedule_Update(dt);
 

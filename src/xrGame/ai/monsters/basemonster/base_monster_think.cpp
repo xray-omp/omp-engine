@@ -12,6 +12,8 @@
 
 void CBaseMonster::Think()
 {
+	if (!IsGameTypeSingle() && OnClient()) return;
+
 	START_PROFILE("Base Monster/Think");
 
 	if (!g_Alive() || getDestroy())			return;
