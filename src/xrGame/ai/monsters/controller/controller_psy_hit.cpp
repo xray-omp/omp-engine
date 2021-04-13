@@ -69,6 +69,8 @@ bool CControllerPsyHit::check_start_conditions()
 	{
 		CActor *pA = const_cast<CActor *>(smart_cast<const CActor*>(m_object->EnemyMan.get_enemy()));
 		if (pA) {
+			m_curent_actor_id = u16(-1);
+
 			if (pA->Cameras().GetCamEffector(eCEControllerPsyHit))
 				return						false;
 
@@ -81,7 +83,7 @@ bool CControllerPsyHit::check_start_conditions()
 			if (m_object->Position().distance_to(pA->Position()) < m_min_tube_dist)
 				return						false;
 
-			m_actor = pA;
+			m_curent_actor_id = pA->ID();
 		}
 		else
 			return false;
@@ -92,6 +94,17 @@ bool CControllerPsyHit::check_start_conditions()
 
 void CControllerPsyHit::activate()
 {
+	CActor* pActorMP = nullptr; // for mp
+
+	if (!IsGameTypeSingle())
+	{
+		pActorMP = smart_cast<CActor*>(Level().Objects.net_Find(m_curent_actor_id));
+		if (!pActorMP)
+		{
+			return;
+		}
+	}
+
 	m_man->capture_pure				(this);
 	m_man->subscribe				(this, ControlCom::eventAnimationEnd);
 
@@ -103,10 +116,10 @@ void CControllerPsyHit::activate()
 	SControlDirectionData			*ctrl_dir = (SControlDirectionData*)m_man->data(this, ControlCom::eControlDir); 
 	VERIFY							(ctrl_dir);
 	ctrl_dir->heading.target_speed	= 3.f;
-	if(IsGameTypeSingle())
-		ctrl_dir->heading.target_angle	= m_man->direction().angle_to_target(Actor()->Position());
+	if (IsGameTypeSingle())
+		ctrl_dir->heading.target_angle = m_man->direction().angle_to_target(Actor()->Position());
 	else
-		ctrl_dir->heading.target_angle = m_man->direction().angle_to_target(m_actor->Position());
+		ctrl_dir->heading.target_angle = m_man->direction().angle_to_target(pActorMP->Position());
 
 	//////////////////////////////////////////////////////////////////////////
 	m_current_index					= 0;
@@ -117,7 +130,7 @@ void CControllerPsyHit::activate()
 	if (!IsGameTypeSingle()) {
 		NET_Packet	tmp_packet;
 		CGameObject::u_EventGen(tmp_packet, GE_CONTROLLER_PSY_FIRE, m_object->ID());
-		tmp_packet.w_u16(m_actor->ID());
+		tmp_packet.w_u16(pActorMP->ID());
 		tmp_packet.w_u8(0);
 		Level().Server->SendBroadcast(BroadcastCID, tmp_packet, net_flags(TRUE, TRUE));
 	}
@@ -141,10 +154,14 @@ void CControllerPsyHit::deactivate()
 		}
 		else
 		{
-			m_actor->u_EventGen(P, GEG_PLAYER_WEAPON_HIDE_STATE, m_actor->ID());
-			P.w_u16(INV_STATE_BLOCK_ALL);
-			P.w_u8(u8(false));
-			m_actor->u_EventSend(P);
+			CActor* pActorMP = smart_cast<CActor*>(Level().Objects.net_Find(m_curent_actor_id));
+			if (pActorMP)
+			{
+				pActorMP->u_EventGen(P, GEG_PLAYER_WEAPON_HIDE_STATE, pActorMP->ID());
+				P.w_u16(INV_STATE_BLOCK_ALL);
+				P.w_u8(u8(false));
+				pActorMP->u_EventSend(P);
+			}
 		}
 	}
 
@@ -240,13 +257,15 @@ bool CControllerPsyHit::check_conditions_final()
 	if (!m_object->g_Alive())						
 		return false;
 	
-	if (!g_actor)									
-		return false;
-	
 // 	if (m_object->EnemyMan.get_enemy() != Actor())	
 // 		return false;
 	
+	CActor* pActorMP = nullptr; // for mp
+
 	if (IsGameTypeSingle()) {
+		if (!g_actor)
+			return false;
+
 		if (!m_object->EnemyMan.is_enemy(Actor()))
 			return false;
 
@@ -258,20 +277,25 @@ bool CControllerPsyHit::check_conditions_final()
 	}
 	else
 	{
-		if (!m_object->EnemyMan.is_enemy(m_actor))
+		pActorMP = smart_cast<CActor*>(Level().Objects.net_Find(m_curent_actor_id));
+
+		if (!pActorMP)
 			return false;
 
-		if (!m_actor->g_Alive())
+		if (!m_object->EnemyMan.is_enemy(pActorMP))
 			return false;
 
-		if (m_object->Position().distance_to_xz(m_actor->Position()) < m_min_tube_dist - 2)
+		if (!pActorMP->g_Alive())
+			return false;
+
+		if (m_object->Position().distance_to_xz(pActorMP->Position()) < m_min_tube_dist - 2)
 			return false;
 	}
 	
 	if (IsGameTypeSingle())
 		return see_enemy();
 	else
-		return see_enemy(m_actor);
+		return see_enemy(pActorMP);
 }
 
 void CControllerPsyHit::death_glide_start()
@@ -280,7 +304,17 @@ void CControllerPsyHit::death_glide_start()
 		m_man->deactivate	(this);
 		return;
 	}
-	
+
+	CActor* pActorMP = nullptr; // for mp
+	if (!IsGameTypeSingle())
+	{
+		pActorMP = smart_cast<CActor*>(Level().Objects.net_Find(m_curent_actor_id));
+		if (!pActorMP)
+		{
+			return;
+		}
+	}
+
 	if (IsGameTypeSingle())
 	{
 		HUD().SetRenderable(false);
@@ -333,7 +367,7 @@ void CControllerPsyHit::death_glide_start()
 	{
 		NET_Packet	tmp_packet;
 		CGameObject::u_EventGen(tmp_packet, GE_CONTROLLER_PSY_FIRE, m_object->ID());
-		tmp_packet.w_u16(m_actor->ID());
+		tmp_packet.w_u16(pActorMP->ID());
 		tmp_packet.w_u8(1);
 		Level().Server->SendBroadcast(BroadcastCID, tmp_packet, net_flags(TRUE, TRUE));
 	}
@@ -348,10 +382,10 @@ void CControllerPsyHit::death_glide_start()
 	else
 	{
 		NET_Packet			P;
-		m_actor->u_EventGen(P, GEG_PLAYER_WEAPON_HIDE_STATE, m_actor->ID());
+		pActorMP->u_EventGen(P, GEG_PLAYER_WEAPON_HIDE_STATE, pActorMP->ID());
 		P.w_u16(INV_STATE_BLOCK_ALL);
 		P.w_u8(u8(true));
-		m_actor->u_EventSend(P);
+		pActorMP->u_EventSend(P);
 	}
 
 	
@@ -365,7 +399,7 @@ void CControllerPsyHit::death_glide_start()
 	if(IsGameTypeSingle())
 		ctrl_dir->heading.target_angle	= m_man->direction().angle_to_target(Actor()->Position());
 	else
-		ctrl_dir->heading.target_angle = m_man->direction().angle_to_target(m_actor->Position());
+		ctrl_dir->heading.target_angle = m_man->direction().angle_to_target(pActorMP->Position());
 
 	//////////////////////////////////////////////////////////////////////////
 }
@@ -382,10 +416,14 @@ void CControllerPsyHit::death_glide_end()
 
 		m_object->Hit_Psy(Actor(), monster->m_tube_damage);
 	}
-	else 
+	else
 	{
 		CController *monster = smart_cast<CController *>(m_object);
-		m_object->Hit_Psy(m_actor, monster->m_tube_damage);
+		CActor* pActorMP = smart_cast<CActor*>(Level().Objects.net_Find(m_curent_actor_id));
+		if (pActorMP)
+		{
+			m_object->Hit_Psy(pActorMP, monster->m_tube_damage);
+		}
 	}
 
 
@@ -437,15 +475,20 @@ void CControllerPsyHit::hit()
 {
 	//CController *monster	= smart_cast<CController *>(m_object);
 	
-	if (!IsGameTypeSingle()) {
-		NET_Packet	tmp_packet;
-		CGameObject::u_EventGen(tmp_packet, GE_CONTROLLER_PSY_FIRE, m_object->ID());
-		tmp_packet.w_u16(m_actor->ID());
-		tmp_packet.w_u8(3);
-		Level().Server->SendBroadcast(BroadcastCID, tmp_packet, net_flags(TRUE, TRUE));
+	if (!IsGameTypeSingle())
+	{
+		CActor* pActorMP = smart_cast<CActor*>(Level().Objects.net_Find(m_curent_actor_id));
+		if (pActorMP)
+		{
+			NET_Packet	tmp_packet;
+			CGameObject::u_EventGen(tmp_packet, GE_CONTROLLER_PSY_FIRE, m_object->ID());
+			tmp_packet.w_u16(pActorMP->ID());
+			tmp_packet.w_u8(3);
+			Level().Server->SendBroadcast(BroadcastCID, tmp_packet, net_flags(TRUE, TRUE));
+		}
 	}
-	else
-		set_sound_state			(eHit);
+
+	set_sound_state			(eHit);
 	//m_object->Hit_Psy		(Actor(), monster->m_tube_damage);
 }
 
@@ -466,11 +509,15 @@ void CControllerPsyHit::stop ()
 	}
 	else
 	{
-		NET_Packet	tmp_packet;
-		CGameObject::u_EventGen(tmp_packet, GE_CONTROLLER_PSY_FIRE, m_object->ID());
-		tmp_packet.w_u16(m_actor->ID());
-		tmp_packet.w_u8(2);
-		Level().Server->SendBroadcast(BroadcastCID, tmp_packet, net_flags(TRUE, TRUE));
+		CActor* pActorMP = smart_cast<CActor*>(Level().Objects.net_Find(m_curent_actor_id));
+		if (pActorMP)
+		{
+			NET_Packet	tmp_packet;
+			CGameObject::u_EventGen(tmp_packet, GE_CONTROLLER_PSY_FIRE, m_object->ID());
+			tmp_packet.w_u16(pActorMP->ID());
+			tmp_packet.w_u8(2);
+			Level().Server->SendBroadcast(BroadcastCID, tmp_packet, net_flags(TRUE, TRUE));
+		}
 	}
 }
 
