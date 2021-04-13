@@ -308,13 +308,14 @@ private:
 			virtual void					make_Interpolation();
 // for interpolation
 
+protected:
+	void						ApplyAnimation(u16 motion_idx, u8 motion_slot, bool noLoop);
 
 	// Movement Manager
 protected:
 	CControlPathBuilder			*m_movement_manager;
 protected:
 	virtual CMovementManager	*create_movement_manager();
-	void						ApplyAnimation(u16 motion_idx, u8 motion_slot, bool noLoop);
 // members
 public:
 	void			set_force_anti_aim	(bool force_anti_aim) { m_force_anti_aim = force_anti_aim; }
