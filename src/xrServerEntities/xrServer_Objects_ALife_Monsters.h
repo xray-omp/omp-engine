@@ -443,13 +443,7 @@ add_to_type_list(CSE_ALifeMonsterZombie)
 #define script_type_list save_type_list(CSE_ALifeMonsterZombie)
 
 SERVER_ENTITY_DECLARE_BEGIN2(CSE_ALifeMonsterBase,CSE_ALifeMonsterAbstract,CSE_PHSkeleton)
-	net_physics_state				physics_state;
-	u16								m_spec_object_id;
-	u16								u_motion_idx = 0;
-	u8								u_motion_slot = 0;
-	Flags8						m_flags;
-	u8								m_custom_flags = 0;
-	
+
 	enum snd_flags {
 		monster_sound_no = u32(0),
 		monster_sound_play,
@@ -464,6 +458,14 @@ SERVER_ENTITY_DECLARE_BEGIN2(CSE_ALifeMonsterBase,CSE_ALifeMonsterAbstract,CSE_P
 		fAnimNoLoop = (1 << 4),
 		fHasCustomSyncFlag = (1 << 5)
 	};
+
+	net_physics_state	physics_state;
+	u16								m_spec_object_id;
+	u16								u_motion_idx = 0;
+	u8								u_motion_slot = 0;
+	Flags8						m_flags;
+	u8								m_custom_flags = 0;
+	snd_flags					m_sound_flag = snd_flags::monster_sound_no;
 
 	u8								m_snd_sync_sound = 0;
 	u16								m_snd_sync_sound_delay = 0;

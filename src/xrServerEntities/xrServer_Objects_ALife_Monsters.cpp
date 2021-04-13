@@ -1949,18 +1949,15 @@ void CSE_ALifeMonsterBase::UPDATE_Read	(NET_Packet	&tNetPacket)
 		// sounds synchronization
 		if (m_flags.test(sync_flags::fSndPlayNoDelay))
 		{
+			m_sound_flag = snd_flags::monster_sound_play;
 			tNetPacket.r_u8(m_snd_sync_sound);
 			m_snd_sync_sound_delay = 0;
 		}
 		else if (m_flags.test(sync_flags::fSndPlayWithDelay))
 		{
+			m_sound_flag = snd_flags::monster_sound_play_with_delay;
 			tNetPacket.r_u8(m_snd_sync_sound);
 			tNetPacket.r_u16(m_snd_sync_sound_delay);
-		}
-		else
-		{
-			m_snd_sync_sound = 0;
-			m_snd_sync_sound_delay = 0;
 		}
 
 		tNetPacket.r_u16(u_motion_idx);
@@ -1977,6 +1974,23 @@ void CSE_ALifeMonsterBase::UPDATE_Write	(NET_Packet	&tNetPacket)
 	}
 	else
 	{
+		// Pavel: отправляем последний неотправленный звук
+		switch (m_sound_flag)
+		{
+		case CSE_ALifeMonsterBase::monster_sound_play:
+			m_flags.set(sync_flags::fSndPlayNoDelay, true);
+			m_flags.set(sync_flags::fSndPlayWithDelay, false);
+			break;
+		case CSE_ALifeMonsterBase::monster_sound_play_with_delay:
+			m_flags.set(sync_flags::fSndPlayWithDelay, true);
+			m_flags.set(sync_flags::fSndPlayNoDelay, false);
+			break;
+		default:
+			m_flags.set(sync_flags::fSndPlayNoDelay, false);
+			m_flags.set(sync_flags::fSndPlayWithDelay, false);
+			break;
+		}
+
 		tNetPacket.w_u8(m_flags.flags);
 
 		if (m_flags.test(fHasCustomSyncFlag))
@@ -2011,6 +2025,10 @@ void CSE_ALifeMonsterBase::UPDATE_Write	(NET_Packet	&tNetPacket)
 
 		tNetPacket.w_u16(u_motion_idx);
 		//tNetPacket.w_u8(u_motion_slot);
+
+		m_sound_flag = snd_flags::monster_sound_no;
+		m_snd_sync_sound = 0;
+		m_snd_sync_sound_delay = 0;
 	}
 }
 
