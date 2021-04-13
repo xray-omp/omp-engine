@@ -591,8 +591,8 @@ void CControlAnimationBase::check_hit(MotionID motion, float time_perc)
 
 	SAAParam &params		= AA_GetParams(motion,time_perc);
 	
-	m_object->sound().play	(MonsterSound::eMonsterSoundAttackHit);
-
+	m_object->PlaySoundSync(MonsterSound::eMonsterSoundAttackHit);
+	
 	bool should_hit = true;
 	// определить дистанцию до врага
 	Fvector d;

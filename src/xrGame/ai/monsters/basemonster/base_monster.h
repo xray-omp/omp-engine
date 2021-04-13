@@ -534,6 +534,9 @@ protected:
 	u32 m_sv_snd_sync_sound = 0;
 	u32 m_sv_snd_sync_sound_delay = 0;
 
+public:
+	void PlaySoundSync(u32 type);
+
 	//////////////////////////////////////////////////////////////////////////
 
 public:

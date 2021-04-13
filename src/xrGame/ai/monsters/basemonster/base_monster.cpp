@@ -697,6 +697,16 @@ void CBaseMonster::set_state_sound(u32 type, bool once)
 	m_prev_sound_type	= type;
 }
 
+void CBaseMonster::PlaySoundSync(u32 type)
+{
+	sound().play(type);
+	if (!IsGameTypeSingle() && OnServer())
+	{
+		m_sv_snd_sync_flag = snd_flags::monster_sound_play;
+		m_sv_snd_sync_sound = type;
+	}
+}
+
 BOOL CBaseMonster::feel_touch_on_contact	(CObject *O)
 {
 	return		(inherited::feel_touch_on_contact(O));

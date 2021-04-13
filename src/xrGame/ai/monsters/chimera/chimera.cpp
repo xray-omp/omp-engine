@@ -10,7 +10,9 @@
 #include "../control_animation_base.h"
 #include "../control_movement_base.h"
 #include "../control_path_builder_base.h"
+#include "../../../../xrServerEntities/xrserver_objects_alife_monsters.h"
 
+using snd_flags = CSE_ALifeMonsterBase::snd_flags;
 
 CChimera::CChimera ()
 {
@@ -167,6 +169,11 @@ void   CChimera::jump (Fvector const &position, float const factor)
 {
 	com_man().script_jump					(position, factor);
 	sound().play							(MonsterSound::eMonsterSoundAggressive);
+	if (!IsGameTypeSingle())
+	{
+		m_sv_snd_sync_flag = snd_flags::monster_sound_play;
+		m_sv_snd_sync_sound = MonsterSound::eMonsterSoundAggressive;
+	}
 }
 
 void CChimera::UpdateCL()
