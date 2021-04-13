@@ -60,7 +60,7 @@ void CBaseMonster::Load(LPCSTR section)
 	// load parameters from ".ltx" file
 	inherited::Load					(section);
 
-	m_near_players_distance = READ_IF_EXISTS(pSettings, r_u32, section, "near_players_distance", 0);
+	m_near_players_distance = READ_IF_EXISTS(pSettings, r_float, section, "near_players_distance", 0);
 	m_near_players_delay_time = READ_IF_EXISTS(pSettings, r_u32, section, "near_players_delay_time", 0);
 
 	m_head_bone_name				= READ_IF_EXISTS(pSettings,r_string,section, "bone_head", "bip01_head");
