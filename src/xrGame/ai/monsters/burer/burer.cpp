@@ -24,6 +24,7 @@
 
 #include "../../../../xrCore/_vector3d_ext.h"
 #include "../control_direction_base.h"
+#include "ai/monsters/monster_sound_defs.h"
 
 bool CBurer::can_scan = true;
 
@@ -64,11 +65,11 @@ void CBurer::reload(LPCSTR section)
 	// add specific sounds
 	sound().add				(pSettings->r_string(section,"sound_gravi_attack"),	DEFAULT_SAMPLE_COUNT,	
 							SOUND_TYPE_MONSTER_ATTACKING,	MonsterSound::eHighPriority + 2,	
-							u32(MonsterSound::eBaseChannel),	eMonsterSoundGraviAttack, "head");
+							u32(MonsterSound::eBaseChannel), MonsterSound::eMonsterSoundGraviAttack, "head");
 
 	sound().add				(pSettings->r_string(section,"sound_tele_attack"),	DEFAULT_SAMPLE_COUNT,	
 							SOUND_TYPE_MONSTER_ATTACKING,	MonsterSound::eHighPriority + 3,	
-							u32(MonsterSound::eBaseChannel),	eMonsterSoundTeleAttack, "head");
+							u32(MonsterSound::eBaseChannel), MonsterSound::eMonsterSoundTeleAttack, "head");
 }
 
 void CBurer::ActivateShield () 

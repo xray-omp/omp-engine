@@ -142,5 +142,17 @@ void CStateBurerAttackGravi<Object>::ExecuteGraviFire()
 	}
 
 	object->StopGraviPrepare			();
-	object->sound().play				(CBurer::eMonsterSoundGraviAttack);
+
+	if (IsGameTypeSingle())
+	{
+		object->sound().play(MonsterSound::eMonsterSoundGraviAttack);
+	}
+	else
+	{
+		CBaseMonster* pMonster = smart_cast<CBaseMonster*>(object);
+		if (pMonster)
+		{
+			pMonster->PlaySoundSync(MonsterSound::eMonsterSoundGraviAttack);
+		}
+	}
 }

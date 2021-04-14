@@ -289,7 +289,18 @@ void CStateBurerAttackTele<Object>::FireAllToEnemy()
 
 	//object->CTelekinesis::fire_all(enemy_pos);
 
-	object->sound().play			(CBurer::eMonsterSoundTeleAttack);
+	if (IsGameTypeSingle())
+	{
+		object->sound().play(MonsterSound::eMonsterSoundTeleAttack);
+	}
+	else
+	{
+		CBaseMonster* pMonster = smart_cast<CBaseMonster*>(object);
+		if (pMonster)
+		{
+			pMonster->PlaySoundSync(MonsterSound::eMonsterSoundTeleAttack);
+		}
+	}
 }
 
 template <typename Object>
@@ -340,7 +351,18 @@ void CStateBurerAttackTele<Object>::ExecuteTeleFire()
 	object->CTelekinesis::fire_t	(selected_object,enemy_pos, fire_time);
 
 	object->StopTeleObjectParticle	(selected_object);
-	object->sound().play			(CBurer::eMonsterSoundTeleAttack);
+	if (IsGameTypeSingle())
+	{
+		object->sound().play(MonsterSound::eMonsterSoundTeleAttack);
+	}
+	else
+	{
+		CBaseMonster* pMonster = smart_cast<CBaseMonster*>(object);
+		if (pMonster)
+		{
+			pMonster->PlaySoundSync(MonsterSound::eMonsterSoundTeleAttack);
+		}
+	}
 }
 
 template <typename Object>

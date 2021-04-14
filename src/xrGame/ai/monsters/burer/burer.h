@@ -69,12 +69,12 @@ public:
 	ref_sound	sound_tele_hold;
 	ref_sound	sound_tele_throw;
 
-	enum EBurerSounds {
+	/*enum EBurerSounds {
 		eAdditionalSounds			= MonsterSound::eMonsterSoundCustom,
 
 		eMonsterSoundGraviAttack	= eAdditionalSounds | 0,
 		eMonsterSoundTeleAttack		= eAdditionalSounds | 1,
-	};	
+	};	*/
 	//////////////////////////////////////////////////////////////////////////
 
 	struct gravi_params
