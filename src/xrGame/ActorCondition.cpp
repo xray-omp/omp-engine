@@ -502,7 +502,7 @@ bool CActorCondition::IsCantWalk() const
 
 bool CActorCondition::IsCantWalkWeight()
 {
-	if(IsGameTypeSingle() && !GodMode())
+	if(/*IsGameTypeSingle() &&*/ !GodMode())
 	{
 		float max_w	= m_object->MaxWalkWeight();
 
