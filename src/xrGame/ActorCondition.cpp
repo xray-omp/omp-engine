@@ -70,6 +70,11 @@ CActorCondition::CActorCondition(CActor *object) :
 	m_max_power_restore_speed	= 0.0f;
 	m_max_wound_protection		= 0.0f;
 	m_max_fire_wound_protection = 0.0f;
+
+	if (!IsGameTypeSingle())
+	{
+		psActorFlags.set(AF_GODMODE_RT, FALSE);
+	}
 }
 
 CActorCondition::~CActorCondition()
@@ -185,7 +190,7 @@ void CActorCondition::UpdateCondition()
 
 		m_fAlcohol		+= m_fV_Alcohol*m_fDeltaTime;
 		clamp			(m_fAlcohol,			0.0f,		1.0f);
-		if(IsGameTypeSingle())
+		if(Actor() && Actor()->ID() == m_object->ID())
 		{
 			CEffectorCam* ce = Actor()->Cameras().GetCamEffector((ECamEffectorType)effAlcohol);
 			if(ce)
@@ -230,7 +235,7 @@ void CActorCondition::UpdateCondition()
 	m_fAlcohol		+= m_fV_Alcohol*m_fDeltaTime;
 	clamp			(m_fAlcohol,			0.0f,		1.0f);
 
-	if ( IsGameTypeSingle() )
+	if (Actor() && Actor()->ID() == m_object->ID())
 	{	
 		CEffectorCam* ce = Actor()->Cameras().GetCamEffector((ECamEffectorType)effAlcohol);
 		if	((m_fAlcohol>0.0001f) ){
