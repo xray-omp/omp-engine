@@ -436,11 +436,11 @@ void CActorCondition::UpdateRadiation()
 
 void CActorCondition::UpdateSatiety()
 {
- 	if (!IsGameTypeSingle()) 
+ 	/*if (!IsGameTypeSingle()) 
 	{
 		m_fDeltaPower += m_fV_SatietyPower * m_fDeltaTime;
  		return;
-	}
+	}*/
 
 	if(m_fSatiety>0)
 	{
@@ -610,7 +610,7 @@ void CActorCondition::ChangeSatiety(float value)
 
 void CActorCondition::BoostParameters(const SBooster& B)
 {
-	if(OnServer())
+	if(/*OnServer()*/ true)
 	{
 		switch(B.m_type)
 		{
@@ -637,8 +637,8 @@ void CActorCondition::BoostParameters(const SBooster& B)
 }
 void CActorCondition::DisableBoostParameters(const SBooster& B)
 {
-	if(!OnServer())
-		return;
+	/*if(!OnServer())
+		return;*/
 
 	switch(B.m_type)
 	{
