@@ -106,9 +106,26 @@ void CCustomDetector::ToggleDetector(bool bFastMode)
 		{
 			if(slot_to_activate!=NO_ACTIVE_SLOT)
 			{
-				m_pInventory->Activate(slot_to_activate);
-				m_bNeedActivation		= true;
-			}else
+				if (OnServer())
+				{
+					// Пытаемся достать допустимый предмет: нож, оружие или тп
+					// при этом будет спрятано текущее оружие
+					m_pInventory->Activate(slot_to_activate);
+				}
+				else
+				{
+					if (H_Parent() && H_Parent() == Level().CurrentViewEntity())
+					{
+						NET_Packet						P;
+						CGameObject::u_EventGen(P, GEG_PLAYER_ACTIVATE_SLOT, H_Parent()->ID());
+						P.w_u16(slot_to_activate);
+						CGameObject::u_EventSend(P);
+					}
+				}
+				// указываем, что нужно будет достать детектор
+				m_bNeedActivation = true;
+			}
+			else
 			{
 				SwitchState				(eShowing);
 				TurnDetectorInternal	(true);
@@ -119,6 +136,21 @@ void CCustomDetector::ToggleDetector(bool bFastMode)
 		SwitchState					(eHiding);
 
 }
+void CCustomDetector::SwitchState(u32 S)
+{
+	if (IsGameTypeSingle() || OnServer())
+	{
+		inherited::SwitchState(S);
+		return;
+	}
+
+	if (!IsGameTypeSingle() && OnClient())
+	{
+		SetNextState(S);
+		OnStateSwitch(u32(S));
+	}
+}
+
 
 void CCustomDetector::OnStateSwitch(u32 S)
 {
@@ -239,6 +271,28 @@ void CCustomDetector::UpfateWork()
 
 void CCustomDetector::UpdateVisibility()
 {
+	// Pavel: ХАК. Прячем детектор, если в руках оказывается оружие (кроме пистолета, ножа, болта)
+	if (!IsGameTypeSingle() && OnClient())
+	{
+		PIItem pWpn = m_pInventory->ItemFromSlot(m_pInventory->GetNextActiveSlot());
+		u16 curSlot = m_pInventory->GetActiveSlot();
+		if (pWpn != NULL)
+		{
+			u32 slot = pWpn->BaseSlot();
+			bool bres = (slot == INV_SLOT_2 || slot == KNIFE_SLOT || slot == BOLT_SLOT || curSlot == NO_ACTIVE_SLOT);
+			if (GetState() == eIdle || GetState() == eShowing) {
+				if (!bres)
+				{
+					m_bNeedActivation = false;
+					m_bFastAnimMode = true;
+					SwitchState(eHiding);
+					// HideDetector(true);
+					return;
+				}
+			}
+		}
+	}
+
 	//check visibility
 	attachable_hud_item* i0		= g_player_hud->attached_item(0);
 	if(i0 && HudItemData())

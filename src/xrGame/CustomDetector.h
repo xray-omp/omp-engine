@@ -144,6 +144,8 @@ public:
 	virtual void	OnAnimationEnd		(u32 state);
 	virtual	void	UpdateXForm			();
 
+	virtual void	SwitchState			(u32 S);
+
 	void			ToggleDetector		(bool bFastMode);
 	void			HideDetector		(bool bFastMode);
 	void			ShowDetector		(bool bFastMode);

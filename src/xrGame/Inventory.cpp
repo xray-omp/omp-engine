@@ -724,8 +724,34 @@ bool CInventory::Action(u16 cmd, u32 flags)
 		}break;
 	}
 
-	if(b_send_event && g_pGameLevel && OnClient() && pActor)
-			SendActionEvent(cmd, flags);
+	if (b_send_event && g_pGameLevel && OnClient() && pActor)
+	{
+		if (cmd != kWPN_1 && cmd != kWPN_6)
+		{
+			attachable_hud_item *i1 = g_player_hud->attached_item(1);
+			if (i1)
+			{
+				// don't switch weapon if detector is switching now
+				CHudItem *pHudItem = i1->m_parent_hud_item;
+				if (pHudItem->GetState() != CHUDState::EHudStates::eIdle &&
+					pHudItem->GetState() != CHUDState::EHudStates::eHidden)
+				{
+					return false;
+				}
+			}
+
+			attachable_hud_item *i0 = g_player_hud->attached_item(0);
+			if (i0)
+			{
+				CWeapon* pWpn = smart_cast<CWeapon*>(i0->m_parent_hud_item);
+				if (pWpn && pWpn->IsZoomed())
+				{
+					return false;
+				}
+			}
+		}
+		SendActionEvent(cmd, flags);
+	}
 
 	return false;
 }
