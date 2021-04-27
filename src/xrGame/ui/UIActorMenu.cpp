@@ -61,6 +61,9 @@ void CUIActorMenu::SetPartner(CInventoryOwner* io)
 {
 	R_ASSERT			(!IsShown());
 	m_pPartnerInvOwner	= io;
+
+	m_PartnerCharacterInfo->ClearInfo();
+
 	if ( m_pPartnerInvOwner )
 	{
 		if (m_pPartnerInvOwner->use_simplified_visual())
@@ -75,6 +78,7 @@ void CUIActorMenu::SetPartner(CInventoryOwner* io)
 				LPCSTR monster_tex_name = pSettings->r_string(pMonster->cNameSect(), "icon");
 				m_PartnerCharacterInfo->UIIcon().InitTexture(monster_tex_name);
 				m_PartnerCharacterInfo->UIIcon().SetStretchTexture(true);
+				m_PartnerCharacterInfo->UIIcon().Show(true);
 			}
 			else
 			{
