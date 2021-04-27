@@ -653,8 +653,15 @@ bool CUIActorMenu::ToBelt(CUICellItem* itm, bool b_use_cursor_pos)
 		else
 			new_owner->SetItem				(i);
 
-		if(!b_own_item)
-			SendEvent_Item2Belt				(iitem, m_pActorInvOwner->object_id());
+		if (IsGameTypeSingle())
+		{
+			if (!b_own_item)
+				SendEvent_Item2Belt(iitem, m_pActorInvOwner->object_id());
+		}
+		else
+		{
+			SendEvent_Item2Belt(iitem, m_pActorInvOwner->object_id());
+		}
 
 		//ColorizeItem						(itm, false);
 		return								true;
