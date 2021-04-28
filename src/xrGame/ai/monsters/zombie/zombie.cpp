@@ -147,6 +147,7 @@ void	CZombie::Hit								(SHit* pHDS)
 	inherited::Hit(pHDS);
 
 	if (!g_Alive()) return;
+	if (!OnServer()) return;
 	
 	if ((pHDS->hit_type == ALife::eHitTypeFireWound) && (Device.dwFrame != last_hit_frame)) {
 		if (!com_man().ta_is_active() && (time_resurrect + TIME_RESURRECT_RESTORE < Device.dwTimeGlobal) && (conditions().GetHealth() < health_death_threshold)) {

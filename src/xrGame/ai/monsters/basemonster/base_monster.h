@@ -536,6 +536,7 @@ protected:
 
 public:
 	void PlaySoundSync(u32 type);
+	void PlaySoundSyncWithDelay(u32 type, u32 delay);
 
 	//////////////////////////////////////////////////////////////////////////
 

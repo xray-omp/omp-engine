@@ -707,6 +707,17 @@ void CBaseMonster::PlaySoundSync(u32 type)
 	}
 }
 
+void CBaseMonster::PlaySoundSyncWithDelay(u32 type, u32 delay)
+{
+	sound().play(type);
+	if (!IsGameTypeSingle() && OnServer())
+	{
+		m_sv_snd_sync_flag = snd_flags::monster_sound_play_with_delay;
+		m_sv_snd_sync_sound = type;
+		m_sv_snd_sync_sound_delay = delay;
+	}
+}
+
 BOOL CBaseMonster::feel_touch_on_contact	(CObject *O)
 {
 	return		(inherited::feel_touch_on_contact(O));
