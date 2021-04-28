@@ -5,10 +5,13 @@
 #include "customzone.h"
 #include "artefact.h"
 #include "ai_sounds.h"
+#include <functional>
 //#include "ui/ArtefactDetectorUI.h"
 
 class CCustomZone;
 class CInventoryOwner;
+
+typedef std::function<void()> detector_fn_t;
 
 struct ITEM_TYPE
 {
@@ -119,6 +122,8 @@ protected:
 	bool			m_bFastAnimMode;
 	bool			m_bNeedActivation;
 
+	detector_fn_t hide_callback;
+
 public:
 					CCustomDetector		();
 	virtual			~CCustomDetector	();
@@ -151,6 +156,9 @@ public:
 	void			ShowDetector		(bool bFastMode);
 	float			m_fAfDetectRadius;
 	virtual bool	CheckCompatibility	(CHudItem* itm);
+
+	void			ClearCallback() { hide_callback = nullptr; };
+	void			HideAndSetCallback(const detector_fn_t fn);
 
 	virtual u32		ef_detector_type	() const	{return 1;};
 protected:

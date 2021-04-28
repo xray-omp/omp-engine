@@ -4,6 +4,7 @@
 #include "CustomOutfit.h"
 #include "trade.h"
 #include "weapon.h"
+#include "CustomDetector.h"
 
 #include "ui/UIInventoryUtilities.h"
 #include "ui/UIActorMenu.h"
@@ -726,20 +727,12 @@ bool CInventory::Action(u16 cmd, u32 flags)
 
 	if (b_send_event && g_pGameLevel && OnClient() && pActor)
 	{
+		u16 slot = u16(cmd - kWPN_1 + 1);
+		// Pavel: для ножа и болта нам не нужны проверки
+		// Они нормально достаются / убираются с детектором в руках
 		if (cmd != kWPN_1 && cmd != kWPN_6)
 		{
-			attachable_hud_item *i1 = g_player_hud->attached_item(1);
-			if (i1)
-			{
-				// don't switch weapon if detector is switching now
-				CHudItem *pHudItem = i1->m_parent_hud_item;
-				if (pHudItem->GetState() != CHUDState::EHudStates::eIdle &&
-					pHudItem->GetState() != CHUDState::EHudStates::eHidden)
-				{
-					return false;
-				}
-			}
-
+			// Pavel: Не достаем другое оружие, если прицеливаемся из текущего оружия
 			attachable_hud_item *i0 = g_player_hud->attached_item(0);
 			if (i0)
 			{
@@ -747,6 +740,32 @@ bool CInventory::Action(u16 cmd, u32 flags)
 				if (pWpn && pWpn->IsZoomed())
 				{
 					return false;
+				}
+			}
+
+			attachable_hud_item *i1 = g_player_hud->attached_item(1);
+			if (i1)
+			{
+				// Pavel: Не достаем оружие, если в данный момент уже достается или убирается детектор
+				CHudItem *pHudItem = i1->m_parent_hud_item;
+				if (pHudItem->GetState() != CHUDState::EHudStates::eIdle &&
+					pHudItem->GetState() != CHUDState::EHudStates::eHidden)
+				{
+					return false;
+				}
+
+				CCustomDetector *pDetector = smart_cast<CCustomDetector*>(pHudItem);
+				if (pDetector)
+				{
+					PIItem pItem = ItemFromSlot(slot);
+					// Pavel: достаем пушку только после того, как убрали детектор
+					if (pItem && pItem->BaseSlot() != INV_SLOT_2)
+					{
+						pDetector->HideAndSetCallback([cmd, flags, this]() {
+							this->SendActionEvent(cmd, flags);
+						});
+						return false;
+					}
 				}
 			}
 		}

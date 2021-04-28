@@ -79,6 +79,15 @@ bool  CCustomDetector::CheckCompatibility(CHudItem* itm)
 	return true;
 }
 
+void CCustomDetector::HideAndSetCallback(detector_fn_t fn)
+{
+	m_bNeedActivation = false;
+	m_bFastAnimMode = true;
+	SwitchState(eHiding);
+
+	hide_callback = fn;
+}
+
 void CCustomDetector::HideDetector(bool bFastMode)
 {
 	if(GetState()==eIdle)
@@ -148,6 +157,23 @@ void CCustomDetector::SwitchState(u32 S)
 	{
 		SetNextState(S);
 		OnStateSwitch(u32(S));
+
+		switch (S)
+		{
+		case eHidden:
+			if (hide_callback)
+			{
+				hide_callback();
+			}
+			ClearCallback();
+			break;
+		case eShowing:
+		case eIdle:
+			ClearCallback();
+			break;
+		default:
+			break;
+		}
 	}
 }
 
