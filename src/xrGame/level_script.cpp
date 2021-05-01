@@ -714,6 +714,11 @@ void print_msg(LPCSTR str)
 	Msg("[lua] %s", str);
 }
 
+bool check_params(LPCSTR p)
+{
+	return strstr(Core.Params, p);
+}
+
 CScriptGameObject *get_object_by_client(u32 clientID)
 {
 	xrClientData* xrCData = Level().Server->ID_to_client(clientID);
@@ -930,7 +935,8 @@ void CLevel::script_register(lua_State *L)
 		def("print_msg",						&print_msg),
 		def("IsDedicated",						&is_dedicated),
 		def("OnClient",							&OnClient),
-		def("OnServer",							&OnServer)
+		def("OnServer",							&OnServer),
+		def("CheckParams", 					&check_params)		
 	];
 
 	module(L,"relation_registry")
