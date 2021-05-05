@@ -362,6 +362,7 @@ SERVER_ENTITY_DECLARE_BEGIN3(CSE_ALifeCreatureActor,CSE_ALifeCreatureAbstract,CS
 #endif
 	virtual CSE_Abstract			*cast_abstract			() {return this;};
 	virtual CSE_ALifeTraderAbstract	*cast_trader_abstract	() {return this;};
+	virtual CSE_ALifeCreatureActor	*cast_actor() { return this; };
 public:
 	virtual BOOL					Net_Relevant			();
 SERVER_ENTITY_DECLARE_END

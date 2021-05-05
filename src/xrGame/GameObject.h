@@ -73,6 +73,7 @@ public:
 	virtual CEntity*					cast_entity					()						{return NULL;}
 	virtual CEntityAlive*				cast_entity_alive			()						{return NULL;}
 	virtual CActor*						cast_actor					()						{return NULL;}
+	virtual CActorMP*						cast_actor_mp() { return NULL; }
 	virtual CGameObject*				cast_game_object			()						{return this;}
 	virtual CCustomZone*				cast_custom_zone			()						{return NULL;}
 	virtual CPhysicsShellHolder*		cast_physics_shell_holder	()						{return NULL;}

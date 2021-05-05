@@ -24,6 +24,9 @@ private:
 
 public:
 							CActorMP			();
+
+	virtual CActorMP* cast_actor_mp() { return this; }
+
 	virtual void			net_Export			(NET_Packet		&packet);
 	virtual void			net_Import			(NET_Packet		&packet);
 	virtual BOOL			net_Relevant		();

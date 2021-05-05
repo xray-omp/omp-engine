@@ -160,11 +160,14 @@ public:
 	virtual CSE_ALifeHumanAbstract		*cast_human_abstract		() {return 0;};
 	virtual CSE_ALifeAnomalousZone		*cast_anomalous_zone		() {return 0;};
 	virtual CSE_ALifeTrader				*cast_trader				() {return 0;};
+	virtual CSE_ALifeCreatureActor	*cast_actor() { return 0; };
+	virtual CSE_ActorMP	*cast_actor_mp() { return 0; };
 
 	virtual CSE_ALifeCreatureAbstract	*cast_creature_abstract		() {return 0;};
 	virtual CSE_ALifeSmartZone			*cast_smart_zone			() {return 0;};
 	virtual CSE_ALifeOnlineOfflineGroup	*cast_online_offline_group	() {return 0;};
 	virtual CSE_ALifeItemPDA			*cast_item_pda				() {return 0;};
+	virtual CSE_ALifeItemArtefact			*cast_item_artefact() { return 0; };
 };
 add_to_type_list(CSE_Abstract)
 #define script_type_list save_type_list(CSE_Abstract)

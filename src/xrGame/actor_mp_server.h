@@ -17,6 +17,9 @@ private:
 
 public:
 							CSE_ActorMP		(LPCSTR		section);
+
+	virtual CSE_ActorMP	*cast_actor_mp() { return this; };
+
 	virtual void 			UPDATE_Read		(NET_Packet &packet);
 	virtual void 			UPDATE_Write	(NET_Packet &packet);
 	virtual void 			STATE_Read		(NET_Packet &packet, u16 size);

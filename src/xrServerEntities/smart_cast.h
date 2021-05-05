@@ -114,6 +114,10 @@
 #		undef cast_type_list
 #		define cast_type_list save_cast_list	(CActor,			CGameObject)
 
+		DECLARE_SPECIALIZATION(CActorMP, CGameObject, cast_actor_mp);
+#		undef cast_type_list
+#		define cast_type_list save_cast_list	(CActorMP,			CGameObject)
+
 		DECLARE_SPECIALIZATION	(CGameObject,		CInventoryOwner,	cast_game_object);
 #		undef cast_type_list
 #		define cast_type_list save_cast_list	(CGameObject,		CInventoryOwner)
@@ -323,6 +327,21 @@
 	DECLARE_SPECIALIZATION	(CSE_ALifeItemPDA,			CSE_Abstract,	cast_item_pda);
 #	undef cast_type_list
 #	define cast_type_list save_cast_list	(CSE_ALifeItemPDA,			CSE_Abstract)
+
+	DECLARE_SPECIALIZATION(CSE_ALifeCreatureActor, CSE_Abstract, cast_actor);
+#	undef cast_type_list
+#	define cast_type_list save_cast_list	(CSE_ALifeCreatureActor,			CSE_Abstract)
+
+	DECLARE_SPECIALIZATION(CSE_ActorMP, CSE_Abstract, cast_actor_mp);
+#	undef cast_type_list
+#	define cast_type_list save_cast_list	(CSE_ActorMP,			CSE_Abstract)
+
+	DECLARE_SPECIALIZATION(CSE_ALifeItemArtefact, CSE_Abstract, cast_item_artefact);
+#	undef cast_type_list
+#	define cast_type_list save_cast_list	(CSE_ALifeItemArtefact,			CSE_Abstract)
+
+
+	
 
 #	ifndef DO_NOT_DECLARE_TYPE_LIST
 #		include "smart_cast_impl1.h"
