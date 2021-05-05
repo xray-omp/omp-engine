@@ -1424,7 +1424,7 @@ void CSE_ALifeCreatureActor::load(NET_Packet &tNetPacket)
 
 BOOL CSE_ALifeCreatureActor::Net_Relevant()
 {
-	return TRUE; // this is a big question ;)
+	return FALSE; // TRUE; // this is a big question ;)
 }
 
 void CSE_ALifeCreatureActor::UPDATE_Read	(NET_Packet	&tNetPacket)

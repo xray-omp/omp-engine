@@ -30,7 +30,7 @@ void CSE_ActorMP::STATE_Write	(NET_Packet &packet)
 BOOL CSE_ActorMP::Net_Relevant	()
 {
 	if (get_health() <= 0) return (false);
-	return (inherited::Net_Relevant());
+	return true; // (inherited::Net_Relevant());
 }
 
 #ifdef XRGAME_EXPORTS
