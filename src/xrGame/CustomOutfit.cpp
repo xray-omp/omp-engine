@@ -44,6 +44,12 @@ void CCustomOutfit::net_Export(NET_Packet& P)
 {
 	inherited::net_Export	(P);
 	P.w_float_q8			(GetCondition(),0.0f,1.0f);
+
+	if (!IsGameTypeSingle())
+	{
+		u8 in_slot = u8(m_pInventory && m_pInventory->InSlot(this));
+		P.w_u8(in_slot);
+	}
 }
 
 void CCustomOutfit::net_Import(NET_Packet& P)
@@ -52,6 +58,12 @@ void CCustomOutfit::net_Import(NET_Packet& P)
 	float _cond;
 	P.r_float_q8			(_cond,0.0f,1.0f);
 	SetCondition			(_cond);
+
+	if (!IsGameTypeSingle())
+	{
+		u8 in_slot = 0;
+		P.r_u8(in_slot);
+	}
 }
 
 void CCustomOutfit::OnH_A_Chield()

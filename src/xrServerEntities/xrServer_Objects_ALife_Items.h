@@ -311,6 +311,7 @@ add_to_type_list(CSE_ALifeItemBolt)
 
 SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemCustomOutfit,CSE_ALifeItem)
 	u32								m_ef_equipment_type;
+	u8								m_in_slot;
 									CSE_ALifeItemCustomOutfit	(LPCSTR caSection);
 	virtual							~CSE_ALifeItemCustomOutfit	();
 	virtual u32						ef_equipment_type			() const;
@@ -320,6 +321,7 @@ add_to_type_list(CSE_ALifeItemCustomOutfit)
 #define script_type_list save_type_list(CSE_ALifeItemCustomOutfit)
 
 SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemHelmet,CSE_ALifeItem)
+u8								m_in_slot;
 									CSE_ALifeItemHelmet	(LPCSTR caSection);
 	virtual							~CSE_ALifeItemHelmet	();
 	virtual BOOL					Net_Relevant			();

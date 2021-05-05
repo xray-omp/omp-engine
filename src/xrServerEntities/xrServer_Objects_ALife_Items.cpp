@@ -11,6 +11,7 @@
 #include "xrServer_Objects_ALife_Items.h"
 #include "clsid_game.h"
 #include "object_broker.h"
+#include "Level.h"
 
 #ifndef XRGAME_EXPORTS
 #	include "bone.h"
@@ -1230,6 +1231,7 @@ void CSE_ALifeItemBolt::FillProps			(LPCSTR pref, PropItemVec& values)
 CSE_ALifeItemCustomOutfit::CSE_ALifeItemCustomOutfit	(LPCSTR caSection): CSE_ALifeItem(caSection)
 {
 	m_ef_equipment_type		= pSettings->r_u32(caSection,"ef_equipment_type");
+	m_in_slot = 0;
 }
 
 CSE_ALifeItemCustomOutfit::~CSE_ALifeItemCustomOutfit	()
@@ -1254,13 +1256,23 @@ void CSE_ALifeItemCustomOutfit::STATE_Write		(NET_Packet	&tNetPacket)
 void CSE_ALifeItemCustomOutfit::UPDATE_Read		(NET_Packet	&tNetPacket)
 {
 	inherited::UPDATE_Read			(tNetPacket);
-	tNetPacket.r_float_q8			(m_fCondition,0.0f,1.0f);
+
+	if (g_pGamePersistent->GameType() != eGameIDSingle)
+	{
+		tNetPacket.r_float_q8(m_fCondition, 0.0f, 1.0f);
+		tNetPacket.r_u8(m_in_slot);
+	}
 }
 
 void CSE_ALifeItemCustomOutfit::UPDATE_Write		(NET_Packet	&tNetPacket)
 {
 	inherited::UPDATE_Write			(tNetPacket);
-	tNetPacket.w_float_q8			(m_fCondition,0.0f,1.0f);
+
+	if (g_pGamePersistent->GameType() != eGameIDSingle)
+	{
+		tNetPacket.w_float_q8(m_fCondition, 0.0f, 1.0f);
+		tNetPacket.w_u8(m_in_slot);
+	}
 }
 
 #ifndef XRGAME_EXPORTS
@@ -1272,7 +1284,10 @@ void CSE_ALifeItemCustomOutfit::FillProps			(LPCSTR pref, PropItemVec& items)
 
 BOOL CSE_ALifeItemCustomOutfit::Net_Relevant		()
 {
-	return							(true);
+	if (!attached())
+		return inherited::Net_Relevant();
+
+	return m_in_slot;
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -1280,6 +1295,7 @@ BOOL CSE_ALifeItemCustomOutfit::Net_Relevant		()
 ////////////////////////////////////////////////////////////////////////////
 CSE_ALifeItemHelmet::CSE_ALifeItemHelmet	(LPCSTR caSection): CSE_ALifeItem(caSection)
 {
+	m_in_slot = 0;
 }
 
 CSE_ALifeItemHelmet::~CSE_ALifeItemHelmet	()
@@ -1299,13 +1315,21 @@ void CSE_ALifeItemHelmet::STATE_Write		(NET_Packet	&tNetPacket)
 void CSE_ALifeItemHelmet::UPDATE_Read		(NET_Packet	&tNetPacket)
 {
 	inherited::UPDATE_Read			(tNetPacket);
-	tNetPacket.r_float_q8			(m_fCondition,0.0f,1.0f);
+	if (g_pGamePersistent->GameType() != eGameIDSingle)
+	{
+		tNetPacket.r_float_q8(m_fCondition, 0.0f, 1.0f);
+		tNetPacket.r_u8(m_in_slot);
+	}
 }
 
 void CSE_ALifeItemHelmet::UPDATE_Write		(NET_Packet	&tNetPacket)
 {
 	inherited::UPDATE_Write			(tNetPacket);
-	tNetPacket.w_float_q8			(m_fCondition,0.0f,1.0f);
+	if (g_pGamePersistent->GameType() != eGameIDSingle)
+	{
+		tNetPacket.w_float_q8(m_fCondition, 0.0f, 1.0f);
+		tNetPacket.w_u8(m_in_slot);
+	}
 }
 
 #ifndef XRGAME_EXPORTS
@@ -1317,5 +1341,11 @@ void CSE_ALifeItemHelmet::FillProps			(LPCSTR pref, PropItemVec& items)
 
 BOOL CSE_ALifeItemHelmet::Net_Relevant		()
 {
-	return							(true);
+	if (g_pGamePersistent->GameType() == eGameIDSingle)
+		return (true);
+
+	if (!attached())
+		return inherited::Net_Relevant();
+
+	return m_in_slot;
 }
