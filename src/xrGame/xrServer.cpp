@@ -45,6 +45,12 @@ void	xrClientData::Clear()
 	m_ping_warn.m_maxPingWarnings			= 0;
 	m_ping_warn.m_dwLastMaxPingWarningTime	= 0;
 	m_admin_rights.m_has_admin_rights		= FALSE;
+
+	m_last_update_time_15 = 0;
+	m_last_update_time_10 = 0;
+	m_last_update_time_5 = 0;
+	m_last_update_time_1 = 0;
+	m_last_update_time_05 = 0;
 };
 
 
@@ -285,6 +291,10 @@ void xrServer::MakeUpdatePackets()
 	NET_Packet						tmpPacket;			
 	u32								position;
 
+#ifndef OLD_SYNC
+	m_update_packets.clear();
+#endif // !OLD_SYNC
+
 	m_updator.begin_updates			();
 	
 	xrS_entities::iterator I	= entities.begin();
@@ -307,12 +317,22 @@ void xrServer::MakeUpdatePackets()
 			u32 ObjectSize					= u32(tmpPacket.w_tell()-position)-sizeof(u8);
 			tmpPacket.w_chunk_close8		(position);
 
-			if (ObjectSize == 0)			continue;					
+			if (ObjectSize == 0)			continue;
+
 #ifdef DEBUG
 			if (g_Dump_Update_Write) Msg("* %s : %d", Test.name(), ObjectSize);
 #endif
-			m_updator.write_update_for		(Test.ID, tmpPacket);
-		}
+
+#ifdef OLD_SYNC
+			m_updator.write_update_for(Test.ID, tmpPacket);
+#else
+			// save all packets
+			m_update_packets.push_back(UpdatePacket());
+			UpdatePacket* NewPacket = &(m_update_packets.back());
+			NewPacket->Entity = I->second;
+			CopyMemory(&(NewPacket->Packet), &tmpPacket, sizeof(NET_Packet));
+#endif // OLD_SYNC
+			}
 	}//all entities
 
 	m_updator.end_updates			(m_update_begin, m_update_end);
@@ -320,6 +340,7 @@ void xrServer::MakeUpdatePackets()
 
 void xrServer::SendUpdatePacketsToAll()
 {
+#ifdef OLD_SYNC
 	m_last_updates_size = 0;
 	for (update_iterator_t i = m_update_begin; i != m_update_end; ++i)
 	{
@@ -334,6 +355,222 @@ void xrServer::SendUpdatePacketsToAll()
 			}
 		}
 	}
+#else
+
+	struct ClientExcluderPredicate
+	{
+		ClientID id_to_exclude;
+		ClientExcluderPredicate(ClientID exclude) :
+			id_to_exclude(exclude)
+		{}
+		bool operator()(IClient* client)
+		{
+			xrClientData* tmp_client = static_cast<xrClientData*>(client);
+			if (client->ID == id_to_exclude)
+				return false;
+			if (!client->flags.bConnected)
+				return false;
+			if (!tmp_client->net_Accepted)
+				return false;
+			return true;
+		}
+	};
+
+	struct SenderFunctor
+	{
+		xrServer *m_owner;
+		u32 m_dwFlags;
+		xr_vector<UpdatePacket> &m_packets;
+
+		server_updates_compressor*	m_updator;
+		update_iterator_t			m_update_begin;
+		update_iterator_t			m_update_end;
+
+		SenderFunctor(xrServer* owner, xr_vector<UpdatePacket> &packets, server_updates_compressor* updator, u32 dwFlags) :
+			m_owner(owner), m_packets(packets), m_updator(updator), m_dwFlags(dwFlags)
+		{}
+		void operator()(IClient* client)
+		{
+			auto I = m_packets.begin();
+			auto E = m_packets.end();
+
+			xrClientData* CL = static_cast<xrClientData*>(client);
+
+			bool need_to_update_15 = Device.dwTimeGlobal - CL->m_last_update_time_15 >= u32(1000 / 15); // 15 per sec
+			bool need_to_update_10 = Device.dwTimeGlobal - CL->m_last_update_time_10 >= u32(1000 / 10); // 10 per sec
+			bool need_to_update_5 = Device.dwTimeGlobal - CL->m_last_update_time_5 >= u32(1000 / 5);    // 5 per sec
+			bool need_to_update_1 = Device.dwTimeGlobal - CL->m_last_update_time_1 >= u32(1000);        // 1 per sec
+			bool need_to_update_05 = Device.dwTimeGlobal - CL->m_last_update_time_1 >= u32(2000);       // 1 per 2 sec
+			
+			constexpr float distance_30 = 30.f * 30.f;
+			constexpr float distance_50 = 50.f * 50.f;
+			constexpr float distance_60 = 60.f * 60.f;
+			constexpr float distance_100 = 100.f * 100.f;
+			constexpr float distance_200 = 200.f * 200.f;
+			constexpr float distance_300 = 300.f * 300.f;
+
+			// create big net packets & compress (if enabled)
+			m_updator->begin_updates();
+			for (; I != E; ++I)
+			{
+				CSE_Abstract* owner = CL->owner;
+				if (!owner) continue;
+
+				CSE_Abstract*	entity = I->Entity;
+				NET_Packet& packet = I->Packet;
+
+				float distance = 0.f;
+
+				CSE_Abstract* parent = m_owner->ID_to_entity(entity->ID_Parent);
+
+				bool has_parent = !!parent;
+				if (!has_parent)
+				{
+					distance = owner->Position().distance_to_sqr(entity->Position());
+				}
+				else
+				{
+					distance = owner->Position().distance_to_sqr(parent->Position());
+				}
+
+				if (entity->cast_human_abstract() || entity->cast_monster_abstract()) 
+				{
+					// MONSTERS AND HUMANS
+					// 0 - 50 : 30 per sec
+					// 50 - 100 : 15 per sec
+					// 100 - 200 : 10 per sec
+					// 200 - 300 : 5 per sec
+					// 300 and more : 1 per 2 sec
+
+					if (distance <= distance_50)
+					{
+						m_updator->write_update_for(entity->ID, packet);
+					}
+					else if (need_to_update_15 && distance <= distance_100)
+					{
+						m_updator->write_update_for(entity->ID, packet);
+					}
+					else if (need_to_update_10 && distance <= distance_200)
+					{
+						m_updator->write_update_for(entity->ID, packet);
+					}
+					else if (need_to_update_5 && distance <= distance_300)
+					{
+						m_updator->write_update_for(entity->ID, packet);
+					}
+					else if (need_to_update_05)
+					{
+						m_updator->write_update_for(entity->ID, packet);
+					}
+				}
+				else if (entity->cast_actor_mp()) 
+				{
+					// ACTORS
+					// 0 - 200 : 30 per second
+					// 200 - 300 : 10 per second
+					// 300 and more : 1 per sec
+
+					if (distance <= distance_200)
+					{
+						m_updator->write_update_for(entity->ID, packet);
+					}
+					else if (need_to_update_10 && distance <= distance_300)
+					{
+						m_updator->write_update_for(entity->ID, packet);
+					}
+					else if (need_to_update_1)
+					{
+						m_updator->write_update_for(entity->ID, packet);
+					}
+				}
+				else if (entity->cast_item_artefact())
+				{
+					// ARTEFACTS
+					// 0 - 30 : 10 per second
+					// 30 - 60 : 5 per second
+					// 60 and more : 1 per 2 sec
+
+					if (need_to_update_10 && distance <= distance_30)
+					{
+						m_updator->write_update_for(entity->ID, packet);
+					}
+					else if (need_to_update_5 && distance <= distance_60)
+					{
+						m_updator->write_update_for(entity->ID, packet);
+					}
+					else if (need_to_update_05)
+					{
+						m_updator->write_update_for(entity->ID, packet);
+					}
+				}
+				else if (entity->cast_inventory_item())
+				{
+					if (has_parent)
+					{					
+						// Inventory items with parent
+						// 0 - 200 : 30 per second
+						// 200 - 300 : 10 per second
+						// 300 and more : 1 per sec
+
+						if (distance <= distance_200)
+						{
+							m_updator->write_update_for(entity->ID, packet);
+						}
+						else if (need_to_update_10 && distance <= distance_300)
+						{
+							m_updator->write_update_for(entity->ID, packet);
+						}
+						else if (need_to_update_1)
+						{
+							m_updator->write_update_for(entity->ID, packet);
+						}
+					}
+					else
+					{
+						// Если родительский объект отсутствует, значит это просто предмет лежащий на карте.
+						// Такие объекты не обновляются постоянно (по крайней мере не должны).
+						m_updator->write_update_for(entity->ID, packet);
+					}
+				}
+				else
+				{
+					m_updator->write_update_for(entity->ID, packet);
+				}
+			} // end for
+
+			if (need_to_update_15)
+				CL->m_last_update_time_15 = Device.dwTimeGlobal;
+
+			if (need_to_update_10)
+				CL->m_last_update_time_10 = Device.dwTimeGlobal;
+
+			if (need_to_update_5)
+				CL->m_last_update_time_5 = Device.dwTimeGlobal;
+
+			if (need_to_update_1)
+				CL->m_last_update_time_1 = Device.dwTimeGlobal;
+
+			if (need_to_update_05)
+				CL->m_last_update_time_05 = Device.dwTimeGlobal;
+
+			m_updator->end_updates(m_update_begin, m_update_end);
+
+			// send packets to client
+			for (update_iterator_t i = m_update_begin; i != m_update_end; ++i)
+			{
+				NET_Packet& P = **i;
+				if (P.B.count > 2)
+				{
+					m_owner->SendTo_LL(client->ID, P.B.data, P.B.count, m_dwFlags);
+				}
+			}
+		}
+	};
+
+	SenderFunctor temp_functor(this, m_update_packets, &m_updator, net_flags(FALSE, TRUE));
+	net_players.ForFoundClientsDo(ClientExcluderPredicate(GetServerClient()->ID), temp_functor);
+
+#endif // OLD_SYNC
 }
 
 void xrServer::SendUpdatesToAll()
