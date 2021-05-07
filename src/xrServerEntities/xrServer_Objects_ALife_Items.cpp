@@ -1256,10 +1256,10 @@ void CSE_ALifeItemCustomOutfit::STATE_Write		(NET_Packet	&tNetPacket)
 void CSE_ALifeItemCustomOutfit::UPDATE_Read		(NET_Packet	&tNetPacket)
 {
 	inherited::UPDATE_Read			(tNetPacket);
+	tNetPacket.r_float_q8(m_fCondition, 0.0f, 1.0f);
 
 	if (g_pGamePersistent->GameType() != eGameIDSingle)
 	{
-		tNetPacket.r_float_q8(m_fCondition, 0.0f, 1.0f);
 		tNetPacket.r_u8(m_in_slot);
 	}
 }
@@ -1267,10 +1267,10 @@ void CSE_ALifeItemCustomOutfit::UPDATE_Read		(NET_Packet	&tNetPacket)
 void CSE_ALifeItemCustomOutfit::UPDATE_Write		(NET_Packet	&tNetPacket)
 {
 	inherited::UPDATE_Write			(tNetPacket);
+	tNetPacket.w_float_q8(m_fCondition, 0.0f, 1.0f);
 
 	if (g_pGamePersistent->GameType() != eGameIDSingle)
 	{
-		tNetPacket.w_float_q8(m_fCondition, 0.0f, 1.0f);
 		tNetPacket.w_u8(m_in_slot);
 	}
 }
@@ -1315,9 +1315,10 @@ void CSE_ALifeItemHelmet::STATE_Write		(NET_Packet	&tNetPacket)
 void CSE_ALifeItemHelmet::UPDATE_Read		(NET_Packet	&tNetPacket)
 {
 	inherited::UPDATE_Read			(tNetPacket);
+	tNetPacket.r_float_q8(m_fCondition, 0.0f, 1.0f);
+
 	if (g_pGamePersistent->GameType() != eGameIDSingle)
 	{
-		tNetPacket.r_float_q8(m_fCondition, 0.0f, 1.0f);
 		tNetPacket.r_u8(m_in_slot);
 	}
 }
@@ -1325,9 +1326,10 @@ void CSE_ALifeItemHelmet::UPDATE_Read		(NET_Packet	&tNetPacket)
 void CSE_ALifeItemHelmet::UPDATE_Write		(NET_Packet	&tNetPacket)
 {
 	inherited::UPDATE_Write			(tNetPacket);
+	tNetPacket.w_float_q8(m_fCondition, 0.0f, 1.0f);
+
 	if (g_pGamePersistent->GameType() != eGameIDSingle)
 	{
-		tNetPacket.w_float_q8(m_fCondition, 0.0f, 1.0f);
 		tNetPacket.w_u8(m_in_slot);
 	}
 }
