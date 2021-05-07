@@ -144,6 +144,7 @@ void CPhysicsShellHolder::init			()
 {
 	m_pPhysicsShell				=	NULL		;
 	b_sheduled					=	false		;
+	m_activation_speed_is_overriden = false;
 }
 bool	 CPhysicsShellHolder::has_shell_collision_place( const CPhysicsShellHolder* obj ) const
 {
@@ -227,6 +228,10 @@ void CPhysicsShellHolder::activate_physic_shell()
 	{
 		smart_cast<IKinematics*>(H_Parent()->Visual())->CalculateBones_Invalidate	();
 		smart_cast<IKinematics*>(H_Parent()->Visual())->CalculateBones	(TRUE);
+		Fvector dir = H_Parent()->Direction();
+		if (dir.y < 0.f)
+			dir.y = -dir.y;
+		l_fw.set(dir.normalize().mul(2.f));
 	}
 	smart_cast<IKinematics*>(Visual())->CalculateBones_Invalidate	();
 	smart_cast<IKinematics*>(Visual())->CalculateBones(TRUE);
@@ -621,3 +626,26 @@ std::string	CPhysicsShellHolder::dump(EDumpType type) const
 
 }
 #endif
+
+
+bool CPhysicsShellHolder::ActivationSpeedOverriden(Fvector& dest, bool clear_override)
+{
+	if (m_activation_speed_is_overriden)
+	{
+		if (clear_override)
+		{
+			m_activation_speed_is_overriden = false;
+		}
+
+		dest = m_overriden_activation_speed;
+		return							true;
+	}
+
+	return								false;
+}
+
+void CPhysicsShellHolder::SetActivationSpeedOverride(Fvector const& speed)
+{
+	m_overriden_activation_speed = speed;
+	m_activation_speed_is_overriden = true;
+}

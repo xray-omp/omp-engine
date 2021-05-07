@@ -74,7 +74,6 @@ CWeapon::CWeapon()
 	m_UIScope				= NULL;
 	m_set_next_ammoType_on_reload = undefined_ammo_type;
 	m_crosshair_inertion	= 0.f;
-	m_activation_speed_is_overriden	=	false;
 	m_cur_scope				= NULL;
 	m_bRememberActorNVisnStatus = false;
 }
@@ -1524,28 +1523,6 @@ void CWeapon::reload			(LPCSTR section)
 void CWeapon::create_physic_shell()
 {
 	CPhysicsShellHolder::create_physic_shell();
-}
-
-bool CWeapon::ActivationSpeedOverriden (Fvector& dest, bool clear_override)
-{
-	if ( m_activation_speed_is_overriden )
-	{
-		if ( clear_override )
-		{
-			m_activation_speed_is_overriden	=	false;
-		}
-
-		dest						=	m_overriden_activation_speed;
-		return							true;
-	}
-	
-	return								false;
-}
-
-void CWeapon::SetActivationSpeedOverride	(Fvector const& speed)
-{
-	m_overriden_activation_speed	=	speed;
-	m_activation_speed_is_overriden	=	true;
 }
 
 void CWeapon::activate_physic_shell()
