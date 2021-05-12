@@ -343,11 +343,18 @@ BOOL CCustomZone::net_Spawn(CSE_Abstract* DC)
 	m_dwLastTimeMoved			= Device.dwTimeGlobal;
 	m_vPrevPos.set				(Position());
 
-
-	if(spawn_ini() && spawn_ini()->line_exist("fast_mode","always_fast"))
+	if (CheckGameFlag(F_ZONES_ALWAYS_FAST_MODE))
 	{
-		m_zone_flags.set(eAlwaysFastmode, spawn_ini()->r_bool("fast_mode","always_fast"));
+		m_zone_flags.set(eAlwaysFastmode, true);
 	}
+	else
+	{
+		if (spawn_ini() && spawn_ini()->line_exist("fast_mode", "always_fast"))
+		{
+			m_zone_flags.set(eAlwaysFastmode, spawn_ini()->r_bool("fast_mode", "always_fast"));
+		}
+	}
+
 	return						(TRUE);
 }
 
