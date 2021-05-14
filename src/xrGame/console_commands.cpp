@@ -402,6 +402,19 @@ public:
 		//	return;
 		//};
 		#endif
+
+		if (GameID() != eGameIDSingle)
+		{
+			if (!Game().local_player)
+				return;
+
+			if (!Game().local_player->testFlag(GAME_PLAYER_HAS_ADMIN_RIGHTS))
+			{
+				Msg("Available only for administrators.");
+				return;
+			}
+		}
+
 		Console->Hide	();
 
 		LPSTR			fn_; 
