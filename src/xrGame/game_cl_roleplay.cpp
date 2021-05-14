@@ -103,9 +103,12 @@ void game_cl_roleplay::OnTeamSelect(int team)
 
 bool game_cl_roleplay::OnKeyboardPress(int key)
 {
-	if (kTEAM == key) // TODO: remove
+	if (kTEAM == key)
 	{
-		if (!m_game_ui->SpawnMenu()->IsShown())
+		if (
+			local_player->testFlag(GAME_PLAYER_HAS_ADMIN_RIGHTS) &&
+			!m_game_ui->SpawnMenu()->IsShown()
+		)
 		{
 			m_game_ui->SpawnMenu()->ShowDialog(true);
 		}
