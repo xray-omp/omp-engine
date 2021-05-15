@@ -46,6 +46,15 @@ XRCORE_API	u32		build_id;
 #	define NO_MULTI_INSTANCES
 #endif // #ifdef MASTER_GOLD
 
+// Always request high performance GPU
+extern "C"
+{
+	// https://docs.nvidia.com/gameworks/content/technologies/desktop/optimus.htm
+	__declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001; // NVIDIA Optimus
+
+	// https://gpuopen.com/amdpowerxpressrequesthighperformance/
+	__declspec(dllexport) DWORD AmdPowerXpressRequestHighPerformance = 0x00000001; // PowerXpress or Hybrid Graphics
+}
 
 static LPSTR month_id[12] = {
 	"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"
