@@ -75,7 +75,7 @@ void game_sv_freemp::AddMoneyToPlayer(game_PlayerState * ps, s32 amount)
 {
 	if (!ps) return;
 
-	Msg("- Add money to player: [%u]%s, amount", ps->GameID, ps->getName(), amount);
+	Msg("- Add money to player: [%u]%s, %d amount", ps->GameID, ps->getName(), amount);
 
 	s64 total_money = ps->money_for_round;
 	total_money += amount;
@@ -126,11 +126,21 @@ void game_sv_freemp::OnTransferMoney(NET_Packet & P, ClientID const & clientID)
 	P.r_clientID(to);
 	P.r_s32(money);
 
-	game_PlayerState* ps_from = get_id(clientID);
-	if (!ps_from) return;
+	Msg("* Try to transfer money from %u to %u. Amount: %d", clientID.value(), to.value(), money);
 
-	game_PlayerState* ps_to = get_id(clientID);
-	if (!ps_from) return;
+	game_PlayerState* ps_from = get_id(clientID);
+	if (!ps_from)
+	{
+		Msg("! Can't find player state with id=%u", clientID.value());
+		return;
+	}
+
+	game_PlayerState* ps_to = get_id(to);
+	if (!ps_to)
+	{
+		Msg("! Can't find player state with id=%u", to.value());
+		return;
+	}
 
 	if (money <= 0 || ps_from->money_for_round < money) return;
 

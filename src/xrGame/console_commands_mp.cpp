@@ -2272,6 +2272,8 @@ public:
 		string4096 buff;
 		xr_strcpy(buff, args);
 
+		static _locale_t current_locale = _create_locale(LC_ALL, "");
+
 		u32 len = xr_strlen(buff);
 		if (0 == len)
 			return;
@@ -2305,7 +2307,7 @@ public:
 			return;
 		}
 		
-		xr_strlwr(_Trim(name));
+		_strlwr_l(_Trim(name), current_locale);
 
 		bool wasSent = false;
 
@@ -2319,7 +2321,7 @@ public:
 
 			string128 player_name;
 			xr_strcpy(player_name, ps->getName());
-			xr_strlwr(player_name);
+			_strlwr_l(player_name, current_locale);
 
 			if (xr_strcmp(player_name, name) == 0)
 			{
