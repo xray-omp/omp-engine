@@ -606,8 +606,15 @@ bool CUIActorMenu::ToBag(CUICellItem* itm, bool b_use_cursor_pos)
 
 	if(m_pActorInvOwner->inventory().CanPutInRuck(iitem) || (b_already && (new_owner!=old_owner)) )
 	{
-		bool result							= b_already || (!b_own_item || m_pActorInvOwner->inventory().Ruck(iitem) );
-		VERIFY								(result);
+		// Pavel: если предмет в iActorTrade, то он уже должен находится в рюказке
+		// Проверка нужна для того, чтобы не сбрасывалась граната в МП,
+		// при перекладывании из iActorTrade
+		if (GetListType(old_owner) != iActorTrade)
+		{
+			bool result = b_already || (!b_own_item || m_pActorInvOwner->inventory().Ruck(iitem));
+			R_ASSERT(result);
+		}
+
 		CUICellItem* i						= old_owner->RemoveItem(itm, (old_owner==new_owner) );
 		if(!i)
 			return false;
@@ -617,8 +624,13 @@ bool CUIActorMenu::ToBag(CUICellItem* itm, bool b_use_cursor_pos)
 		else
 			new_owner->SetItem				(i);
 
-		if(!b_already || !b_own_item)
-			SendEvent_Item2Ruck					(iitem, m_pActorInvOwner->object_id());
+
+		// Pavel: если предмет находился в iActorTrade, то он уже должен находится в рюказке
+		// Поэтому слать эвент не нужно
+		if ((!b_already || !b_own_item) && GetListType(old_owner) != iActorTrade)
+		{
+			SendEvent_Item2Ruck(iitem, m_pActorInvOwner->object_id());
+		}
 
 		if ( m_currMenuMode == mmTrade && m_pPartnerInvOwner )
 		{
