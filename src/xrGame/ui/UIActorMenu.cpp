@@ -53,7 +53,7 @@ void CUIActorMenu::SetActor(CInventoryOwner* io)
 	}
 	else
 	{
-		UpdateActorMP();
+		SetActorInfoMP();
 	}
 }
 
@@ -230,6 +230,9 @@ void CUIActorMenu::Update()
 	{ // all mode
 		m_last_time = Device.dwTimeGlobal;
 		m_ActorStateInfo->UpdateActorInfo( m_pActorInvOwner );
+
+		if (!IsGameTypeSingle())
+			UpdateActorMoneyMP();
 	}
 
 	switch ( m_currMenuMode )
@@ -860,20 +863,28 @@ void CUIActorMenu::ResetMode()
 	SetCurrentItem				(NULL);
 }
 
-void CUIActorMenu::UpdateActorMP()
+void CUIActorMenu::UpdateActorMoneyMP()
+{
+	if (!&Level() || !Level().game || !Game().local_player || !m_pActorInvOwner || IsGameTypeSingle())
+	{
+		m_ActorMoney->SetText("");
+		return;
+	}
+
+	s32 money = Game().local_player->money_for_round;
+
+	string64 buf;
+	xr_sprintf(buf, "%d RU", money);
+	m_ActorMoney->SetText(buf);
+}
+
+void CUIActorMenu::SetActorInfoMP()
 {
 	if ( !&Level() || !Level().game || !Game().local_player || !m_pActorInvOwner || IsGameTypeSingle() )
 	{
 		m_ActorCharacterInfo->ClearInfo();
-		m_ActorMoney->SetText( "" );
 		return;
 	}
-
-	int money = Game().local_player->money_for_round;
-
-	string64 buf;
-	xr_sprintf( buf, "%d RU", money );
-	m_ActorMoney->SetText( buf );
 
 	if (Game().Type() == eGameIDFreeMp || Game().Type() == eGameIDRolePlay)
 	{
@@ -883,6 +894,8 @@ void CUIActorMenu::UpdateActorMP()
 	{
 		m_ActorCharacterInfo->InitCharacterMP(Game().local_player->getName(), "ui_npc_u_nebo_1");
 	}
+
+	UpdateActorMoneyMP();
 }
 
 bool CUIActorMenu::CanSetItemToList(PIItem item, CUIDragDropListEx* l, u16& ret_slot)
