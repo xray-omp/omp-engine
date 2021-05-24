@@ -1143,7 +1143,7 @@ void CInventoryItem::Interpolate()
 				if (m_activated)
 				{
 #ifdef DEBUG
-					Msg("Deactivating object [%d] after interpolation finish", object().ID());
+					Msg("Deactivating object [%d][%s] after interpolation finish", object().ID(), object().Name());
 #endif // #ifdef DEBUG
 					object().processing_deactivate();
 					m_activated = false;
