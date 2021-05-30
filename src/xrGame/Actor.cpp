@@ -900,10 +900,14 @@ void CActor::Die	(CObject* who)
 		m_DangerSnd.stop		();		
 	}
 
+	if (Level().CurrentViewEntity() == this && CurrentGameUI())
+	{
+		CurrentGameUI()->HideShownDialogs();
+	}
+
 	if	(IsGameTypeSingle())
 	{
 		cam_Set				(eacFreeLook);
-		CurrentGameUI()->HideShownDialogs();
 		start_tutorial		("game_over");
 	} else
 	{
