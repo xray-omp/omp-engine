@@ -27,6 +27,9 @@
 #include "CustomOutfit.h"
 #include "Bolt.h"
 #include "actor_mp_server.h"
+#include "./ui/UIActorMenu.h"
+#include "UIGameCustom.h"
+#include "./ui/UITalkWnd.h"
 
 CInventoryOwner::CInventoryOwner			()
 {
@@ -164,6 +167,15 @@ BOOL CInventoryOwner::net_Spawn		(CSE_Abstract* DC)
 
 void CInventoryOwner::net_Destroy()
 {
+	if (!g_dedicated_server)
+	{
+		StopTrading();
+		if (CurrentGameUI() && Actor() && Actor()->GetTalkPartner() == this)
+		{
+			CurrentGameUI()->TalkMenu->HideDialog();
+		}
+	}
+
 	CAttachmentOwner::net_Destroy();
 	
 	inventory().Clear();
@@ -303,10 +315,10 @@ void CInventoryOwner::StopTrading()
 {
 	m_bTrading = false;
 
-	CUIGameSP* ui_sp = smart_cast<CUIGameSP*>( CurrentGameUI() );
-	if ( ui_sp )
+
+	if (CurrentGameUI())
 	{
-		ui_sp->HideActorMenu();
+		CurrentGameUI()->HideActorMenu();
 	}
 }
 

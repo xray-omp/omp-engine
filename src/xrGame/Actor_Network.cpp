@@ -774,6 +774,10 @@ void CActor::net_Destroy	()
 
 	if (g_actor == this)
 	{
+		if (CurrentGameUI())
+		{
+			CurrentGameUI()->HideShownDialogs();
+		}
 		Msg("g_actor set to NULL");
 		g_actor = NULL;
 	}
