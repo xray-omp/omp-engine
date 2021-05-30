@@ -13,6 +13,7 @@
 #include "script_callback_ex.h"
 #include "script_game_object.h"
 #include "../xrphysics/PhysicsShell.h"
+#include "Level.h"
 #ifdef DEBUG
 #include "../xrphysics/IPHWorld.h"
 //#include "PHWorld.h"
@@ -67,6 +68,16 @@ BOOL CDestroyablePhysicsObject::net_Spawn(CSE_Abstract* DC)
 	}
 	CParticlesPlayer::LoadParticles(K);
 	RunStartupAnim(DC);
+
+	if (m_pPhysicsShell)
+	{
+		bool is_part_object = READ_IF_EXISTS(pSettings, r_bool, cNameSect(), "is_part_object", 0);
+		if (is_part_object)
+		{
+			m_pPhysicsShell->SetIgnoreDynamic();
+		}
+	}
+
 	return res;
 }
 
@@ -100,7 +111,7 @@ void CDestroyablePhysicsObject::Destroy()
 	VERIFY(!physics_world()->Processing());
 	const CGameObject *who_object = smart_cast<const CGameObject*>(FatalHit().initiator());
 	callback(GameObject::eDeath)(lua_game_object(),who_object  ? who_object : 0);
-	CPHDestroyable::Destroy(ID(),"physic_destroyable_object");
+	CPHDestroyable::Destroy(ID(),"physic_destroyable_object_part");
 	if(m_destroy_sound._handle())
 	{
 		m_destroy_sound.play_at_pos(this,Position());
@@ -126,6 +137,11 @@ void CDestroyablePhysicsObject::Destroy()
 			StartParticles(m_destroy_particles,m,ID());
 	}
 	SheduleRegister();
+
+	if (OnClient())
+	{
+		PhysicallyRemoveSelf();
+	}
 }
 void CDestroyablePhysicsObject::InitServerObject(CSE_Abstract* D)
 {

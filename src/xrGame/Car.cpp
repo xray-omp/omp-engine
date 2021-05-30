@@ -1804,7 +1804,7 @@ void CCar::CarExplode()
 	}
 
 	if(CPHDestroyable::CanDestroy())
-		CPHDestroyable::Destroy(ID(),"physic_destroyable_object");	
+		CPHDestroyable::Destroy(ID(),"physic_destroyable_object_part");	
 }
 //void CCar::object_contactCallbackFun(bool& do_colide,dContact& c,SGameMtl * ,SGameMtl * )
 //{

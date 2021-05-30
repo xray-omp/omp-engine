@@ -107,7 +107,7 @@ void CHelicopter::ExplodeHelicopter ()
 		CParticlesObject::Destroy(m_pParticle);
 	}
 	if(CPHDestroyable::CanDestroy())
-		CPHDestroyable::Destroy(ID(),"physic_destroyable_object");
+		CPHDestroyable::Destroy(ID(),"physic_destroyable_object_part");
 
 	CExplosive::SetInitiator(ID());
 	CExplosive::GenExplodeEvent(Position(),Fvector().set(0.f,1.f,0.f));
