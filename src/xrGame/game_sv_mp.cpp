@@ -1498,7 +1498,7 @@ void game_sv_mp::ClearPlayerState(game_PlayerState* ps)
 	ClearPlayerItems		(ps);
 };
 
-void game_sv_mp::OnPlayerKilled(NET_Packet P)
+void game_sv_mp::OnPlayerKilled(NET_Packet &P)
 {
 	u16 KilledID = P.r_u16();
 	KILL_TYPE KillType = KILL_TYPE(P.r_u8());
@@ -1537,7 +1537,7 @@ void game_sv_mp::OnPlayerKilled(NET_Packet P)
 	SendPlayerKilledMessage((ps_killed)?ps_killed->GameID:KilledID, KillType, (ps_killer)?ps_killer->GameID:KillerID, WeaponID, SpecialKill);
 };
 
-void game_sv_mp::OnPlayerHitted(NET_Packet P)
+void game_sv_mp::OnPlayerHitted(NET_Packet &P)
 {
 	u16		id_hitted = P.r_u16();
 	u16     id_hitter = P.r_u16();

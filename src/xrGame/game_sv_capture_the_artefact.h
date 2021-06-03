@@ -226,7 +226,7 @@ public:
 	virtual void OnPlayerConnect(ClientID id_who);
 	virtual	void OnPlayerDisconnect(ClientID id_who, LPSTR Name, u16 GameID);
 	virtual	void OnPlayerConnectFinished(ClientID id_who);
-	virtual	void OnPlayerHitted(NET_Packet P);
+	virtual	void OnPlayerHitted(NET_Packet &P);
 	
 	virtual	void OnPlayerReady(ClientID id_who);
 		

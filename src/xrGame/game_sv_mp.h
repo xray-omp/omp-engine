@@ -117,9 +117,9 @@ public:
 	virtual		BOOL				OnTouch					(u16 eid_who, u16 eid_target, BOOL bForced = FALSE){return true;};			// TRUE=allow ownership, FALSE=denied
 	virtual		void				OnDetach				(u16 eid_who, u16 eid_target){};
 	virtual		void				OnPlayerKillPlayer		(game_PlayerState* ps_killer, game_PlayerState* ps_killed, KILL_TYPE KillType, SPECIAL_KILL_TYPE SpecialKillType, CSE_Abstract* pWeaponA){};
-	virtual		void				OnPlayerKilled			(NET_Packet P);
+	virtual		void				OnPlayerKilled			(NET_Packet &P);
 	virtual		bool				CheckTeams				() { return false; };
-	virtual		void				OnPlayerHitted			(NET_Packet P);
+	virtual		void				OnPlayerHitted			(NET_Packet &P);
 	virtual		void				OnPlayerEnteredGame		(ClientID id_who);
 
 	virtual		void				OnDestroyObject			(u16 eid_who);			

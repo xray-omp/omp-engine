@@ -1389,7 +1389,7 @@ bool game_sv_CaptureTheArtefact::OnKillResult(KILL_RES KillResult, game_PlayerSt
 	return res;
 }
 
-void game_sv_CaptureTheArtefact::OnPlayerHitted(NET_Packet P)
+void game_sv_CaptureTheArtefact::OnPlayerHitted(NET_Packet &P)
 {
 	Set_RankUp_Allowed(true);
 	inherited::OnPlayerHitted(P);
