@@ -297,6 +297,10 @@ void CCustomDetector::UpfateWork()
 
 void CCustomDetector::UpdateVisibility()
 {
+	// Pavel: Предотвращение краша при дисконнекте сервера
+	if (!Actor())
+		return;
+
 	// Pavel: ХАК. Прячем детектор, если в руках оказывается оружие (кроме пистолета, ножа, болта)
 	if (!IsGameTypeSingle() && OnClient())
 	{
@@ -388,6 +392,10 @@ void CCustomDetector::OnMoveToRuck(const SInvItemPlace& prev)
 	{
 		SwitchState					(eHidden);
 		g_player_hud->detach_item	(this);
+
+		// Pavel: фикс для мп, не нужно доставать детектор,
+		// если он был убран / заменён на другой во время перезарядки
+		m_bNeedActivation = false;
 	}
 	TurnDetectorInternal			(false);
 	StopCurrentAnimWithoutCallback	();
