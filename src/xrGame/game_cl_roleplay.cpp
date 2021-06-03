@@ -110,6 +110,7 @@ bool game_cl_roleplay::OnKeyboardPress(int key)
 			!m_game_ui->SpawnMenu()->IsShown()
 		)
 		{
+			m_game_ui->HideShownDialogs();
 			m_game_ui->SpawnMenu()->ShowDialog(true);
 		}
 		return true;
