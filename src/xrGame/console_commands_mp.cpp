@@ -129,7 +129,13 @@ public:
 					CCC_Restart		(LPCSTR N) : IConsole_Command(N)  { bEmptyArgsHandled = true; };
 	virtual void	Execute			(LPCSTR args) 
 	{
-		if (!OnServer())			return;
+		if (!OnServer()) return;
+		if (CheckGameFlag(F_RESTART_DISABLED))
+		{
+			Msg("Disabled restart command for this game type.");
+			return;
+		}
+
 		if(Level().Server)
 		{
 			Level().Server->game->round_end_reason = eRoundEnd_GameRestarted;
@@ -144,8 +150,13 @@ public:
 					CCC_RestartFast	(LPCSTR N) : IConsole_Command(N)  { bEmptyArgsHandled = true; };
 	virtual void	Execute			(LPCSTR args) 
 	{
-		if (!OnServer())		
-									return;
+		if (!OnServer()) return;
+		if (CheckGameFlag(F_RESTART_DISABLED))
+		{
+			Msg("Disabled fast restart command for this game type.");
+			return;
+		}
+
 		if(Level().Server)
 		{
 			Level().Server->game->round_end_reason = eRoundEnd_GameRestartedFast;

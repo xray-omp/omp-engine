@@ -67,6 +67,12 @@ void CUIVotingCategory::InitVotingCategory()
 		CUIXmlInit::InitStatic(*xml_doc, _path, 0, txt[i]);
 	}
 
+	if (CheckGameFlag(F_RESTART_DISABLED))
+	{
+		btn[0]->Enable(false); // restart
+		btn[1]->Enable(false); // fast restart
+	}
+
 	CUIXmlInit::Init3tButton(*xml_doc, "category:btn_cancel", 0, btn_cancel);
 }
 
@@ -179,6 +185,12 @@ void CUIVotingCategory::Update				()
 		
 		btn[i]->Enable(Game().IsVotingEnabled(flag));
 		txt[i]->Enable(Game().IsVotingEnabled(flag));		
+	}
+
+	if (CheckGameFlag(F_RESTART_DISABLED))
+	{
+		btn[0]->Enable(false); // restart
+		btn[1]->Enable(false); // fast restart
 	}
 
 	inherited::Update();
