@@ -27,6 +27,8 @@
 #include "ai/stalker/ai_stalker.h"
 #include "InventoryBox.h"
 
+#include <locale.h>
+
 EGameIDs	ParseStringToGameType	(LPCSTR str);
 LPCSTR		GameTypeToString		(EGameIDs gt, bool bShort);
 LPCSTR		AddHyphens				(LPCSTR c);
