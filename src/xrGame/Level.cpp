@@ -286,6 +286,12 @@ CLevel::~CLevel()
 	pActors4CrPr.clear();
 
 	ai().unload					();
+	//-----------------------------------------------------------
+	if (!IsGameTypeSingle())
+	{
+		Msg("game graph destroyed");
+		ai().destroy_game_graph();
+	}
 	//-----------------------------------------------------------	
 #ifdef DEBUG	
 	xr_delete					(m_level_debug);

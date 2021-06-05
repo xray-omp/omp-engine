@@ -304,20 +304,23 @@ void CCustomDetector::UpdateVisibility()
 	// Pavel: ХАК. Прячем детектор, если в руках оказывается оружие (кроме пистолета, ножа, болта)
 	if (!IsGameTypeSingle() && OnClient())
 	{
-		PIItem pWpn = m_pInventory->ItemFromSlot(m_pInventory->GetNextActiveSlot());
 		u16 curSlot = m_pInventory->GetActiveSlot();
-		if (pWpn != NULL)
+		if (curSlot != NO_ACTIVE_SLOT)
 		{
-			u32 slot = pWpn->BaseSlot();
-			bool bres = (slot == INV_SLOT_2 || slot == KNIFE_SLOT || slot == BOLT_SLOT || curSlot == NO_ACTIVE_SLOT);
-			if (GetState() == eIdle || GetState() == eShowing) {
-				if (!bres)
-				{
-					m_bNeedActivation = false;
-					m_bFastAnimMode = true;
-					SwitchState(eHiding);
-					// HideDetector(true);
-					return;
+			PIItem pWpn = m_pInventory->ItemFromSlot(m_pInventory->GetNextActiveSlot());
+			if (pWpn)
+			{
+				u32 slot = pWpn->BaseSlot();
+				bool bres = (slot == INV_SLOT_2 || slot == KNIFE_SLOT || slot == BOLT_SLOT || curSlot == NO_ACTIVE_SLOT);
+				if (GetState() == eIdle || GetState() == eShowing) {
+					if (!bres)
+					{
+						m_bNeedActivation = false;
+						m_bFastAnimMode = true;
+						SwitchState(eHiding);
+						// HideDetector(true);
+						return;
+					}
 				}
 			}
 		}

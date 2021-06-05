@@ -2270,7 +2270,8 @@ void CSE_ALifeHumanStalker::UPDATE_Read		(NET_Packet &tNetPacket)
 			o_Position.set(tNetPacket.r_vec3());
 		}
 
-		tNetPacket.r_float(f_health);
+		float health;
+		tNetPacket.r_float(health);
 
 		tNetPacket.r_angle8(o_torso.pitch);
 		//tNetPacket.r_angle8(o_torso.roll);
@@ -2293,7 +2294,7 @@ void CSE_ALifeHumanStalker::UPDATE_Read		(NET_Packet &tNetPacket)
 		tNetPacket.r_u16(u_script_anm_idx);
 		tNetPacket.r_u8(u_script_anm_slot);
 
-		set_health(f_health);
+		set_health(health);
 		o_model = o_torso.yaw;
 	}
 }

@@ -545,20 +545,19 @@ SERVER_ENTITY_DECLARE_BEGIN2(CSE_ALifeHumanStalker,CSE_ALifeHumanAbstract,CSE_PH
 
 	net_physics_state				physics_state;
 
-	float							f_health;
-	float							f_head_dir_pitch;
-	float							f_head_dir_yaw;
-	u16								u_active_slot;
+	float							f_head_dir_pitch = 0;
+	float							f_head_dir_yaw = 0;
+	u16								u_active_slot = 0;
 
-	u16								u_torso_anm_idx;
-	u16								u_legs_anm_idx;
-	u16								u_head_anm_idx;
-	u16								u_script_anm_idx;
+	u16								u_torso_anm_idx = 0;
+	u16								u_legs_anm_idx = 0;
+	u16								u_head_anm_idx = 0;
+	u16								u_script_anm_idx = 0;
 
-	u8								u_torso_anm_slot;
-	u8								u_legs_anm_slot;
-	u8								u_head_anm_slot;
-	u8								u_script_anm_slot;
+	u8								u_torso_anm_slot = 0;
+	u8								u_legs_anm_slot = 0;
+	u8								u_head_anm_slot = 0;
+	u8								u_script_anm_slot = 0;
 
 	u8								phSyncFlag = 0;
 

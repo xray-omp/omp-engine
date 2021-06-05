@@ -29,10 +29,13 @@ class CSE_ALifeMonsterAbstract;
 class CSE_ALifeHumanAbstract;
 class CSE_ALifeAnomalousZone;
 class CSE_ALifeTrader;
+class CSE_ALifeCreatureActor;
+class CSE_ActorMP;
 class CSE_ALifeCreatureAbstract;
 class CSE_ALifeSmartZone;
 class CSE_ALifeOnlineOfflineGroup;
 class CSE_ALifeItemPDA;
+class CSE_ALifeItemArtefact;
 
 #pragma warning(push)
 #pragma warning(disable:4005)

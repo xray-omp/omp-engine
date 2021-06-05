@@ -23,6 +23,7 @@ class CEntity;
 class CEntityAlive;
 class CInventoryOwner;
 class CActor;
+class CActorMP;
 class CPhysicsShellHolder;
 class CParticlesPlayer;
 class CCustomZone;

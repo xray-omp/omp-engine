@@ -56,7 +56,10 @@ IC	void CSSafeMapIterator::remove				(const _key_type &id, bool no_assert)
 {
 	_iterator				I = m_objects.find(id);
 	if (I == m_objects.end()) {
-		THROW2				(no_assert,"Specified object hasn't been found in the registry!");
+		// Pavel: крашит на Debug сборке  в мультиплеере.
+		// Решил закоментировать, т.к. если объект не найдет,
+		// то будет просто вызыван return
+		//THROW2				(no_assert,"Specified object hasn't been found in the registry!");
 		return;
 	}
 
