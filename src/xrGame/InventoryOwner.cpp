@@ -169,10 +169,16 @@ void CInventoryOwner::net_Destroy()
 {
 	if (!g_dedicated_server)
 	{
-		StopTrading();
-		if (CurrentGameUI() && Actor() && Actor()->GetTalkPartner() == this)
+		if (CurrentGameUI())
 		{
-			CurrentGameUI()->TalkMenu->HideDialog();
+			if (CurrentGameUI()->ActorMenu().GetPartner() == this)
+			{
+				StopTrading();
+			}
+			if (Actor() && Actor()->GetTalkPartner() == this)
+			{
+				CurrentGameUI()->TalkMenu->HideDialog();
+			}
 		}
 	}
 
