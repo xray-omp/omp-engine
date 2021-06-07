@@ -101,7 +101,7 @@ void type_pair::on_key_press( line_edit_control* const control )
 		
 		if ( pInput->get_dik_name( m_dik, buff, sizeof(buff) ) )
 		{
-			if ( _isalpha_l(buff[0], current_locale) || buff[0] == char(-1) ) // "ÿ" = -1
+			if (_isalpha_l((unsigned char)buff[0], current_locale) || buff[0] == char(-1)) // "ÿ" = -1
 			{
 				_strlwr_l	(buff, current_locale);
 				c			= buff[0];
