@@ -55,7 +55,7 @@ void CTeleWhirlwind::set_throw_power(float throw_pow)
 
 void CTeleWhirlwind::draw_out_impact(Fvector& dir,float& val)
 {
-	VERIFY2(m_saved_impacts.size(),"NO IMPACTS ADDED!");
+	R_ASSERT2(m_saved_impacts.size(),"NO IMPACTS ADDED!");
 
 	dir.set(m_saved_impacts[0].force);
 	val=dir.magnitude();
@@ -171,18 +171,22 @@ bool	CTeleWhirlwindObject::destroy_object		(const Fvector dir,float val)
 	if(D)
 	{
 		D->PhysicallyRemoveSelf();
-		D->Destroy(m_telekinesis->OwnerObject()->ID());
-		
-//.		m_telekinesis->add_impact(dir,val*10.f);
 
-		xr_vector<shared_str>::iterator i = D->m_destroyed_obj_visual_names.begin();
-		xr_vector<shared_str>::iterator e = D->m_destroyed_obj_visual_names.end();
 		if (IsGameTypeSingle())
 		{
-			for(;e!=i;i++)
-				m_telekinesis->add_impact(dir,val*10.f);
-		};	
+			D->Destroy(m_telekinesis->OwnerObject()->ID());
 
+			xr_vector<shared_str>::iterator i = D->m_destroyed_obj_visual_names.begin();
+			xr_vector<shared_str>::iterator e = D->m_destroyed_obj_visual_names.end();
+			for (; e != i; i++)
+				m_telekinesis->add_impact(dir, val * 10.f);
+		}
+		else
+		{
+			D->DestroyWithoutParts(m_telekinesis->OwnerObject()->ID());
+		}
+		
+//.		m_telekinesis->add_impact(dir,val*10.f);
 
 		CParticlesPlayer* PP = smart_cast<CParticlesPlayer*>(object);
 		if(PP)

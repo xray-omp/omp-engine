@@ -124,7 +124,6 @@ void CMincer::NotificateDestroy			(CPHDestroyableNotificate *dn)
 
 	//CObject* obj=Level().Objects.net_Find(id);
 	CPhysicsShellHolder* obj=dn->PPhysicsShellHolder();
-	m_telekinetics.draw_out_impact(dir,impulse);
 	CParticlesPlayer* PP = smart_cast<CParticlesPlayer*>(obj);
 	if(PP && *m_torn_particles)
 	{
@@ -132,10 +131,16 @@ void CMincer::NotificateDestroy			(CPHDestroyableNotificate *dn)
 	}
 	m_tearing_sound.play_at_pos(0,m_telekinetics.Center());
 
-	Fvector position_in_bone_space, throw_in_dir;
-	position_in_bone_space.set		(0.0f, 0.0f, 0.0f);
-	throw_in_dir.set				(1.0f, 0.0f, 1.0f);
-	CreateHit(obj->ID(),ID(),throw_in_dir,power,0,position_in_bone_space,impulse,ALife::eHitTypeExplosion);
+
+	if (OnServer())
+	{
+		m_telekinetics.draw_out_impact(dir, impulse);
+
+		Fvector position_in_bone_space, throw_in_dir;
+		position_in_bone_space.set(0.0f, 0.0f, 0.0f);
+		throw_in_dir.set(1.0f, 0.0f, 1.0f);
+		CreateHit(obj->ID(), ID(), throw_in_dir, power, 0, position_in_bone_space, impulse, ALife::eHitTypeExplosion);
+	}
 }
 
 void CMincer::AffectPullAlife(CEntityAlive* EA,const Fvector& throw_in_dir,float dist)

@@ -49,7 +49,6 @@ CPHDestroyable::CPHDestroyable()
 /////////spawn object representing destroyed item//////////////////////////////////////////////////////////////////////////////////
 void CPHDestroyable::GenSpawnReplace(u16 ref_id,LPCSTR section,shared_str visual_name)
 {
-
 	CSE_Abstract				*D	= F_entity_Create(section);//*cNameSect()
 	VERIFY						(D);
 	CSE_Visual					*V  =smart_cast<CSE_Visual*>(D);
@@ -63,15 +62,13 @@ void CPHDestroyable::GenSpawnReplace(u16 ref_id,LPCSTR section,shared_str visual
 	D->s_name			= section;//*cNameSect()
 	D->ID_Parent		= u16(-1);
 	InitServerObject	(D);
-	if (OnServer())
-	{
-		NET_Packet			P;
-		D->Spawn_Write		(P,TRUE);
-		Level().Send		(P,net_flags(TRUE));
-		// Destroy
-		F_entity_Destroy	(D);
-		m_depended_objects++;
-	};
+
+	NET_Packet			P;
+	D->Spawn_Write(P, TRUE);
+	Level().Send(P, net_flags(TRUE));
+	// Destroy
+	F_entity_Destroy(D);
+	m_depended_objects++;
 };
 
 void CPHDestroyable::InitServerObject(CSE_Abstract* D)
@@ -135,6 +132,25 @@ void CPHDestroyable::PhysicallyRemovePart(CPHDestroyableNotificate *dn)
 							s					->DisableCollision			()		;
 }
 
+void CPHDestroyable::DestroyWithoutParts(u16 source_id)
+{
+	m_notificate_objects.clear();
+
+	CPhysicsShellHolder* obj = PPhysicsShellHolder();
+	CPHSkeleton* phs = obj->PHSkeleton();
+	if (phs)phs->SetNotNeedSave();
+	if (obj->PPhysicsShell())	obj->PPhysicsShell()->Enable();
+	obj->processing_activate();
+
+	if (source_id == obj->ID())
+	{
+		m_flags.set(fl_released, FALSE);
+	}
+
+	m_flags.set(fl_destroyed, TRUE);
+	return;
+}
+
 void CPHDestroyable::Destroy(u16 source_id/*=u16(-1)*/,LPCSTR section/*="ph_skeleton_object"*/)
 {
 	
@@ -151,7 +167,7 @@ void CPHDestroyable::Destroy(u16 source_id/*=u16(-1)*/,LPCSTR section/*="ph_skel
 	}
 	xr_vector<shared_str>::iterator i=m_destroyed_obj_visual_names.begin(),e=m_destroyed_obj_visual_names.end();
 
-	if (true/*IsGameTypeSingle()*/)
+	if (OnServer())
 	{
 		for(;e!=i;i++)
 			GenSpawnReplace(source_id,section,*i);
