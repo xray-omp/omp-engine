@@ -436,11 +436,11 @@ void CActorCondition::UpdateRadiation()
 
 void CActorCondition::UpdateSatiety()
 {
- 	/*if (!IsGameTypeSingle()) 
+ 	if (!IsGameTypeSingle()) 
 	{
 		m_fDeltaPower += m_fV_SatietyPower * m_fDeltaTime;
  		return;
-	}*/
+	}
 
 	if(m_fSatiety>0)
 	{
