@@ -6,8 +6,6 @@
 /binares
 /intermediate
 
-# Ignore SDK folder
-/SDK
  
 # User-specific files
 *.rsuser
@@ -30,6 +28,13 @@ bld/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
+
+# exceptions
+!/SDK/include/boost/preprocessor/debug
+!/SDK/include/boost/spirit/debug
+!/SDK/binaries/x86
+!/SDK/libraries/x86
+!/SDK/sources/libtheora-1.1.1/lib/x86
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
