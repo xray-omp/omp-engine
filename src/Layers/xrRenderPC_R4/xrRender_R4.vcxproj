@@ -92,7 +92,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>dxguid.lib;d3dx11.lib;d3d11.lib;dxgi.lib;D3DCompiler.lib;nvapi.lib;atimgpud_s_x86.lib;dxerr.lib;d3d10.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dxguid.lib;d3dx11.lib;d3d11.lib;dxgi.lib;D3DCompiler.lib;nvapi.lib;dxerr.lib;d3d10.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <GenerateMapFile>false</GenerateMapFile>
@@ -135,7 +135,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>dxguid.lib;d3dx11.lib;D3DCompiler.lib;d3d11.lib;dxgi.lib;nvapi.lib;atimgpud_s_x86.lib;dxerr.lib;d3d10.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dxguid.lib;d3dx11.lib;D3DCompiler.lib;d3d11.lib;dxgi.lib;nvapi.lib;dxerr.lib;d3d10.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)$(ProjectName).pdb</ProgramDatabaseFile>
       <GenerateMapFile>false</GenerateMapFile>
@@ -178,7 +178,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>dxguid.lib;d3dx11.lib;D3DCompiler.lib;d3d11.lib;dxgi.lib;nvapi.lib;atimgpud_s_x86.lib;dxerr.lib;d3d10.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dxguid.lib;d3dx11.lib;D3DCompiler.lib;d3d11.lib;dxgi.lib;nvapi.lib;dxerr.lib;d3d10.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <GenerateMapFile>false</GenerateMapFile>
       <MapFileName>$(OutDir)$(ProjectName).map</MapFileName>

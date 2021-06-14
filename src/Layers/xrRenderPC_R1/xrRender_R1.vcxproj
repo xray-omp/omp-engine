@@ -92,7 +92,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>nvapi.lib;atimgpud_s_x86.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>nvapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <GenerateMapFile>false</GenerateMapFile>
@@ -136,7 +136,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>nvapi.lib;atimgpud_s_x86.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>nvapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)$(ProjectName).pdb</ProgramDatabaseFile>
       <GenerateMapFile>false</GenerateMapFile>
@@ -180,7 +180,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>nvapi.lib;atimgpud_s_x86.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>nvapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <GenerateMapFile>false</GenerateMapFile>
       <MapFileName>$(OutDir)$(ProjectName).map</MapFileName>
