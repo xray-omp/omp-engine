@@ -10,8 +10,20 @@ struct SteamNetworkingQuickConnectionStatus;
 
 class XRNETSERVER_API IClientStatistic
 {
+	// steam
 	float				qualityLocal = 0;
 	float				qualityRemote = 0;
+
+	float				packetsInPerSec = 0;
+	float				packetsOutPerSec = 0;
+
+	s64					queueTime = 0;
+	s32					sendRateBytesPerSecond = 0;
+	s32					pendingReliable = 0;
+	s32					pendingUnreliable = 0;
+	s32					sentUnackedReliable = 0;
+	// steam
+
 	u32					mps_recive, mps_receive_base;
 	u32					mps_send, mps_send_base;
 	u32					dwBaseTime;
@@ -31,8 +43,19 @@ public:
 	IC u32	getMPS_Send() { return mps_send; }
 	IC u32	getReceivedPerSec() { return dwBytesReceivedPerSec; }
 	IC u32	getSendedPerSec() { return dwBytesSendedPerSec; }	
+
+
 	IC float	getQualityLocal() { return qualityLocal; }
 	IC float	getQualityRemote() { return qualityRemote; }
+
+	IC float	getPacketsInPerSec() { return packetsInPerSec; }
+	IC float	getPacketsOutPerSec() { return packetsOutPerSec; }
+
+	IC s64	getQueueTime() { return queueTime; }
+	IC s32	getSendRateBytesPerSecond() { return sendRateBytesPerSecond; }
+	IC s32	getPendingReliable() { return pendingReliable; }
+	IC s32	getPendingUnreliable() { return pendingUnreliable; }
+	IC s32	getSentUnackedReliable() { return sentUnackedReliable; }
 
 	IC void	Clear() { CTimer* timer = device_timer; ZeroMemory(this, sizeof(*this)); device_timer = timer; dwBaseTime = TimeGlobal(device_timer); }
 
