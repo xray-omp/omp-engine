@@ -730,7 +730,7 @@ bool CInventory::Action(u16 cmd, u32 flags)
 		u16 slot = u16(cmd - kWPN_1 + 1);
 		// Pavel: для ножа и болта нам не нужны проверки
 		// Они нормально достаются / убираются с детектором в руках
-		if (cmd != kWPN_1 && cmd != kWPN_6)
+		if (flags & CMD_START && cmd != kWPN_1 && cmd != kWPN_6)
 		{
 			// Pavel: Не достаем другое оружие, если прицеливаемся из текущего оружия
 			attachable_hud_item *i0 = g_player_hud->attached_item(0);
