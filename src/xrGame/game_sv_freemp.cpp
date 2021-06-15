@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "game_sv_freemp.h"
 #include "Level.h"
+#include "alife_simulator.h"
 
 game_sv_freemp::game_sv_freemp()
 	:pure_relcase(&game_sv_freemp::net_Relcase)
@@ -236,4 +237,14 @@ BOOL game_sv_freemp::OnTouch(u16 eid_who, u16 eid_what, BOOL bForced)
 		return FALSE;
 
 	return TRUE;
+}
+
+void game_sv_freemp::on_death(CSE_Abstract* e_dest, CSE_Abstract* e_src)
+{
+	inherited::on_death(e_dest, e_src);
+
+	if (!ai().get_alife())
+		return;
+
+	alife().on_death(e_dest, e_src);
 }

@@ -36,6 +36,8 @@ public:
 
 	virtual		BOOL				OnTouch(u16 eid_who, u16 eid_what, BOOL bForced = FALSE);
 
+	virtual		void				on_death(CSE_Abstract* e_dest, CSE_Abstract* e_src);
+
 	virtual		void				OnPlayerTrade(NET_Packet &P, ClientID const & clientID);
 	virtual		void				OnTransferMoney(NET_Packet &P, ClientID const & clientID);
 };
