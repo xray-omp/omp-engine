@@ -2,7 +2,7 @@
 X-RAY OMP - проект, представляющий собой набор правок движка/скриптов игры S.T.A.L.K.E.R.: Зов Припяти для мультиплеера. Проект создан с целью поделиться некоторыми наработками с другими разработчиками мультиплеерных проектов.
 
 ## gamedata
-gamedata находится в [отдельном репозитории](https://github.com/xray-omp/omp-engine).
+gamedata находится в [отдельном репозитории](https://github.com/xray-omp/omp-gamedata).
 
 ## Сборка
 * [Скачать](https://visualstudio.microsoft.com/ru/) Viusal Studio 2019 (достаточно Community версии).
