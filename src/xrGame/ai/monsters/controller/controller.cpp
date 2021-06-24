@@ -710,7 +710,7 @@ void CController::set_mental_state(EMentalState state)
 
 void   CController::HitEntity (const CEntity *pEntity, float fDamage, float impulse, Fvector &dir, ALife::EHitType hit_type, bool draw_hit_marks)
 {
-	if ( pEntity == Actor() && !GodMode() )
+	if ( pEntity == Actor() && !GodMode() && !Actor()->MpGodMode() )
 	{
 		Actor()->conditions().PowerHit(m_stamina_hit, false);
 		if ( Actor()->conditions().GetPower() < m_stamina_hit )

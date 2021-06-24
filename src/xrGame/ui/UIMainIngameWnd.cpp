@@ -344,7 +344,11 @@ void CUIMainIngameWnd::Update()
 	{
 		lookat_player = Game().lookat_player();
 	}
-	bool b_God = ( GodMode() || ( !lookat_player ) )? true : lookat_player->testFlag(GAME_PLAYER_FLAG_INVINCIBLE);
+
+	bool b_God = (GodMode() || lookat_player->testFlag(GAME_PLAYER_MP_GOD_MODE) || (!lookat_player))
+		? true
+		: lookat_player->testFlag(GAME_PLAYER_FLAG_INVINCIBLE);
+
 	if ( b_God )
 	{
 		SetWarningIconColor( ewiInvincible, 0xffffffff );

@@ -198,7 +198,7 @@ void CActorCondition::UpdateCondition()
 		}
 	}
 
-	if (GodMode())				return;
+	if (GodMode() || object().MpGodMode())				return;
 	if (!object().g_Alive())	return;
 	if (!object().Local() && m_object != Level().CurrentViewEntity())		return;	
 	
@@ -449,7 +449,7 @@ void CActorCondition::UpdateSatiety()
 	}
 		
 	float satiety_health_koef = (m_fSatiety-m_fSatietyCritical)/(m_fSatiety>=m_fSatietyCritical?1-m_fSatietyCritical:m_fSatietyCritical);
-	if(CanBeHarmed() && !psActorFlags.test(AF_GODMODE_RT) )
+	if(CanBeHarmed() && !psActorFlags.test(AF_GODMODE_RT) && !object().MpGodMode())
 	{
 		m_fDeltaHealth += m_fV_SatietyHealth*satiety_health_koef*m_fDeltaTime;
 		m_fDeltaPower += m_fV_SatietyPower*m_fSatiety*m_fDeltaTime;
@@ -458,7 +458,7 @@ void CActorCondition::UpdateSatiety()
 
 CWound* CActorCondition::ConditionHit(SHit* pHDS)
 {
-	if (GodMode()) return NULL;
+	if (GodMode()|| object().MpGodMode()) return NULL;
 	return inherited::ConditionHit(pHDS);
 }
 
@@ -502,7 +502,7 @@ bool CActorCondition::IsCantWalk() const
 
 bool CActorCondition::IsCantWalkWeight()
 {
-	if(/*IsGameTypeSingle() &&*/ !GodMode())
+	if(/*IsGameTypeSingle() &&*/ !GodMode() && !object().MpGodMode())
 	{
 		float max_w	= m_object->MaxWalkWeight();
 

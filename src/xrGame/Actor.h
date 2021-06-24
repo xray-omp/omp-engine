@@ -81,6 +81,7 @@ public:
 
 public:
 	
+			bool						MpGodMode					() const				;
 			bool						MpNoClip					() const				;
 			bool						MpInvisibility				() const				;
 

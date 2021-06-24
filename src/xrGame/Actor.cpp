@@ -232,6 +232,15 @@ CActor::~CActor()
 //.	xr_delete				(m_vehicle_anims);
 }
 
+bool CActor::MpGodMode() const
+{
+	if (!g_Alive())
+		return false;
+
+	game_PlayerState* ps = Game().GetPlayerByGameID(ID());
+	return (ps && ps->testFlag(GAME_PLAYER_MP_GOD_MODE));
+}
+
 bool CActor::MpNoClip() const
 {
 	if (!g_Alive())
@@ -1349,7 +1358,7 @@ void CActor::shedule_Update	(u32 DT)
 	//звук тяжелого дыхания при уталости и хромании
 	if(this==Level().CurrentControlEntity() && !g_dedicated_server )
 	{
-		if(conditions().IsLimping() && g_Alive() && !psActorFlags.test(AF_GODMODE_RT)){
+		if(conditions().IsLimping() && g_Alive() && !psActorFlags.test(AF_GODMODE_RT) && !MpGodMode()){
 			if(!m_HeavyBreathSnd._feedback()){
 				m_HeavyBreathSnd.play_at_pos(this, Fvector().set(0,ACTOR_HEIGHT,0), sm_Looped | sm_2D);
 			}else{

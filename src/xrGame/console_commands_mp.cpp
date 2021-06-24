@@ -2438,6 +2438,45 @@ public:
 	}
 };
 
+class CCC_SetGodModForPlayer : public IConsole_Command {
+public:
+	CCC_SetGodModForPlayer(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = false; };
+
+	virtual void	Execute(LPCSTR args)
+	{
+		if (!g_pGameLevel || !Level().Server) return;
+
+		game_sv_mp* srv = smart_cast<game_sv_mp*>(Level().Server->game);
+		if (!srv) return;
+
+		string1024 buff;
+		exclude_raid_from_args(args, buff, sizeof(buff));
+
+		ClientID client_id(0);
+		u32 tmp_client_id;
+		u32 value;
+		if (sscanf_s(buff, "%u %u", &tmp_client_id, &value) != 2)
+		{
+			Msg("! ERROR: bad command parameters.");
+			Msg("Set god mode for player. Format: \"sv_set_god_mode <player session id> <value>\"");
+			return;
+		}
+		client_id.set(tmp_client_id);
+
+		xrClientData* CL = static_cast<xrClientData*>(Level().Server->GetClientByID(client_id));
+		if (CL && CL->ps && (CL != Level().Server->GetServerClient()) && (value == 0 || value == 1))
+		{
+			if (value) CL->ps->setFlag(GAME_PLAYER_MP_GOD_MODE);
+			else CL->ps->resetFlag(GAME_PLAYER_MP_GOD_MODE);
+			srv->signal_Syncronize();
+		}
+		else
+		{
+			Msg("! Can't set god mode for player with client id %u", client_id.value());
+		}
+	}
+};
+
 class CCC_AdmNoClip : public IConsole_Command {
 public:
 	CCC_AdmNoClip(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = false; };
@@ -2490,6 +2529,32 @@ public:
 	}
 };
 
+class CCC_AdmGodMode : public IConsole_Command {
+public:
+	CCC_AdmGodMode(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = false; };
+
+	virtual void Execute(LPCSTR args)
+	{
+		u32 value = u32(-1);
+
+		if (sscanf(args, "%u", &value) == 1 && (value == 0 || value == 1))
+		{
+			NET_Packet		P;
+			P.w_begin(M_REMOTE_CONTROL_CMD);
+			string128 str;
+			xr_sprintf(str, "sv_set_god_mode %u %u", Game().local_svdpnid.value(), value);
+			P.w_stringZ(str);
+			Level().Send(P, net_flags(TRUE, TRUE));
+		}
+		else
+		{
+			Msg("! ERROR: bad command parameters.");
+			Msg("Set noclip for self. Format: \"adm_god_mode [0,1]\"");
+			return;
+		}
+	}
+};
+
 void register_mp_console_commands()
 {
 	CMD1(CCC_SpawnToInventory,		"sv_spawn_to_player_inv");
@@ -2501,8 +2566,10 @@ void register_mp_console_commands()
 
 	CMD1(CCC_SetNoClipForPlayer,	"sv_set_no_clip"		);
 	CMD1(CCC_SetInvisForPlayer,		"sv_set_invis"			);
+	CMD1(CCC_SetGodModForPlayer,	"sv_set_god_mode"		);
 	CMD1(CCC_AdmNoClip,				"adm_no_clip"			);
 	CMD1(CCC_AdmInvis,				"adm_invis"				);
+	CMD1(CCC_AdmGodMode,			"adm_god_mode"			);
 
 	CMD1(CCC_GiveMoneyToPlayer, "sv_give_money");
 	CMD1(CCC_TransferMoney, "transfer_money");
