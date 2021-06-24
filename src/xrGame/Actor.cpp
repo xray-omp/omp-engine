@@ -241,6 +241,15 @@ bool CActor::MpNoClip() const
 	return (ps && ps->testFlag(GAME_PLAYER_MP_NO_CLIP));
 }
 
+bool CActor::MpInvisibility() const
+{
+	if (!g_Alive())
+		return false;
+
+	game_PlayerState* ps = Game().GetPlayerByGameID(ID());
+	return (ps && ps->testFlag(GAME_PLAYER_MP_INVIS));
+}
+
 void CActor::reinit	()
 {
 	character_physics_support()->movement()->CreateCharacter		();

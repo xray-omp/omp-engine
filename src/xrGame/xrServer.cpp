@@ -872,6 +872,7 @@ u32 xrServer::OnMessage	(NET_Packet& P, ClientID sender)			// Non-Zero means bro
 				if (CL->ps)
 				{
 					CL->ps->resetFlag(GAME_PLAYER_HAS_ADMIN_RIGHTS);
+					game->signal_Syncronize();
 				}
 				xr_strcpy				(reason,"logged off");
 				Msg("# Remote administrator logged off.");
@@ -885,6 +886,7 @@ u32 xrServer::OnMessage	(NET_Packet& P, ClientID sender)			// Non-Zero means bro
 					if (CL->ps)
 					{
 						CL->ps->setFlag(GAME_PLAYER_HAS_ADMIN_RIGHTS);
+						game->signal_Syncronize();
 					}
 					Msg("# User [%s] logged as remote administrator.", user.c_str());
 				}else

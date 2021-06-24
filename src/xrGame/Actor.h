@@ -82,6 +82,7 @@ public:
 public:
 	
 			bool						MpNoClip					() const				;
+			bool						MpInvisibility				() const				;
 
 	virtual BOOL						AlwaysTheCrow				()						{ return TRUE; }
 
