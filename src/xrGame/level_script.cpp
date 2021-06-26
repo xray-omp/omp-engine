@@ -25,6 +25,7 @@
 #include "script_engine.h"
 #include "game_cl_single.h"
 #include "game_sv_single.h"
+#include "game_sv_mp.h"
 #include "map_manager.h"
 #include "map_spot.h"
 #include "map_location.h"
@@ -744,6 +745,24 @@ int get_g_actor_id()
 	return Actor()->ID();
 }
 
+void sv_teleport_player(u32 clientID, const Fvector3 pos)
+{
+	game_sv_mp* srv = smart_cast<game_sv_mp*>(Level().Server->game);
+	if (srv)
+	{
+		srv->TeleportPlayerTo(clientID, pos);
+	}
+}
+
+void sv_teleport_player2(u32 clientID, const Fvector3 pos, const Fvector3 dir)
+{
+	game_sv_mp* srv = smart_cast<game_sv_mp*>(Level().Server->game);
+	if (srv)
+	{
+		srv->TeleportPlayerTo(clientID, pos, dir);
+	}
+}
+
 // script events
 
 void send_script_event_to_server(NET_Packet& P)
@@ -900,6 +919,12 @@ void CLevel::script_register(lua_State *L)
 		def("get_object_by_client", &get_object_by_client),
 		def("get_local_player_id", &get_local_player_id),
 		def("get_g_actor_id", &get_g_actor_id)
+	],
+
+	module(L, "mp")
+	[
+		def("sv_teleport_player", &sv_teleport_player),
+		def("sv_teleport_player2", &sv_teleport_player2)
 	],
 	
 
