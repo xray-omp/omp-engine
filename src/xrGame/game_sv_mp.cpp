@@ -702,6 +702,58 @@ bool game_sv_mp::SpawnItemToPos(LPCSTR section, Fvector3 position)
 	return true;
 };
 
+bool game_sv_mp::TeleportPlayerTo(ClientID id, Fvector3 P)
+{
+	xrClientData* CL = static_cast<xrClientData*>(Level().Server->GetClientByID(id));
+	if (!CL || !CL->net_Ready || !CL->owner || !CL->ps || CL->ps->testFlag(GAME_PLAYER_FLAG_VERY_VERY_DEAD))
+	{
+		return false;
+	}
+
+	CActor* pActor = smart_cast<CActor*>(Level().Objects.net_Find(CL->ps->GameID));
+	if (!pActor)
+		return false;
+
+	SRotation rotation = pActor->Orientation();
+	Fvector A;
+	A.set(-rotation.pitch, rotation.yaw, 0);
+
+	CL->net_PassUpdates = FALSE;
+	CL->net_LastMoveUpdateTime = Level().timeServer();
+
+	NET_Packet MovePacket;
+	MovePacket.w_begin(M_MOVE_PLAYERS);
+	MovePacket.w_u8(1);
+	MovePacket.w_u16(CL->owner->ID);
+	MovePacket.w_vec3(P);
+	MovePacket.w_vec3(A);
+	Level().Server->SendTo(CL->ID, MovePacket, net_flags(TRUE, TRUE));
+
+	return true;
+};
+
+bool game_sv_mp::TeleportPlayerTo(ClientID id, Fvector3 P, Fvector3 A)
+{
+	xrClientData* CL = static_cast<xrClientData*>(Level().Server->GetClientByID(id));
+	if (!CL || !CL->net_Ready || !CL->owner || !CL->ps || CL->ps->testFlag(GAME_PLAYER_FLAG_VERY_VERY_DEAD))
+	{
+		return false;
+	}
+
+	CL->net_PassUpdates = FALSE;
+	CL->net_LastMoveUpdateTime = Level().timeServer();
+
+	NET_Packet MovePacket;
+	MovePacket.w_begin(M_MOVE_PLAYERS);
+	MovePacket.w_u8(1);
+	MovePacket.w_u16(CL->owner->ID);
+	MovePacket.w_vec3(P);
+	MovePacket.w_vec3(A);
+	Level().Server->SendTo(CL->ID, MovePacket, net_flags(TRUE, TRUE));
+
+	return true;
+};
+
 void game_sv_mp::AllowDeadBodyRemove(ClientID id, u16 GameID)
 {
 	CSE_Abstract* pSObject = get_entity_from_eid(GameID);

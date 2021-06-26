@@ -2438,6 +2438,44 @@ public:
 	}
 };
 
+class CCC_MovePlayerToRPoint : public IConsole_Command {
+public:
+	CCC_MovePlayerToRPoint(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = false; };
+
+	virtual void	Execute(LPCSTR args)
+	{
+		if (!g_pGameLevel || !Level().Server) return;
+
+		game_sv_mp* sv_game = smart_cast<game_sv_mp*>(Level().Server->game);
+		if (!sv_game) return;
+
+		string1024 buff;
+		exclude_raid_from_args(args, buff, sizeof(buff));
+
+		ClientID client_id(0);
+		u32 tmp_client_id;
+		if (sscanf_s(buff, "%u", &tmp_client_id) != 1)
+		{
+			Msg("! ERROR: bad command parameters.");
+			Msg("Move player to rpoint. Format: \"sv_move_player_to_rpoint <player session id>\"");
+			return;
+		}
+		client_id.set(tmp_client_id);
+
+		xrClientData* CL = static_cast<xrClientData*>(Level().Server->GetClientByID(client_id));
+		if (!CL || !CL->net_Ready || !CL->owner || !CL->ps || CL->ps->testFlag(GAME_PLAYER_FLAG_VERY_VERY_DEAD))
+		{
+			Msg("! Can't move player to rpoint %u", client_id.value());
+			return;
+		}
+
+		xr_vector<RPoint>& rpoints = sv_game->rpoints[CL->ps->team];
+		RPoint& rp = rpoints[::Random.randI(rpoints.size())];
+
+		sv_game->TeleportPlayerTo(client_id, rp.P, rp.A);
+	}
+};
+
 class CCC_SetGodModForPlayer : public IConsole_Command {
 public:
 	CCC_SetGodModForPlayer(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = false; };
@@ -2570,6 +2608,9 @@ void register_mp_console_commands()
 	CMD1(CCC_AdmNoClip,				"adm_no_clip"			);
 	CMD1(CCC_AdmInvis,				"adm_invis"				);
 	CMD1(CCC_AdmGodMode,			"adm_god_mode"			);
+
+
+	CMD1(CCC_MovePlayerToRPoint,	"sv_move_player_to_rpoint");
 
 	CMD1(CCC_GiveMoneyToPlayer, "sv_give_money");
 	CMD1(CCC_TransferMoney, "transfer_money");

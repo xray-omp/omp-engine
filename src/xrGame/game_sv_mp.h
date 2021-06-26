@@ -218,6 +218,9 @@ public:
 				bool				SpawnItem(LPCSTR section, u16 parent);
 				bool				SpawnItemToPos(LPCSTR section, Fvector3 position);
 
+				bool				TeleportPlayerTo(ClientID id, Fvector3 P);
+				bool				TeleportPlayerTo(ClientID id, Fvector3 P, Fvector3 A);
+
 	IC			xrServer			&server					() const
 	{
 		VERIFY						(m_server);

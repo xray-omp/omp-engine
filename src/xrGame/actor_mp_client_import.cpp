@@ -7,6 +7,7 @@
 #include "../xrEngine/camerabase.h"
 //#include "Physics.h"
 #include "../xrphysics/phvalide.h"
+#include "CharacterPhysicsSupport.h"
 
 void CActorMP::net_Import	( NET_Packet &P)
 {
@@ -99,6 +100,44 @@ void CActorMP::net_Import	( NET_Packet &P)
 	N_A.State.torque		= m_state_holder.state().physics_torque;
 	N_A.State.position		= m_state_holder.state().physics_position;
 	N_A.State.quaternion	= m_state_holder.state().physics_quaternion;
+
+
+	if (g_Alive() && (Remote() || OnServer()))
+	{
+		Fvector currentPosition;
+		character_physics_support()->movement()->GetPosition(currentPosition);
+
+		// Pavel: Если новая позиция дальше текущей на 4 метра, то телепортируем игрока, в обход интерполяции.
+		// Нужно для телепорта игрока.
+		if (currentPosition.distance_to_sqr(N_A.State.position) > 16.f) // distance > 4m
+		{
+			character_physics_support()->movement()->SetPosition(N_A.State.position);
+			character_physics_support()->movement()->SetVelocity(0, 0, 0);
+			character_physics_support()->movement()->GetPosition(Position());
+
+			const float block_damage_time_seconds = 2.f;
+			character_physics_support()->movement()->BlockDamageSet(u64(block_damage_time_seconds / fixed_step));
+
+			unaffected_r_torso.yaw = N.o_torso.yaw;
+			unaffected_r_torso.pitch = N.o_torso.pitch;
+			unaffected_r_torso.roll = N.o_torso.roll;
+			cam_Active()->Set(-unaffected_r_torso.yaw, unaffected_r_torso.pitch, 0);//, unaffected_r_torso.roll);
+
+			NET.clear();
+			NET.push_back(N);
+			NET_Last = N;
+
+			NET_A.clear();
+
+			mstate_real = mstate_wishful = NET_Last.mstate;
+			NET_SavedAccel = NET_Last.p_accel;
+
+			m_bInInterpolation = false;
+
+			Level().RemoveObject_From_4CrPr(this);
+			return;
+		}
+	}
 
 	// interpolcation
 	postprocess_packet		(N_A);
