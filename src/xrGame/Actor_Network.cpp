@@ -984,25 +984,31 @@ void CActor::PH_B_CrPr		()	// actions & operations before physic correction-pred
 		}
 		else
 		{
-			net_update_A N_A = NET_A.back();
-			net_update N = NET.back();
+			// Pavel: TEMP SOLUTION
+			// This should not be.
+			// See CActorMP::net_Import().
+			if (!NET_A.empty())
+			{
+				net_update_A N_A = NET_A.back();
+				net_update N = NET.back();
 
-			NET_Last = N;
-			///////////////////////////////////////////////
-			cam_Active()->Set		(-unaffected_r_torso.yaw,unaffected_r_torso.pitch, 0);//, unaffected_r_torso.roll);		// set's camera orientation
-			if (!N_A.State.enabled) 
-			{
-				pSyncObj->set_State(N_A.State);
+				NET_Last = N;
+				///////////////////////////////////////////////
+				cam_Active()->Set(-unaffected_r_torso.yaw, unaffected_r_torso.pitch, 0);//, unaffected_r_torso.roll);		// set's camera orientation
+				if (!N_A.State.enabled)
+				{
+					pSyncObj->set_State(N_A.State);
+				}
+				else
+				{
+					PHUnFreeze();
+
+					pSyncObj->set_State(N_A.State);
+
+					g_Physics(N.p_accel, 0.0f, 0.0f);
+					Position().set(IStart.Pos);
+				}
 			}
-			else
-			{
-				PHUnFreeze();
-				
-				pSyncObj->set_State(N_A.State);
-				
-				g_Physics(N.p_accel, 0.0f, 0.0f);				
-				Position().set(IStart.Pos);
-			};
 		};
 	}
 	else
