@@ -638,10 +638,22 @@ void CAI_Bloodsucker::shedule_Update(u32 dt)
 	
 	if (!g_Alive())	
 	{
-		setVisible(TRUE);
-		if ( state_invisible )
+		if (IsGameTypeSingle() || OnServer())
 		{
-			stop_invisible_predator();
+			setVisible(TRUE);
+			if (state_invisible)
+			{
+				stop_invisible_predator();
+			}
+		}
+		else // Pavel: MP Client
+		{
+			if (m_visibility_state != full_visibility)
+			{
+				m_visibility_state = full_visibility;
+				manual_deactivate();
+				stop_invisible_predator();
+			}
 		}
 	}
 
@@ -791,13 +803,16 @@ void CAI_Bloodsucker::predator_start()
 		control().animation().restart();
 	else
 	{
-		MotionID mid;
-		mid.idx = u_last_motion_idx;
-		mid.slot = u_last_motion_slot;
-		if (mid.valid() && u_last_motion_idx != u16(-1) && u_last_motion_slot != u16(-1)) {
-			u_last_motion_idx = NULL;
-			u_last_motion_slot = NULL;
-			ApplyAnimation(mid.idx, mid.slot, u_last_motion_no_loop);
+		if (g_Alive())
+		{
+			MotionID mid;
+			mid.idx = u_last_motion_idx;
+			mid.slot = u_last_motion_slot;
+			if (mid.valid() && u_last_motion_idx != u16(-1) && u_last_motion_slot != u16(-1)) {
+				u_last_motion_idx = NULL;
+				u_last_motion_slot = NULL;
+				ApplyAnimation(mid.idx, mid.slot, u_last_motion_no_loop);
+			}
 		}
 	}
 	
@@ -834,13 +849,16 @@ void CAI_Bloodsucker::predator_stop()
 		control().animation().restart	();
 	else
 	{
-		MotionID mid;
-		mid.idx = u_last_motion_idx;
-		mid.slot = u_last_motion_slot;
-		if (mid.valid() && u_last_motion_idx != u16(-1) && u_last_motion_slot != u16(-1)) {
-			u_last_motion_idx = NULL;
-			u_last_motion_slot = NULL;
-			ApplyAnimation(mid.idx, mid.slot, u_last_motion_no_loop);
+		if (g_Alive())
+		{
+			MotionID mid;
+			mid.idx = u_last_motion_idx;
+			mid.slot = u_last_motion_slot;
+			if (mid.valid() && u_last_motion_idx != u16(-1) && u_last_motion_slot != u16(-1)) {
+				u_last_motion_idx = NULL;
+				u_last_motion_slot = NULL;
+				ApplyAnimation(mid.idx, mid.slot, u_last_motion_no_loop);
+			}
 		}
 	}
 	
