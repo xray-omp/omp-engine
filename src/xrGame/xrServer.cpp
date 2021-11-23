@@ -401,7 +401,7 @@ void xrServer::SendUpdatePacketsToAll()
 			bool need_to_update_10 = Device.dwTimeGlobal - CL->m_last_update_time_10 >= u32(1000 / 10); // 10 per sec
 			bool need_to_update_5 = Device.dwTimeGlobal - CL->m_last_update_time_5 >= u32(1000 / 5);    // 5 per sec
 			bool need_to_update_1 = Device.dwTimeGlobal - CL->m_last_update_time_1 >= u32(1000);        // 1 per sec
-			bool need_to_update_05 = Device.dwTimeGlobal - CL->m_last_update_time_1 >= u32(2000);       // 1 per 2 sec
+			bool need_to_update_05 = Device.dwTimeGlobal - CL->m_last_update_time_05 >= u32(2000);      // 1 per 2 sec
 			
 			constexpr float distance_30 = 30.f * 30.f;
 			constexpr float distance_50 = 50.f * 50.f;
