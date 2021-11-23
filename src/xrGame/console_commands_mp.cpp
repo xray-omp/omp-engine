@@ -2386,7 +2386,7 @@ public:
 		client_id.set(tmp_client_id);
 
 		xrClientData* CL = static_cast<xrClientData*>(Level().Server->GetClientByID(client_id));
-		if (CL && CL->ps && (CL != Level().Server->GetServerClient()) && (value == 0 || value == 1))
+		if (CL && CL->ps && (!g_dedicated_server || CL != Level().Server->GetServerClient()) && (value == 0 || value == 1))
 		{
 			if (value) CL->ps->setFlag(GAME_PLAYER_MP_NO_CLIP);
 			else CL->ps->resetFlag(GAME_PLAYER_MP_NO_CLIP);
@@ -2425,7 +2425,7 @@ public:
 		client_id.set(tmp_client_id);
 
 		xrClientData* CL = static_cast<xrClientData*>(Level().Server->GetClientByID(client_id));
-		if (CL && CL->ps && (CL != Level().Server->GetServerClient()) && (value == 0 || value == 1))
+		if (CL && CL->ps && (!g_dedicated_server || CL != Level().Server->GetServerClient()) && (value == 0 || value == 1))
 		{
 			if (value) CL->ps->setFlag(GAME_PLAYER_MP_INVIS);
 			else CL->ps->resetFlag(GAME_PLAYER_MP_INVIS);
@@ -2502,7 +2502,7 @@ public:
 		client_id.set(tmp_client_id);
 
 		xrClientData* CL = static_cast<xrClientData*>(Level().Server->GetClientByID(client_id));
-		if (CL && CL->ps && (CL != Level().Server->GetServerClient()) && (value == 0 || value == 1))
+		if (CL && CL->ps && (!g_dedicated_server || CL != Level().Server->GetServerClient()) && (value == 0 || value == 1))
 		{
 			if (value) CL->ps->setFlag(GAME_PLAYER_MP_GOD_MODE);
 			else CL->ps->resetFlag(GAME_PLAYER_MP_GOD_MODE);
