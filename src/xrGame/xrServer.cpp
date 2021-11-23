@@ -1466,15 +1466,15 @@ void xrServer::OnScriptEvent(NET_Packet & P, ClientID sender)
 	CopyMemory(&(pEvent->Packet), &P, sizeof(NET_Packet));
 }
 
-ScriptEvent * xrServer::GetLastServerScriptEvent()
+ScriptEvent * xrServer::GetFrontServerScriptEvent()
 {
 	R_ASSERT2(script_server_events.size() > 0, "empty script server events");
-	return &(script_server_events.back());
+	return &(script_server_events.front());
 }
 
-void xrServer::PopLastServerScriptEvent()
+void xrServer::PopFrontServerScriptEvent()
 {
-	script_server_events.pop_back();
+	script_server_events.pop_front();
 }
 
 u32 xrServer::GetSizeServerScriptEvent()

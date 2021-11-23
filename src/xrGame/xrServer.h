@@ -310,8 +310,8 @@ private:
 	void					OnScriptEvent(NET_Packet & P, ClientID sender);
 
 public:
-	ScriptEvent*	GetLastServerScriptEvent();
-	void					PopLastServerScriptEvent();
+	ScriptEvent*			GetFrontServerScriptEvent();
+	void					PopFrontServerScriptEvent();
 	u32						GetSizeServerScriptEvent();
 };
 

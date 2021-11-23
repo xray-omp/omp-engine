@@ -798,21 +798,18 @@ void send_script_event_broadcast(NET_Packet& P)
 	Level().Server->SendBroadcast(BroadcastCID, P, net_flags(TRUE, TRUE));
 }
 
-ScriptEvent* get_last_server_event()
+ScriptEvent* get_front_server_event()
 {
-	return Level().Server->GetLastServerScriptEvent();
+	return Level().Server->GetFrontServerScriptEvent();
 }
-
-void pop_last_server_event()
+void pop_front_server_event()
 {
-	Level().Server->PopLastServerScriptEvent();
+	Level().Server->PopFrontServerScriptEvent();
 }
-
 u32 get_size_server_events()
 {
 	return Level().Server->GetSizeServerScriptEvent();
 }
-
 
 
 #pragma optimize("s",on)
@@ -938,8 +935,8 @@ void CLevel::script_register(lua_State *L)
 		def("pop_last_client_event", &pop_last_client_event),
 		def("get_size_client_events", &get_size_client_events),
 
-		def("get_last_server_event", &get_last_server_event),
-		def("pop_last_server_event", &pop_last_server_event),
+		def("get_front_server_event", &get_front_server_event),
+		def("pop_front_server_event", &pop_front_server_event),
 		def("get_size_server_events", &get_size_server_events)
 	];
 
