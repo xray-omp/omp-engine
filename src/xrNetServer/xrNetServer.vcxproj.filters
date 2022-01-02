@@ -40,6 +40,9 @@
     <ClCompile Include="SteamNetServer.cpp">
       <Filter>NET_Server</Filter>
     </ClCompile>
+    <ClCompile Include="WinsocksHelper.cpp">
+      <Filter>NET_Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ip_filter.h" />
@@ -100,6 +103,9 @@
     </ClInclude>
     <ClInclude Include="SteamNetServer.h">
       <Filter>NET_Server</Filter>
+    </ClInclude>
+    <ClInclude Include="WinsocksHelper.h">
+      <Filter>NET_Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

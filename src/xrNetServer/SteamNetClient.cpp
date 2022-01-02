@@ -2,6 +2,7 @@
 #include "SteamNetClient.h"
 #include "SteamNetServer.h"
 #include "ip_address.h"
+#include "WinsocksHelper.h"
 
 SteamNetClient* s_pCallbackInstance = nullptr;
 
@@ -95,6 +96,20 @@ bool SteamNetClient::CreateConnection(ClientConnectionOptions & connectOpt)
 	{
 		serverAddr.ParseString(connectOpt.server_name);
 		serverAddr.m_port = (uint16)sv_port;
+
+		// TRY GET HOSTNAME
+		if (!serverAddr.IsIPv4())
+		{
+			uint32 ip = WinsocksHelper::GetIpAddress(connectOpt.server_name);
+			if (ip == 0)
+			{
+				Msg("[SteamNetClient] Incorrect server address %s", connectOpt.server_name);
+				OnInvalidHost();
+				return false;
+			}
+			serverAddr.Clear();
+			serverAddr.SetIPv4(ip, (uint16)sv_port);
+		}
 	}
 
 	char szAddr[SteamNetworkingIPAddr::k_cchMaxString];

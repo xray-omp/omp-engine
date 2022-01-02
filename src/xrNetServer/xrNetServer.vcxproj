@@ -252,6 +252,7 @@
     </ClCompile>
     <ClCompile Include="SteamNetClient.cpp" />
     <ClCompile Include="SteamNetServer.cpp" />
+    <ClCompile Include="WinsocksHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseClient.h" />
@@ -279,6 +280,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SteamNetClient.h" />
     <ClInclude Include="SteamNetServer.h" />
+    <ClInclude Include="WinsocksHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\xrCore\xrCore.vcxproj">
