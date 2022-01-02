@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "SteamNetServer.h"
+#include "GameNetworkingSockets/steam/isteamnetworkingutils.h"
 
 // -----------------------------------------------------------------------------
 
@@ -84,6 +85,9 @@ bool SteamNetServer::CreateConnection(GameDescriptionData & game_descr, ServerCo
 	bindServerAddress.m_port = (uint16)connectOpt.dwServerPort;
 
 	psNET_Port = connectOpt.dwServerPort;
+
+	// SET UPPER LIMIT OF BUFFERED PENDING BYTES TO BE SENT
+	SteamNetworkingUtils()->SetGlobalConfigValueInt32(k_ESteamNetworkingConfig_SendBufferSize, 1024 * 1024);	
 
 	// SETUP CALLBACK
 	SteamNetworkingConfigValue_t opt;
