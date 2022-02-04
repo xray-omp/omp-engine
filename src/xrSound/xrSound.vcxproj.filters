@@ -28,6 +28,9 @@
     <Filter Include="Cache">
       <UniqueIdentifier>{0b3033ba-48eb-4fd9-8856-8d274ddeaf54}</UniqueIdentifier>
     </Filter>
+    <Filter Include="VoiceChat">
+      <UniqueIdentifier>{b0a4d57a-884f-4983-9bb1-17df9d7ab232}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cl_intersect.h">
@@ -70,6 +73,18 @@
       <Filter>Cache</Filter>
     </ClInclude>
     <ClInclude Include="VoicePacket.h">
+      <Filter>VoiceChat</Filter>
+    </ClInclude>
+    <ClInclude Include="IStreamPlayer.h">
+      <Filter>VoiceChat</Filter>
+    </ClInclude>
+    <ClInclude Include="ISoundVoiceChat.h">
+      <Filter>VoiceChat</Filter>
+    </ClInclude>
+    <ClInclude Include="ISoundRecorder.h">
+      <Filter>VoiceChat</Filter>
+    </ClInclude>
+    <ClInclude Include="IVoicePacketSender.h">
       <Filter>VoiceChat</Filter>
     </ClInclude>
   </ItemGroup>

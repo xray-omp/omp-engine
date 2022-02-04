@@ -196,6 +196,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="cl_intersect.h" />
+    <ClInclude Include="ISoundRecorder.h" />
+    <ClInclude Include="ISoundVoiceChat.h" />
+    <ClInclude Include="IStreamPlayer.h" />
     <ClInclude Include="OpenALDeviceList.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="SoundRender.h" />
@@ -209,6 +212,7 @@
     <ClInclude Include="SoundRender_TargetA.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="VoicePacket.h" />
+    <ClInclude Include="IVoicePacketSender.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="guids.cpp">
