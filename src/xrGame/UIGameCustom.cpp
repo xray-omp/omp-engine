@@ -67,6 +67,11 @@ void CUIGameCustom::HideShownDialogs()
 	}
 }
 
+bool CUIGameCustom::HasShownDialogs() const
+{
+	return ActorMenu().IsShown() || PdaMenu().IsShown() || TalkMenu->IsShown();
+}
+
 void CUIGameCustom::OnFrame() 
 {
 	CDialogHolder::OnFrame();
