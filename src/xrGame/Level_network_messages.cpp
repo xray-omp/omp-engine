@@ -342,6 +342,11 @@ void CLevel::ClientReceive()
 				}*/
 				if (!game) break;
 				Game().OnChatMessage(P);
+			}break;			
+		case M_VOICE_MESSAGE:
+			{
+				if (!game) break;
+				Game().OnVoiceMessage(P);
 			}break;
 		case M_CLIENT_WARN:
 			{
