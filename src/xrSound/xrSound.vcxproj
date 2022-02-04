@@ -214,6 +214,7 @@
     <ClInclude Include="VoicePacket.h" />
     <ClInclude Include="SpeexPreprocess.h" />
     <ClInclude Include="IVoicePacketSender.h" />
+    <ClInclude Include="VoicePacketsPacker.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="guids.cpp">
@@ -250,6 +251,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Mixed|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="VoicePacketsPacker.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\3rd party\openal\OpenAL-Windows\Router\Router.vcxproj">
