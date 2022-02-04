@@ -87,6 +87,9 @@
     <ClInclude Include="IVoicePacketSender.h">
       <Filter>VoiceChat</Filter>
     </ClInclude>
+    <ClInclude Include="SpeexPreprocess.h">
+      <Filter>VoiceChat</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="guids.cpp">
@@ -145,6 +148,9 @@
     </ClCompile>
     <ClCompile Include="SoundRender_Cache.cpp">
       <Filter>Cache</Filter>
+    </ClCompile>
+    <ClCompile Include="SpeexPreprocess.cpp">
+      <Filter>VoiceChat</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
