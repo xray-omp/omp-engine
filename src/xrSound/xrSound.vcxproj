@@ -201,6 +201,7 @@
     <ClInclude Include="IStreamPlayer.h" />
     <ClInclude Include="OpenALDeviceList.h" />
     <ClInclude Include="Sound.h" />
+    <ClInclude Include="SoundRecorderA.h" />
     <ClInclude Include="SoundRender.h" />
     <ClInclude Include="SoundRender_Cache.h" />
     <ClInclude Include="SoundRender_Core.h" />
@@ -227,6 +228,7 @@
     </ClCompile>
     <ClCompile Include="OpenALDeviceList.cpp" />
     <ClCompile Include="sound.cpp" />
+    <ClCompile Include="SoundRecorderA.cpp" />
     <ClCompile Include="SoundRender_Cache.cpp" />
     <ClCompile Include="SoundRender_Core.cpp" />
     <ClCompile Include="SoundRender_CoreA.cpp" />

@@ -31,6 +31,9 @@
     <Filter Include="VoiceChat">
       <UniqueIdentifier>{b0a4d57a-884f-4983-9bb1-17df9d7ab232}</UniqueIdentifier>
     </Filter>
+    <Filter Include="VoiceChat\OpenAL">
+      <UniqueIdentifier>{17ce6f69-dd9b-4334-b6fc-802397324942}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cl_intersect.h">
@@ -92,6 +95,9 @@
     </ClInclude>
     <ClInclude Include="VoicePacketsPacker.h">
       <Filter>VoiceChat</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundRecorderA.h">
+      <Filter>VoiceChat\OpenAL</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -157,6 +163,9 @@
     </ClCompile>
     <ClCompile Include="VoicePacketsPacker.cpp">
       <Filter>VoiceChat</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundRecorderA.cpp">
+      <Filter>VoiceChat\OpenAL</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
