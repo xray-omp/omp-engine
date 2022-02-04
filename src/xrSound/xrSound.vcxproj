@@ -200,6 +200,7 @@
     <ClInclude Include="ISoundVoiceChat.h" />
     <ClInclude Include="IStreamPlayer.h" />
     <ClInclude Include="OpenALDeviceList.h" />
+    <ClInclude Include="RingBuffer.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="SoundRecorderA.h" />
     <ClInclude Include="SoundRender.h" />

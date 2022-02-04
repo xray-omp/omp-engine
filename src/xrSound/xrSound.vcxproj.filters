@@ -99,6 +99,9 @@
     <ClInclude Include="SoundRecorderA.h">
       <Filter>VoiceChat\OpenAL</Filter>
     </ClInclude>
+    <ClInclude Include="RingBuffer.h">
+      <Filter>VoiceChat</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="guids.cpp">
