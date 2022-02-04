@@ -7428,6 +7428,9 @@
     <ClInclude Include="VoiceChat.h">
       <Filter>Core\Client\VoiceChat</Filter>
     </ClInclude>
+    <ClInclude Include="VoiceSender.h">
+      <Filter>Core\Client\VoiceChat</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="damage_manager.cpp">
@@ -11109,6 +11112,9 @@
       <Filter>Core\Server\Games\server\freemp</Filter>
     </ClCompile>
     <ClCompile Include="VoiceChat.cpp">
+      <Filter>Core\Client\VoiceChat</Filter>
+    </ClCompile>
+    <ClCompile Include="VoiceSender.cpp">
       <Filter>Core\Client\VoiceChat</Filter>
     </ClCompile>
   </ItemGroup>
