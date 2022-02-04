@@ -214,6 +214,7 @@
     <ClInclude Include="SoundRender_TargetA.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="VoicePacket.h" />
+    <ClInclude Include="SoundVoiceChat.h" />
     <ClInclude Include="SpeexPreprocess.h" />
     <ClInclude Include="StreamPlayerA.h" />
     <ClInclude Include="IVoicePacketSender.h" />
@@ -249,6 +250,7 @@
     <ClCompile Include="SoundRender_Source_loader.cpp" />
     <ClCompile Include="SoundRender_Target.cpp" />
     <ClCompile Include="SoundRender_TargetA.cpp" />
+    <ClCompile Include="SoundVoiceChat.cpp" />
     <ClCompile Include="SpeexPreprocess.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

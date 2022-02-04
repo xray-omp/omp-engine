@@ -30,6 +30,8 @@ class	XRSOUND_API					CSound_emitter;
 class	XRSOUND_API					CSound_stream_interface;
 class	XRSOUND_API					CSound_environment;
 
+class	XRSOUND_API					ISoundVoiceChat;
+
 XRSOUND_API extern u32				psSoundModel			;
 XRSOUND_API extern float			psSoundVEffects			;
 XRSOUND_API extern float			psSoundVFactor			;
@@ -283,6 +285,9 @@ public:
 
 	virtual void					object_relcase			( CObject* obj )																		= 0;
 	virtual const Fvector&			listener_position		()																						= 0;
+
+	virtual ISoundVoiceChat*		GetSoundVoiceChat		()																						= 0;
+
 #ifdef __BORLANDC__
 	virtual SoundEnvironment_LIB*	get_env_library			()																						= 0;
 	virtual void					refresh_env_library		()																						= 0;

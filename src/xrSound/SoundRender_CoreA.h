@@ -6,6 +6,7 @@
 #include "OpenALDeviceList.h"
 #include <eax/eax.h>
 
+class SoundVoiceChat;
 
 #ifdef DEBUG
 #	define A_CHK(expr)		{ alGetError(); 		expr; ALenum error=alGetError(); 			VERIFY2(error==AL_NO_ERROR, (LPCSTR)alGetString(error)); }
@@ -30,6 +31,8 @@ class CSoundRender_CoreA: public CSoundRender_Core
 	};
 	SListener				Listener;
 
+	SoundVoiceChat*			pSoundVoiceChat = nullptr;
+
     BOOL 					EAXQuerySupport			(BOOL bDeferred, const GUID* guid, u32 prop, void* val, u32 sz);
 	BOOL 					EAXTestSupport			(BOOL bDeferred);
 protected:
@@ -43,10 +46,14 @@ public:
 	virtual void			_initialize				(int stage);
 	virtual void			_clear					( );
 	virtual void			_restart				( );
+
+	virtual void            update					(const Fvector& P, const Fvector& D, const Fvector& N);
     
 	virtual void			set_master_volume		( float f		);
 
 	virtual const Fvector&	listener_position		( ){return Listener.position;}
+
+	virtual ISoundVoiceChat* GetSoundVoiceChat		() { return (ISoundVoiceChat*)pSoundVoiceChat; }
 };
 extern CSoundRender_CoreA* SoundRenderA;
 #endif
