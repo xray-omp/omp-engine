@@ -69,6 +69,9 @@
     <ClInclude Include="SoundRender_Cache.h">
       <Filter>Cache</Filter>
     </ClInclude>
+    <ClInclude Include="VoicePacket.h">
+      <Filter>VoiceChat</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="guids.cpp">
