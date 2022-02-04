@@ -96,6 +96,9 @@
     <ClInclude Include="VoicePacketsPacker.h">
       <Filter>VoiceChat</Filter>
     </ClInclude>
+    <ClInclude Include="StreamPlayerA.h">
+      <Filter>VoiceChat\OpenAL</Filter>
+    </ClInclude>
     <ClInclude Include="SoundRecorderA.h">
       <Filter>VoiceChat\OpenAL</Filter>
     </ClInclude>
@@ -166,6 +169,9 @@
     </ClCompile>
     <ClCompile Include="VoicePacketsPacker.cpp">
       <Filter>VoiceChat</Filter>
+    </ClCompile>
+    <ClCompile Include="StreamPlayerA.cpp">
+      <Filter>VoiceChat\OpenAL</Filter>
     </ClCompile>
     <ClCompile Include="SoundRecorderA.cpp">
       <Filter>VoiceChat\OpenAL</Filter>
