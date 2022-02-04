@@ -22,6 +22,10 @@ float	psSoundVFactor			= 1.0f;
 float	psSoundVMusic			= 1.f;
 int		psSoundCacheSizeMB		= 32;
 
+float	psSoundVRecorder = 1.f;
+int		psSoundRecorderMode = 1;
+int		psSoundRecorderDenoise = 1;
+
 CSoundRender_Core*				SoundRender = 0;
 CSound_manager_interface*		Sound		= 0;
 
