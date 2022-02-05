@@ -28,6 +28,12 @@
     <Filter Include="Cache">
       <UniqueIdentifier>{0b3033ba-48eb-4fd9-8856-8d274ddeaf54}</UniqueIdentifier>
     </Filter>
+    <Filter Include="VoiceChat">
+      <UniqueIdentifier>{b0a4d57a-884f-4983-9bb1-17df9d7ab232}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="VoiceChat\OpenAL">
+      <UniqueIdentifier>{17ce6f69-dd9b-4334-b6fc-802397324942}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cl_intersect.h">
@@ -68,6 +74,39 @@
     </ClInclude>
     <ClInclude Include="SoundRender_Cache.h">
       <Filter>Cache</Filter>
+    </ClInclude>
+    <ClInclude Include="VoicePacket.h">
+      <Filter>VoiceChat</Filter>
+    </ClInclude>
+    <ClInclude Include="IStreamPlayer.h">
+      <Filter>VoiceChat</Filter>
+    </ClInclude>
+    <ClInclude Include="ISoundVoiceChat.h">
+      <Filter>VoiceChat</Filter>
+    </ClInclude>
+    <ClInclude Include="ISoundRecorder.h">
+      <Filter>VoiceChat</Filter>
+    </ClInclude>
+    <ClInclude Include="IVoicePacketSender.h">
+      <Filter>VoiceChat</Filter>
+    </ClInclude>
+    <ClInclude Include="SpeexPreprocess.h">
+      <Filter>VoiceChat</Filter>
+    </ClInclude>
+    <ClInclude Include="VoicePacketsPacker.h">
+      <Filter>VoiceChat</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundVoiceChat.h">
+      <Filter>VoiceChat\OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="StreamPlayerA.h">
+      <Filter>VoiceChat\OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundRecorderA.h">
+      <Filter>VoiceChat\OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="RingBuffer.h">
+      <Filter>VoiceChat</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -127,6 +166,21 @@
     </ClCompile>
     <ClCompile Include="SoundRender_Cache.cpp">
       <Filter>Cache</Filter>
+    </ClCompile>
+    <ClCompile Include="SpeexPreprocess.cpp">
+      <Filter>VoiceChat</Filter>
+    </ClCompile>
+    <ClCompile Include="VoicePacketsPacker.cpp">
+      <Filter>VoiceChat</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundVoiceChat.cpp">
+      <Filter>VoiceChat\OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="StreamPlayerA.cpp">
+      <Filter>VoiceChat\OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundRecorderA.cpp">
+      <Filter>VoiceChat\OpenAL</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

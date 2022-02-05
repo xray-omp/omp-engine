@@ -2509,6 +2509,9 @@
     <Filter Include="UI\Multiplayer\Roleplay">
       <UniqueIdentifier>{da488458-c041-4176-a2e8-5994dc36ea74}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Client\VoiceChat">
+      <UniqueIdentifier>{6c28ff95-4315-4a19-b71d-41045706e757}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="mt_config.h">
@@ -7422,6 +7425,12 @@
     <ClInclude Include="ui\UISpawnMenuRP.h">
       <Filter>UI\Multiplayer\Roleplay</Filter>
     </ClInclude>
+    <ClInclude Include="VoiceChat.h">
+      <Filter>Core\Client\VoiceChat</Filter>
+    </ClInclude>
+    <ClInclude Include="VoiceSender.h">
+      <Filter>Core\Client\VoiceChat</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="damage_manager.cpp">
@@ -11101,6 +11110,12 @@
     </ClCompile>
     <ClCompile Include="game_sv_freemp_trade.cpp">
       <Filter>Core\Server\Games\server\freemp</Filter>
+    </ClCompile>
+    <ClCompile Include="VoiceChat.cpp">
+      <Filter>Core\Client\VoiceChat</Filter>
+    </ClCompile>
+    <ClCompile Include="VoiceSender.cpp">
+      <Filter>Core\Client\VoiceChat</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

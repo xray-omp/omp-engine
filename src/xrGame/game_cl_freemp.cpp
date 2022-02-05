@@ -4,13 +4,20 @@
 #include "xr_level_controller.h"
 #include "UIGameFMP.h"
 #include "actor_mp_client.h"
+#include "VoiceChat.h"
+#include "ui/UIMainIngameWnd.h"
 
 game_cl_freemp::game_cl_freemp()
 {
+	if (!g_dedicated_server)
+		m_pVoiceChat = xr_new<CVoiceChat>();
+	else
+		m_pVoiceChat = NULL;
 }
 
 game_cl_freemp::~game_cl_freemp()
 {
+	xr_delete(m_pVoiceChat);
 }
 
 
@@ -32,6 +39,11 @@ void game_cl_freemp::SetGameUI(CUIGameCustom* uigame)
 	inherited::SetGameUI(uigame);
 	m_game_ui = smart_cast<CUIGameFMP*>(uigame);
 	R_ASSERT(m_game_ui);
+
+	if (m_pVoiceChat)
+	{
+		m_game_ui->UIMainIngameWnd->SetVoiceDistance(m_pVoiceChat->GetDistance());
+	}
 }
 
 
@@ -51,6 +63,19 @@ void game_cl_freemp::shedule_Update(u32 dt)
 
 	if (!local_player)
 		return;
+
+	if (!g_dedicated_server && m_pVoiceChat)
+	{
+		const bool started = m_pVoiceChat->IsStarted();
+		const bool is_dead = !local_player || local_player->testFlag(GAME_PLAYER_FLAG_VERY_VERY_DEAD);
+		const bool has_shown_dialogs = CurrentGameUI()->HasShownDialogs();
+		if (started && (is_dead || has_shown_dialogs))
+		{
+			m_pVoiceChat->Stop();
+			CurrentGameUI()->UIMainIngameWnd->SetActiveVoiceIcon(false);
+		}
+		m_pVoiceChat->Update();
+	}
 
 	// синхронизация имени и денег игроков для InventoryOwner
 	for (auto cl : players)
@@ -79,9 +104,42 @@ void game_cl_freemp::shedule_Update(u32 dt)
 	}
 }
 
+void game_cl_freemp::OnRender()
+{
+	inherited::OnRender();
+
+	if (m_pVoiceChat)
+		m_pVoiceChat->OnRender();
+}
+
 bool game_cl_freemp::OnKeyboardPress(int key)
 {
-	if (kJUMP == key)
+	switch (key)
+	{
+	case kVOICE_CHAT:
+	{
+		if (local_player && !local_player->testFlag(GAME_PLAYER_FLAG_VERY_VERY_DEAD))
+		{
+			if (!m_pVoiceChat->IsStarted())
+			{
+				m_pVoiceChat->Start();
+				CurrentGameUI()->UIMainIngameWnd->SetActiveVoiceIcon(true);
+			}
+		}
+		return true;
+	}break;
+
+	case kVOICE_DISTANCE:
+	{
+		if (local_player && !local_player->testFlag(GAME_PLAYER_FLAG_VERY_VERY_DEAD))
+		{
+			u8 distance = m_pVoiceChat->SwitchDistance();
+			CurrentGameUI()->UIMainIngameWnd->SetVoiceDistance(distance);
+		}
+		return true;
+	}break;
+
+	case kJUMP:
 	{
 		bool b_need_to_send_ready = false;
 
@@ -111,7 +169,11 @@ bool game_cl_freemp::OnKeyboardPress(int key)
 		{
 			return false;
 		}
-	};
+	}break;
+
+	default:
+		break;
+	}
 
 	return inherited::OnKeyboardPress(key);
 }
@@ -121,6 +183,24 @@ LPCSTR game_cl_freemp::GetGameScore(string32&	score_dest)
 	s32 frags = local_player ? local_player->frags() : 0;
 	xr_sprintf(score_dest, "[%d]", frags);
 	return score_dest;
+}
+
+bool game_cl_freemp::OnKeyboardRelease(int key)
+{
+	switch (key)
+	{
+	case kVOICE_CHAT:
+	{
+		m_pVoiceChat->Stop();
+		CurrentGameUI()->UIMainIngameWnd->SetActiveVoiceIcon(false);
+		return true;
+	}break;
+
+	default:
+		break;
+	}
+
+	return inherited::OnKeyboardRelease(key);
 }
 
 void game_cl_freemp::OnConnected()
@@ -138,3 +218,15 @@ void game_cl_freemp::OnConnected()
 	funct();
 }
 
+void game_cl_freemp::OnScreenResolutionChanged()
+{
+	if (m_game_ui && m_pVoiceChat)
+	{
+		m_game_ui->UIMainIngameWnd->SetVoiceDistance(m_pVoiceChat->GetDistance());
+	}
+}
+
+void game_cl_freemp::OnVoiceMessage(NET_Packet* P)
+{
+	m_pVoiceChat->ReceiveMessage(P);
+}

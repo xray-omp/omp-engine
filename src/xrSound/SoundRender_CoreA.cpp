@@ -3,6 +3,7 @@
 
 #include "soundrender_coreA.h"
 #include "soundrender_targetA.h"
+#include "SoundVoiceChat.h"
 
 CSoundRender_CoreA*	SoundRenderA= 0; 
 
@@ -160,7 +161,17 @@ void CSoundRender_CoreA::_initialize(int stage)
         		break;
 			}
 		}
+
+		pSoundVoiceChat = xr_new<SoundVoiceChat>(pContext);
 	}
+}
+
+void CSoundRender_CoreA::update(const Fvector& P, const Fvector& D, const Fvector& N)
+{
+	inherited::update(P, D, N);
+
+	if (pSoundVoiceChat)
+		pSoundVoiceChat->Update(P, D, N);
 }
 
 void CSoundRender_CoreA::set_master_volume(float f )
@@ -173,6 +184,9 @@ void CSoundRender_CoreA::set_master_volume(float f )
 void CSoundRender_CoreA::_clear	()
 {
 	inherited::_clear			();
+
+	xr_delete(pSoundVoiceChat);
+
     // remove targets
 	CSoundRender_Target*	T	= 0;
 	for (u32 tit=0; tit<s_targets.size(); tit++)
