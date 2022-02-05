@@ -122,4 +122,5 @@ public:
 	virtual		void				OnConnected				();
 
 	virtual		void				OnSetCurrentControlEntity(CObject *O) {};
+	virtual		void				OnScreenResolutionChanged() {};
 };
