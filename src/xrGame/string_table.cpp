@@ -29,7 +29,7 @@ void CStringTable::Init		()
     
 	pData				= xr_new<STRING_TABLE_DATA>();
 	
-	//имя языка, если не задано (NULL), то первый <text> в <string> в XML
+	//ГЁГ¬Гї ГїГ§Г»ГЄГ , ГҐГ±Г«ГЁ Г­ГҐ Г§Г Г¤Г Г­Г® (NULL), ГІГ® ГЇГҐГ°ГўГ»Г© <text> Гў <string> Гў XML
 	pData->m_sLanguage	= pSettings->r_string("string_table", "language");
 
 
@@ -64,21 +64,21 @@ void CStringTable::Load	(LPCSTR xml_file_full)
 
 	uiXml.Load					(CONFIG_PATH, _s, xml_file_full);
 
-	//общий список всех записей таблицы в файле
+	//Г®ГЎГ№ГЁГ© Г±ГЇГЁГ±Г®ГЄ ГўГ±ГҐГµ Г§Г ГЇГЁГ±ГҐГ© ГІГ ГЎГ«ГЁГ¶Г» Гў ГґГ Г©Г«ГҐ
 	int string_num = uiXml.GetNodesNum		(uiXml.GetRoot(), "string");
 
 	for(int i=0; i<string_num; ++i)
 	{
 		LPCSTR string_name = uiXml.ReadAttrib(uiXml.GetRoot(), "string", i, "id", NULL);
 
-		VERIFY3(pData->m_StringTable.find(string_name) == pData->m_StringTable.end(), "duplicate string table id", string_name);
+		R_ASSERT3(pData->m_StringTable.find(string_name) == pData->m_StringTable.end(), "duplicate string table id", string_name);
 
 		LPCSTR string_text		= uiXml.Read(uiXml.GetRoot(), "string:text", i,  NULL);
 
 		if(m_bWriteErrorsToLog && string_text)
 			Msg("[string table] '%s' no translation in '%s'", string_name, pData->m_sLanguage.c_str() );
 		
-		VERIFY3						(string_text, "string table entry does not has a text", string_name);
+		R_ASSERT3(string_text, "string table entry does not has a text", string_name);
 		
 		STRING_VALUE str_val		= ParseLine(string_text, string_name, true);
 		
