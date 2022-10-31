@@ -93,6 +93,16 @@ protected:
 	CUIDragDropListEx*			m_pInventoryOutfitList;
 	CUIDragDropListEx*			m_pInventoryHelmetList;
 	CUIDragDropListEx*			m_pInventoryDetectorList;
+	
+	//===========================by AZMOD=====================================
+	CUIDragDropListEx*			m_pInventoryKnifeList;      // нож
+	CUIDragDropListEx*			m_pInventoryBinocularList;  // бинокль
+	CUIDragDropListEx*			m_pInventoryBoltList;       // болтяра
+	CUIDragDropListEx*			m_pInventoryPdaList;        // пда
+	CUIDragDropListEx*			m_pInventoryTorchList;      // фонарь
+	CUIDragDropListEx*			m_pInventoryBriefcaselList; // сталкер пошел в школу((( 
+	//===========================by AZMOD=====================================
+	
 	CUIDragDropListEx*			m_pInventoryBagList;
 
 	CUIDragDropListEx*			m_pTradeActorBagList;
@@ -111,6 +121,16 @@ protected:
 	CUIStatic*					m_HelmetSlotHighlight;
 	CUIStatic*					m_OutfitSlotHighlight;
 	CUIStatic*					m_DetectorSlotHighlight;
+	
+	//===========================by AZMOD=====================================
+	CUIStatic*					m_KnifeSlotHighlight;      // нож
+	CUIStatic*					m_BinocularSlotHighlight;  // бинокль
+	CUIStatic*					m_BoltSlotHighlight;       // болтяра
+	CUIStatic*					m_PdaSlotHighlight;        // пда
+	CUIStatic*					m_TorchSlotHighlight;      // фонарь
+	CUIStatic*					m_BriefcaselSlotHighlight; // сталкер пошел в школу((( 
+	//===========================by AZMOD=====================================
+		
 	CUIStatic*					m_QuickSlotsHighlight[4];
 	CUIStatic*					m_ArtefactSlotsHighlight[e_af_count];
 
