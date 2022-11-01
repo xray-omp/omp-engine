@@ -10,6 +10,9 @@
 #include "ui/UIStatic.h"
 #include "ui/UIXmlInit.h"
 
+#include "Inventory.h"
+#include "PDA.h"
+
 BOOL g_cl_draw_mp_statistic = FALSE;
 
 CUIGameFMP::CUIGameFMP()
@@ -152,6 +155,7 @@ bool CUIGameFMP::IR_UIOnKeyboardPress(int dik)
 	case kACTIVE_JOBS:
 		{
 			if (!pActor->inventory_disabled())
+				if (pActor->GetPDA())
 				ShowPdaMenu();			
 		} break;
 	case kINVENTORY:
