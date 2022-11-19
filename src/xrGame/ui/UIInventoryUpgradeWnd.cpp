@@ -384,5 +384,5 @@ void CUIInventoryUpgradeWnd::set_info_cur_upgrade( Upgrade_type* upgrade )
 
 CUIInventoryUpgradeWnd::Manager_type& CUIInventoryUpgradeWnd::get_manager()
 {
-	return  ai().alife().inventory_upgrade_manager();
+	return  Level().inventory_upgrade_manager();
 }

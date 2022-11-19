@@ -63,6 +63,12 @@ namespace file_transfer
 	class client_site;
 }; //namespace file_transfer
 
+namespace inventory {
+	namespace upgrade {
+		class Manager;
+	}
+} // namespace upgrade, inventory
+
 class CLevel					: public IGame_Level, public NET_CLIENT_CLASS
 {
 	#include "Level_network_Demo.h"
@@ -358,10 +364,12 @@ protected:
 protected:	
 	CMapManager *			m_map_manager;
 	CGameTaskManager*		m_game_task_manager;
+	inventory::upgrade::Manager* m_upgrade_manager;
 
 public:
 	CMapManager&			MapManager					() const 	{return *m_map_manager;}
 	CGameTaskManager&		GameTaskManager				() const	{return *m_game_task_manager;}
+	inventory::upgrade::Manager& inventory_upgrade_manager() const { return *m_upgrade_manager; }
 	void					OnAlifeSimulatorLoaded		();
 	void					OnAlifeSimulatorUnLoaded	();
 	//работа с пулями

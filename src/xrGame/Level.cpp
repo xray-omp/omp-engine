@@ -50,6 +50,7 @@
 #include "demoinfo.h"
 #include "CustomDetector.h"
 #include "string_table.h"
+#include "inventory_upgrade_manager.h"
 
 #include "../xrphysics/iphworld.h"
 #include "../xrphysics/console_vars.h"
@@ -105,6 +106,8 @@ CLevel::CLevel():NET_CLIENT_CLASS (Device.GetTimerGlobal())
 
 	m_map_manager				= xr_new<CMapManager>();
 	m_game_task_manager			= xr_new<CGameTaskManager>();
+
+	m_upgrade_manager			= nullptr;
 
 //----------------------------------------------------
 	m_bNeed_CrPr				= false;
@@ -1217,12 +1220,17 @@ void CLevel::OnAlifeSimulatorUnLoaded()
 {
 	MapManager().ResetStorage();
 	GameTaskManager().ResetStorage();
+
+	xr_delete(m_upgrade_manager);
 }
 
 void CLevel::OnAlifeSimulatorLoaded()
 {
 	MapManager().ResetStorage();
 	GameTaskManager().ResetStorage();
+
+	// moved from alife simulator for supporting in MP
+	m_upgrade_manager = xr_new<inventory::upgrade::Manager>();
 }
 
 void CLevel::OnSessionTerminate		(LPCSTR reason)

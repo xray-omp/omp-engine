@@ -14,12 +14,11 @@
 #include "xrUIXmlParser.h"
 #include "UIXmlInit.h"
 
-#include "ai_space.h"
-#include "alife_simulator.h"
 #include "inventory_upgrade_manager.h"
 #include "inventory_upgrade.h"
 #include "inventory_upgrade_property.h"
 
+#include "../Level.h"
 
 UIProperty::UIProperty()
 {
@@ -64,7 +63,7 @@ UIProperty::Property_type* UIProperty::get_property()
 	{
 		return NULL;
 	}
-	Property_type* proper = ai().alife().inventory_upgrade_manager().get_property( m_property_id );
+	Property_type* proper = Level().inventory_upgrade_manager().get_property( m_property_id );
 	VERIFY( proper );
 	return proper;
 }
@@ -98,7 +97,7 @@ bool UIProperty::compute_value( ItemUpgrades_type const& item_upgrades )
 	ItemUpgrades_type::const_iterator ie_upg = item_upgrades.end();
 	for ( ; ib_upg != ie_upg; ++ib_upg )
 	{
-		Upgrade_type* upgr = ai().alife().inventory_upgrade_manager().get_upgrade( *ib_upg );
+		Upgrade_type* upgr = Level().inventory_upgrade_manager().get_upgrade( *ib_upg );
 		VERIFY( upgr );
 		for(u8 i = 0; i < inventory::upgrade::max_properties_count; i++)
 		{
