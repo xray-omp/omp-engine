@@ -13,8 +13,6 @@
 #include "ai_object_location.h"
 #include "object_broker.h"
 
-#include "ai_space.h"
-#include "alife_simulator.h"
 #include "inventory_upgrade_manager.h"
 #include "inventory_upgrade.h"
 #include "Level.h"
@@ -134,11 +132,6 @@ void CInventoryItem::log_upgrades()
 void CInventoryItem::net_Spawn_install_upgrades( Upgrades_type saved_upgrades ) // net_Spawn
 {
 	m_upgrades.clear_not_free();
-
-	if ( !ai().get_alife() )
-	{
-		return;
-	}
 	
 	Level().inventory_upgrade_manager().init_install( *this ); // from pSettings
 

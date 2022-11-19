@@ -59,10 +59,6 @@ bool UIProperty::init_property( shared_str const& property_id )
 
 UIProperty::Property_type* UIProperty::get_property()
 {
-	if ( !ai().get_alife() )
-	{
-		return NULL;
-	}
 	Property_type* proper = Level().inventory_upgrade_manager().get_property( m_property_id );
 	VERIFY( proper );
 	return proper;

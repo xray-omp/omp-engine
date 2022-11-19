@@ -15,8 +15,6 @@
 #include "UIInventoryUpgradeWnd.h"
 #include "UIInvUpgradeInfo.h"
 
-#include "ai_space.h"
-#include "alife_simulator.h"
 #include "object_broker.h"
 #include "UIWndCallback.h"
 #include "UIHelper.h"
@@ -209,14 +207,10 @@ void CUIActorMenu::Construct()
 //-	AttachChild							(m_ItemInfo);
 	m_ItemInfo->InitItemInfo			("actor_menu_item.xml");
 
-	m_upgrade_info						= NULL;
-	if ( ai().get_alife() )
-	{
-		m_upgrade_info						= xr_new<UIInvUpgradeInfo>();
-		m_upgrade_info->SetAutoDelete		(true);
-		AttachChild							(m_upgrade_info);
-		m_upgrade_info->init_from_xml		("actor_menu_item.xml");
-	}
+	m_upgrade_info = xr_new<UIInvUpgradeInfo>();
+	m_upgrade_info->SetAutoDelete(true);
+	AttachChild(m_upgrade_info);
+	m_upgrade_info->init_from_xml("actor_menu_item.xml");
 
 	m_message_box_yes_no				= xr_new<CUIMessageBoxEx>();	
 	m_message_box_yes_no->InitMessageBox( "message_box_yes_no" );

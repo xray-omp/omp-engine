@@ -18,8 +18,6 @@
 #include "../../xrServerEntities/script_process.h"
 #include "../inventory.h"
 
-#include "ai_space.h"
-#include "alife_simulator.h"
 #include "inventory_upgrade_manager.h"
 #include "inventory_upgrade.h"
 #include "inventory_upgrade_property.h"
@@ -148,7 +146,7 @@ void CUIInventoryUpgradeWnd::InitInventory( CInventoryItem* item, bool can_upgra
 	m_back->Show(false);
 	m_btn_repair->Enable( false );
 	
-	if ( ai().get_alife() && m_inv_item )
+	if ( m_inv_item )
 	{
 		if ( install_item( *m_inv_item, can_upgrade ) )
 		{
