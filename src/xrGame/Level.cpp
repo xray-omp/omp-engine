@@ -302,6 +302,7 @@ CLevel::~CLevel()
 	//-----------------------------------------------------------
 	xr_delete					(m_map_manager);
 	delete_data					(m_game_task_manager);
+	xr_delete					(m_upgrade_manager);
 //	xr_delete					(m_pFogOfWarMngr);
 	
 	// here we clean default trade params
@@ -1230,6 +1231,9 @@ void CLevel::OnAlifeSimulatorLoaded()
 	GameTaskManager().ResetStorage();
 
 	// moved from alife simulator for supporting in MP
+	// only for single and server
+	// for client mangager creates in Load_GameSpecific_Before()
+	R_ASSERT(m_upgrade_manager == nullptr);
 	m_upgrade_manager = xr_new<inventory::upgrade::Manager>();
 }
 
