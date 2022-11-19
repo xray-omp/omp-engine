@@ -137,18 +137,6 @@ void CUIGameSP::Render()
 }
 #endif
 
-
-void  CUIGameSP::StartUpgrade(CInventoryOwner* pActorInv, CInventoryOwner* pMech)
-{
-//.	if( MainInputReceiver() )	return;
-
-	m_ActorMenu->SetActor		(pActorInv);
-	m_ActorMenu->SetPartner		(pMech);
-
-	m_ActorMenu->SetMenuMode	(mmUpgrade);
-	m_ActorMenu->ShowDialog		(true);
-}
-
 extern ENGINE_API BOOL bShowPauseString;
 void CUIGameSP::ChangeLevel(	GameGraph::_GRAPH_ID game_vert_id, 
 								u32 level_vert_id, 

@@ -156,6 +156,7 @@ public:
 	void				StartTrade(CInventoryOwner* pActorInv, CInventoryOwner* pOtherOwner);
 	void				StartCarBody(CInventoryOwner* pActorInv, CInventoryOwner* pOtherOwner);
 	void				StartCarBody(CInventoryOwner* pActorInv, CInventoryBox* pBox);
+	void				StartUpgrade(CInventoryOwner* pActorInv, CInventoryOwner* pMech);
 
 	DECLARE_SCRIPT_REGISTER_FUNCTION
 }; // class CUIGameCustom

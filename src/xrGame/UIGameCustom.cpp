@@ -564,3 +564,14 @@ void CUIGameCustom::StartCarBody(CInventoryOwner* pActorInv, CInventoryBox* pBox
 	m_ActorMenu->SetMenuMode(mmDeadBodySearch);
 	m_ActorMenu->ShowDialog(true);
 }
+
+void  CUIGameCustom::StartUpgrade(CInventoryOwner* pActorInv, CInventoryOwner* pMech)
+{
+	//.	if( MainInputReceiver() )	return;
+
+	m_ActorMenu->SetActor(pActorInv);
+	m_ActorMenu->SetPartner(pMech);
+
+	m_ActorMenu->SetMenuMode(mmUpgrade);
+	m_ActorMenu->ShowDialog(true);
+}
