@@ -31,6 +31,8 @@ public:
 	virtual	bool OnKeyboardPress(int key);
 	virtual	bool OnKeyboardRelease(int key);
 
+	virtual void TranslateGameMessage(u32 msg, NET_Packet& P);
+
 	virtual LPCSTR GetGameScore(string32&	score_dest);
 	virtual bool Is_Rewarding_Allowed()  const { return false; };
 

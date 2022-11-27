@@ -206,6 +206,11 @@ void game_sv_freemp::OnEvent(NET_Packet &P, u16 type, u32 time, ClientID sender)
 			OnPlayerTrade(P, sender);
 		}
 		break;
+	case GAME_EVENT_MP_REPAIR:
+		{
+			OnPlayerRepairItem(P, sender);
+		}
+		break;
 	case GAME_EVENT_TRANSFER_MONEY:
 		{
 			OnTransferMoney(P, sender);

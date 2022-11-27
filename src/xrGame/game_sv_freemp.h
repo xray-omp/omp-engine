@@ -39,5 +39,6 @@ public:
 	virtual		void				on_death(CSE_Abstract* e_dest, CSE_Abstract* e_src);
 
 	virtual		void				OnPlayerTrade(NET_Packet &P, ClientID const & clientID);
+	virtual		void				OnPlayerRepairItem(NET_Packet& P, ClientID const& clientID);
 	virtual		void				OnTransferMoney(NET_Packet &P, ClientID const & clientID);
 };

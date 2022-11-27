@@ -11117,6 +11117,12 @@
     <ClCompile Include="VoiceSender.cpp">
       <Filter>Core\Client\VoiceChat</Filter>
     </ClCompile>
+    <ClCompile Include="game_sv_freemp_upgrade_and_repair.cpp">
+      <Filter>Core\Server\Games\server\freemp</Filter>
+    </ClCompile>
+    <ClCompile Include="game_cl_freemp_messages.cpp">
+      <Filter>Core\Server\Games\client\freemp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="ai\monsters\chimera\chimera_attack_state.h">
