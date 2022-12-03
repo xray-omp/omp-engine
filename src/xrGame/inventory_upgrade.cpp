@@ -59,7 +59,7 @@ void Upgrade::construct( const shared_str& upgrade_id, Group& parental_group, Ma
 		id_str(), precondition_functor_str
 		)
 	);		
-	m_preconditions();
+	//m_preconditions();
 
 	// effect_functor
 	LPCSTR effect_functor_str	= pSettings->r_string( id(), "effect_functor"   );
@@ -72,7 +72,7 @@ void Upgrade::construct( const shared_str& upgrade_id, Group& parental_group, Ma
 		id_str(), effect_functor_str
 		)
 	);
-	m_effects();
+	//m_effects();
 
 	// prereq_functor (1,2) : m_prerequisites, m_tooltip
 	LPCSTR prereq_functor_str	= pSettings->r_string( id(), "prereq_functor" );//prerequisites_functor
@@ -86,7 +86,7 @@ void Upgrade::construct( const shared_str& upgrade_id, Group& parental_group, Ma
 		id_str(), prereq_functor_str
 		)
 	);
-	m_prerequisites();
+	//m_prerequisites();
 
 	/*R_ASSERT2(
 		ai().script_engine().functor( tooltip_functor_str, m_tooltip.functr ),
