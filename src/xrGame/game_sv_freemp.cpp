@@ -211,6 +211,11 @@ void game_sv_freemp::OnEvent(NET_Packet &P, u16 type, u32 time, ClientID sender)
 			OnPlayerRepairItem(P, sender);
 		}
 		break;
+	case GAME_EVENT_MP_INSTALL_UPGRADE:
+		{
+			OnPlayerInstallUpgrade(P, sender);
+		}
+		break;
 	case GAME_EVENT_TRANSFER_MONEY:
 		{
 			OnTransferMoney(P, sender);

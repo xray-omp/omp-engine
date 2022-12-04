@@ -246,6 +246,8 @@ enum EGameMessages {  //game_cl <----> game_sv messages
 	GAME_EVENT_MP_TRADE,
 	GAME_EVENT_MP_REPAIR,
 	GAME_EVENT_MP_REPAIR_SUCCESS,
+	GAME_EVENT_MP_INSTALL_UPGRADE,
+	GAME_EVENT_MP_INSTALL_UPGRADE_SUCCESS,
 	GAME_EVENT_TRANSFER_MONEY,
 
 	//-----------------------------------------

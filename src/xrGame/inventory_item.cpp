@@ -23,6 +23,7 @@
 #include "object_broker.h"
 #include "../xrEngine/igame_persistent.h"
 #include "Artefact.h"
+#include "inventory_upgrade_manager.h"
 
 #ifdef DEBUG
 #	include "debug_renderer.h"
@@ -255,6 +256,16 @@ void CInventoryItem::OnEvent (NET_Packet& P, u16 type)
 		{
 			SetCondition(1.0f);
 		}break;
+	case GE_INSTALL_UPGRADE:
+		{
+			R_ASSERT(!IsGameTypeSingle());
+			if (object().Remote())
+			{
+				shared_str upgrade_id;
+				P.r_stringZ(upgrade_id);
+				Level().inventory_upgrade_manager().upgrade_install_mp(*this, upgrade_id, false);
+			}
+		}break;
 	case GE_CHANGE_POS:
 		{
 			Fvector p; 
@@ -342,10 +353,7 @@ BOOL CInventoryItem::net_Spawn			(CSE_Abstract* DC)
 	//!!!
 	m_fCondition = pSE_InventoryItem->m_fCondition;
 	
-	if ( IsGameTypeSingle() )
-	{
-		net_Spawn_install_upgrades( pSE_InventoryItem->m_upgrades );
-	}
+	net_Spawn_install_upgrades(pSE_InventoryItem->m_upgrades);
 
 	if (GameID() != eGameIDSingle)
 		object().processing_activate();

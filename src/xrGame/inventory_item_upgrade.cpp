@@ -47,7 +47,7 @@ void CInventoryItem::add_upgrade( const shared_str& upgrade_id, bool loading )
 	{
 		m_upgrades.push_back( upgrade_id );
 
-		if ( !loading )
+		if ( !loading && OnServer())
 		{
 			NET_Packet					P;
 			CGameObject::u_EventGen		( P, GE_INSTALL_UPGRADE, object_id() );
@@ -132,14 +132,18 @@ void CInventoryItem::log_upgrades()
 void CInventoryItem::net_Spawn_install_upgrades( Upgrades_type saved_upgrades ) // net_Spawn
 {
 	m_upgrades.clear_not_free();
-	
-	Level().inventory_upgrade_manager().init_install( *this ); // from pSettings
 
-	Upgrades_type::iterator ib = saved_upgrades.begin();
-	Upgrades_type::iterator ie = saved_upgrades.end();
-	for ( ; ib != ie ; ++ib )
+	Level().inventory_upgrade_manager().init_install(*this); // from pSettings
+
+	if (IsGameTypeSingle())
 	{
-		Level().inventory_upgrade_manager().upgrade_install( *this, (*ib), true );
+		for (auto& upgrade : saved_upgrades)
+			Level().inventory_upgrade_manager().upgrade_install(*this, (*upgrade), true);
+	}
+	else
+	{
+		for (auto& upgrade : saved_upgrades)
+			Level().inventory_upgrade_manager().upgrade_install_mp(*this, (*upgrade), true);
 	}
 }
 

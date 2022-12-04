@@ -16,6 +16,7 @@
 #include "inventory_upgrade_group.h"
 #include "inventory_upgrade_root.h"
 #include "inventory_upgrade_property.h"
+#include "Level.h"
 
 namespace inventory
 {
@@ -216,6 +217,7 @@ UpgradeStateResult Upgrade::get_preconditions()
 
 void Upgrade::run_effects( bool loading )
 {
+	R_ASSERT(IsGameTypeSingle());
 	m_effects.parameter3 = loading ? 1 : 0;
 	m_effects();
 }

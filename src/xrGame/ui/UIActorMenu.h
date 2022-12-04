@@ -340,6 +340,7 @@ public:
 	void						UpdateConditionProgressBars	();
 	
 	void						OnSuccessRepairMP			(PIItem item);
+	void						OnSuccessUpgradeInstallMP	(PIItem item);
 
 	IC	UIHint*					get_hint_wnd				() { return m_hint_wnd; }
 

@@ -9,6 +9,7 @@
 #include "alife_object_registry.h"
 #include "xrServer_Objects_ALife_Items.h"
 #include "xrServer_Objects_ALife_Monsters.h"
+#include "Level.h"
 
 void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 {
@@ -272,6 +273,11 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 				break;
 			}
 			iitem->add_upgrade		( upgrade_id );
+
+			if (!IsGameTypeSingle())
+			{
+				SendBroadcast(BroadcastCID, P, net_flags(TRUE, TRUE));
+			}
 		}break;
 	case GE_INV_BOX_STATUS:
 		{
