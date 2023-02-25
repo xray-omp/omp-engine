@@ -481,7 +481,15 @@ void CTorch::afterDetach			()
 }
 void CTorch::renderable_Render()
 {
+	if (IsGameTypeSingle())
+	{
 		inherited::renderable_Render();
+	}
+	else
+	{
+		if (m_switched_on && smart_cast<CActor*>(H_Parent()))
+			inherited::renderable_Render();
+	}
 }
 
 void CTorch::enable(bool value)
