@@ -1269,6 +1269,7 @@ void CWeaponMagazined::OnEvent(NET_Packet& P, u16 type)
 	{
 	case GE_WPN_UNLOAD_AMMO:
 	{
+		u8 ignore = P.r_u8();
 		UnloadMagazine();
 	}break;
 	case GE_WPN_UPDATE_AMMO:

@@ -404,6 +404,7 @@ void CUIActorMenu::UnloadWeapon(CWeaponMagazined* pWpn)
 	{
 		NET_Packet	P;
 		CGameObject::u_EventGen(P, GE_WPN_UNLOAD_AMMO, pWpn->ID());
+		P.w_u8(0);
 		CGameObject::u_EventSend(P);
 	}
 }

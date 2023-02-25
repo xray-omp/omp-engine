@@ -346,11 +346,10 @@ bool Manager::upgrade_install_mp( CInventoryItem& item, shared_str const& upgrad
 {
 	Upgrade* upgrade = upgrade_verify(item.m_section_id, upgrade_id);
 
-	// Pavel: TODO need to fix
-	// if (!loading)
-	// {
-	// 	item.pre_install_upgrade();
-	// }
+	if (!loading)
+	{
+		item.pre_install_upgrade();
+	}
 
 	if (item.install_upgrade(upgrade->section()))
 	{
