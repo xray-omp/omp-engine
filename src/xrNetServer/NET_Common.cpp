@@ -57,11 +57,11 @@ void MultipacketSender::SendPacket( const void* packet_data, u32 packet_sz, u32 
 
     buf->buffer.w_u16( (u16)packet_sz );
     buf->buffer.w( packet_data, packet_sz );
+    buf->last_flags = flags;
         
     if( flags & DPNSEND_IMMEDIATELLY )
         _FlushSendBuffer( timeout, buf );
     
-    buf->last_flags = flags;
     _buf_cs.Leave();
 }
 
