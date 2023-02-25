@@ -213,6 +213,7 @@ BOOL CTorch::net_Spawn(CSE_Abstract* DC)
 	
 	bool b_r2				= !!psDeviceFlags.test(rsR2);
 	b_r2					|= !!psDeviceFlags.test(rsR3);
+	b_r2					|= !!psDeviceFlags.test(rsR4);
 
 	IKinematics* K			= smart_cast<IKinematics*>(Visual());
 	CInifile* pUserData		= K->LL_UserData(); 
@@ -303,43 +304,58 @@ void CTorch::UpdateCL()
 
 		if (actor) 
 		{
-			m_prev_hp.x		= angle_inertion_var(m_prev_hp.x,-actor->cam_FirstEye()->yaw,TORCH_INERTION_SPEED_MIN,TORCH_INERTION_SPEED_MAX,TORCH_INERTION_CLAMP,Device.fTimeDelta);
-			m_prev_hp.y		= angle_inertion_var(m_prev_hp.y,-actor->cam_FirstEye()->pitch,TORCH_INERTION_SPEED_MIN,TORCH_INERTION_SPEED_MAX,TORCH_INERTION_CLAMP,Device.fTimeDelta);
-
-			Fvector			dir,right,up;	
-			dir.setHP		(m_prev_hp.x+m_delta_h,m_prev_hp.y);
-			Fvector::generate_orthonormal_basis_normalized(dir,up,right);
-
-
-			if (true)
+			if (actor->cam_Active() == actor->cam_LookAt())
 			{
-				Fvector offset				= M.c; 
-				offset.mad					(M.i,TORCH_OFFSET.x);
-				offset.mad					(M.j,TORCH_OFFSET.y);
-				offset.mad					(M.k,TORCH_OFFSET.z);
-				light_render->set_position	(offset);
-
-				if(true /*false*/)
-				{
-					offset						= M.c; 
-					offset.mad					(M.i,OMNI_OFFSET.x);
-					offset.mad					(M.j,OMNI_OFFSET.y);
-					offset.mad					(M.k,OMNI_OFFSET.z);
-					light_omni->set_position	(offset);
-				}
-			}//if (true)
-			glow_render->set_position	(M.c);
-
-			if (true)
+				m_prev_hp.x = angle_inertion_var(m_prev_hp.x, -actor->cam_Active()->yaw, TORCH_INERTION_SPEED_MIN, TORCH_INERTION_SPEED_MAX, TORCH_INERTION_CLAMP, Device.fTimeDelta);
+				m_prev_hp.y = angle_inertion_var(m_prev_hp.y, -actor->cam_Active()->pitch, TORCH_INERTION_SPEED_MIN, TORCH_INERTION_SPEED_MAX, TORCH_INERTION_CLAMP, Device.fTimeDelta);
+			}
+			else 
 			{
-				light_render->set_rotation	(dir, right);
-				
-				if(true /*false*/)
-				{
-					light_omni->set_rotation	(dir, right);
-				}
-			}//if (true)
-			glow_render->set_direction	(dir);
+				m_prev_hp.x = angle_inertion_var(m_prev_hp.x, -actor->cam_FirstEye()->yaw, TORCH_INERTION_SPEED_MIN, TORCH_INERTION_SPEED_MAX, TORCH_INERTION_CLAMP, Device.fTimeDelta);
+				m_prev_hp.y = angle_inertion_var(m_prev_hp.y, -actor->cam_FirstEye()->pitch, TORCH_INERTION_SPEED_MIN, TORCH_INERTION_SPEED_MAX, TORCH_INERTION_CLAMP, Device.fTimeDelta);
+			}
+
+			Fvector	dir, right, up;
+			dir.setHP(m_prev_hp.x + m_delta_h, m_prev_hp.y);
+			Fvector::generate_orthonormal_basis_normalized(dir, up, right);
+
+			Fvector offset = M.c;
+			offset.mad(M.i, TORCH_OFFSET.x);
+			offset.mad(M.j, TORCH_OFFSET.y);
+			offset.mad(M.k, TORCH_OFFSET.z);
+			light_render->set_position(offset);
+
+			offset = M.c;
+			offset.mad(M.i, OMNI_OFFSET.x);
+			offset.mad(M.j, OMNI_OFFSET.y);
+			offset.mad(M.k, OMNI_OFFSET.z);
+			light_omni->set_position(offset);
+
+			const bool isFirstActorCam = actor->cam_FirstEye();
+			light_omni->set_shadow(!isFirstActorCam);
+			// Not remove! Please!
+			light_render->set_volumetric(!isFirstActorCam);
+
+			glow_render->set_position(M.c);
+
+			if (!actor->HUDview())
+			{
+				u16 head_bone = actor->Visual()->dcast_PKinematics()->LL_BoneID("bip01_head");
+
+				CBoneInstance& BI2 = actor->Visual()->dcast_PKinematics()->LL_GetBoneInstance(head_bone);
+				Fmatrix M2;
+				M2.mul(actor->XFORM(), BI2.mTransform);
+
+				light_render->set_rotation(M2.k, M2.i);
+				light_omni->set_rotation(M2.k, M2.i);
+			}
+			else
+			{
+				light_render->set_rotation(dir, right);
+				light_omni->set_rotation(dir, right);
+			}
+
+			glow_render->set_direction(dir);
 
 		}// if(actor)
 		else 
@@ -465,7 +481,7 @@ void CTorch::afterDetach			()
 }
 void CTorch::renderable_Render()
 {
-	inherited::renderable_Render();
+		inherited::renderable_Render();
 }
 
 void CTorch::enable(bool value)
