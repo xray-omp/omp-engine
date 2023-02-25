@@ -1184,7 +1184,7 @@ void xrServer::OnVoiceMessage(NET_Packet& P, ClientID sender)
 	tmp_functor.m_from = pClient;
 	tmp_functor.m_voiceDistanceSqr = voiceDistanceSqr;
 
-	ForEachClientDo(tmp_functor);
+	ForEachClientDoSender(tmp_functor);
 };
 
 #ifdef DEBUG

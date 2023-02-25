@@ -366,7 +366,7 @@ void CPseudoGigant::on_threaten_execute()
 		};
 
 		SendFunctor temp_functor(this);
-		Level().Server->ForEachClientDo(temp_functor);
+		Level().Server->ForEachClientDoSender(temp_functor);
 	}
 }
 
