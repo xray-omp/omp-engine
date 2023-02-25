@@ -129,6 +129,11 @@
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention />
     </Link>
+    <PostBuildEvent>
+      <Command>copy /Y "$(SolutionDir)\..\SDK\binaries\x86\GameNetworkingSockets.dll" "$(OutDir)GameNetworkingSockets.dll"
+copy /Y "$(SolutionDir)\..\SDK\binaries\x86\libprotobuf.dll" "$(OutDir)libprotobuf.dll"
+copy /Y "$(SolutionDir)\..\SDK\binaries\x86\libcrypto-3.dll" "$(OutDir)libcrypto-3.dll"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Mixed|Win32'">
     <Midl>
@@ -181,6 +186,11 @@
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention />
     </Link>
+    <PostBuildEvent>
+      <Command>copy /Y "$(SolutionDir)\..\SDK\binaries\x86\GameNetworkingSockets.dll" "$(OutDir)GameNetworkingSockets.dll"
+copy /Y "$(SolutionDir)\..\SDK\binaries\x86\libprotobuf.dll" "$(OutDir)libprotobuf.dll"
+copy /Y "$(SolutionDir)\..\SDK\binaries\x86\libcrypto-3.dll" "$(OutDir)libcrypto-3.dll"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Midl>
@@ -229,6 +239,11 @@
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention />
     </Link>
+    <PostBuildEvent>
+      <Command>copy /Y "$(SolutionDir)\..\SDK\binaries\x86\GameNetworkingSockets.dll" "$(OutDir)GameNetworkingSockets.dll"
+copy /Y "$(SolutionDir)\..\SDK\binaries\x86\libprotobuf.dll" "$(OutDir)libprotobuf.dll"
+copy /Y "$(SolutionDir)\..\SDK\binaries\x86\libcrypto-3.dll" "$(OutDir)libcrypto-3.dll"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BaseClient.cpp" />
