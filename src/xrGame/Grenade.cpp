@@ -100,9 +100,17 @@ void CGrenade::State(u32 state)
 	{
 	case eThrowStart:
 		{
-			Fvector						C;
-			Center						(C);
-			PlaySound					("sndCheckout", C);
+			if (H_Parent())
+			{
+				Fvector SndPos;
+
+				if (H_Parent()->Local())
+					Center(SndPos);
+				else
+					SndPos.set(H_Parent()->Position());
+
+				PlaySound("sndCheckout", SndPos);
+			}
 		}break;
 	case eThrowEnd:
 		{
