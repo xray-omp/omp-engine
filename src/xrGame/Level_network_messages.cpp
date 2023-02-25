@@ -490,15 +490,15 @@ void				CLevel::OnMessage				(void* data, u32 size)
 	NET_CLIENT_CLASS::OnMessage(data, size);
 };
 
-NET_Packet* CLevel::GetLastClientScriptEvent()
+NET_Packet* CLevel::GetFrontClientScriptEvent()
 {
 	R_ASSERT2(script_client_events.size() > 0, "empty script client events");
-	return &(script_client_events.back());
+	return &(script_client_events.front());
 }
 
-void CLevel::PopLastClientScriptEvent()
+void CLevel::PopFrontClientScriptEvent()
 {
-	script_client_events.pop_back();
+	script_client_events.pop_front();
 }
 
 u32 CLevel::GetSizeClientScriptEvent()

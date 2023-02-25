@@ -770,14 +770,15 @@ void send_script_event_to_server(NET_Packet& P)
 	Level().Send(P, net_flags(TRUE, TRUE));
 }
 
-NET_Packet* get_last_client_event()
+
+NET_Packet* get_front_client_event()
 {
-	return Level().GetLastClientScriptEvent();
+	return Level().GetFrontClientScriptEvent();
 }
 
-void pop_last_client_event()
+void pop_front_client_event()
 {
-	Level().PopLastClientScriptEvent();
+	Level().PopFrontClientScriptEvent();
 }
 
 u32 get_size_client_events()
@@ -931,8 +932,8 @@ void CLevel::script_register(lua_State *L)
 		def("send_to_client", &send_script_event_to_client),
 		def("send_broadcast", &send_script_event_broadcast),
 
-		def("get_last_client_event", &get_last_client_event),
-		def("pop_last_client_event", &pop_last_client_event),
+		def("get_front_client_event", &get_front_client_event),
+		def("pop_front_client_event", &pop_front_client_event),
 		def("get_size_client_events", &get_size_client_events),
 
 		def("get_front_server_event", &get_front_server_event),
