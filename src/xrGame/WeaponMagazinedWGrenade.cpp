@@ -269,8 +269,6 @@ void CWeaponMagazinedWGrenade::OnEvent(NET_Packet& P, u16 type)
 	{
 		case GE_WPN_UNLOAD_AMMO:
 			{
-				Msg("CWeaponMagazinedWGrenade::OnEvent");
-
 				UnloadMagazine();
 
 				u8 full_unload = P.r_u8();
