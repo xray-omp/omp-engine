@@ -1,6 +1,10 @@
 #pragma once
 #include "NET_Common.h"
+
+#pragma warning(push)
+#pragma warning(disable:4995)
 #include "GameNetworkingSockets/steam/steamnetworkingtypes.h"
+#pragma warning(pop)
 
 // Direct Play defines
 

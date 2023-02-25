@@ -6,7 +6,7 @@
 #include <DPlay/dplay8.h>
 #pragma warning(pop)
 
-struct SteamNetworkingQuickConnectionStatus;
+struct SteamNetConnectionRealTimeStatus_t;
 
 class XRNETSERVER_API IClientStatistic
 {
@@ -32,7 +32,7 @@ public:
 	IClientStatistic(CTimer* timer) { ZeroMemory(this, sizeof(*this)); device_timer = timer; dwBaseTime = TimeGlobal(device_timer); }
 
 	void	Update(DPN_CONNECTION_INFO& CI);
-	void	Update(SteamNetworkingQuickConnectionStatus& status);
+	void	Update(SteamNetConnectionRealTimeStatus_t& status);
 
 	IC u32	getPing() { return dwRoundTripLatencyMS; }
 	IC u32	getBPS() { return dwThroughputBPS; }

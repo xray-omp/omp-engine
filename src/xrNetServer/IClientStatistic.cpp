@@ -34,7 +34,7 @@ void IClientStatistic::Update(DPN_CONNECTION_INFO& CI)
 	dwPacketsRetried = CI.dwPacketsRetried;
 }
 
-void IClientStatistic::Update(SteamNetworkingQuickConnectionStatus & status)
+void IClientStatistic::Update(SteamNetConnectionRealTimeStatus_t& status)
 {
 	u32 time_global = TimeGlobal(device_timer);
 	if (time_global - dwBaseTime >= 999)
