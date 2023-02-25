@@ -46,6 +46,16 @@ void CUIActorMenu::InitInventoryMode()
 	m_pInventoryOutfitList->Show		(true);
 	m_pInventoryHelmetList->Show		(true);
 	m_pInventoryDetectorList->Show		(true);
+	
+	//===========================by AZMOD=====================================
+	m_pInventoryKnifeList->Show		    (true);// нож
+	m_pInventoryBinocularList->Show		(true);// бинокль
+	m_pInventoryBoltList->Show		    (true);// болт€ра
+	m_pInventoryPdaList->Show		    (true);// пда
+	m_pInventoryTorchList->Show		    (true);// фонарь
+	m_pInventoryBriefcaselList->Show	(true);// сталкер пошел в школу((( 
+	//===========================by AZMOD=====================================
+	
 	m_pInventoryPistolList->Show		(true);
 	m_pInventoryAutomaticList->Show		(true);
 	m_pQuickSlot->Show					(true);
@@ -241,6 +251,16 @@ void CUIActorMenu::OnInventoryAction(PIItem pItem, u16 action_type)
 		m_pInventoryOutfitList,
 		m_pInventoryHelmetList,
 		m_pInventoryDetectorList,
+		
+		//===========================by AZMOD=====================================
+		m_pInventoryKnifeList,      // нож
+		m_pInventoryBinocularList,  // бинокль
+		m_pInventoryBoltList,       // болт€ра
+		m_pInventoryPdaList,        // пда
+		m_pInventoryTorchList,      // фонарь
+		m_pInventoryBriefcaselList, // сталкер пошел в школу((( 
+		//===========================by AZMOD=====================================
+		
 		m_pInventoryBagList,
 		m_pTradeActorBagList,
 		m_pTradeActorList,
@@ -446,6 +466,16 @@ void CUIActorMenu::InitInventoryContents(CUIDragDropListEx* pBagList)
 	InitCellForSlot				(INV_SLOT_3);
 	InitCellForSlot				(OUTFIT_SLOT);
 	InitCellForSlot				(DETECTOR_SLOT);
+	
+	//===========================by AZMOD=====================================
+	InitCellForSlot				(KNIFE_SLOT);      // нож
+	InitCellForSlot				(BINOCULAR_SLOT);  // бинокль
+	InitCellForSlot				(BOLT_SLOT);       // болт€ра
+	InitCellForSlot				(PDA_SLOT);        // пда
+	InitCellForSlot				(TORCH_SLOT);      // фонарь
+	InitCellForSlot				(BRIEFCASEL_SLOT); // сталкер пошел в школу((( 
+	//===========================by AZMOD=====================================
+	
 	InitCellForSlot				(GRENADE_SLOT);
 	InitCellForSlot				(HELMET_SLOT);
 
@@ -749,7 +779,33 @@ CUIDragDropListEx* CUIActorMenu::GetSlotList(u16 slot_idx)
 		case DETECTOR_SLOT:
 			return m_pInventoryDetectorList;
 			break;
-
+			
+		//===========================by AZMOD=====================================
+		case KNIFE_SLOT:                            // нож
+			return m_pInventoryKnifeList;
+			break;
+			
+		case BINOCULAR_SLOT:                        // бинокль
+			return m_pInventoryBinocularList;
+			break;
+			
+		case BOLT_SLOT:                             // болт€ра
+			return m_pInventoryBoltList;
+			break;
+			
+		case PDA_SLOT:                              // пда
+			return m_pInventoryPdaList;
+			break;
+			
+		case TORCH_SLOT:                            // фонарь
+			return m_pInventoryTorchList;
+			break;
+			
+		case BRIEFCASEL_SLOT:                       // сталкер пошел в школу((( 
+			return m_pInventoryBriefcaselList;
+			break;
+		//===========================by AZMOD=====================================
+				
 		case GRENADE_SLOT://fake
 			if ( m_currMenuMode == mmTrade )
 			{

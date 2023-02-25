@@ -102,6 +102,27 @@ void CUIActorMenu::Construct()
 	m_OutfitSlotHighlight		->Show(false);
 	m_DetectorSlotHighlight		= UIHelper::CreateStatic(uiXml, "detector_slot_highlight", this);
 	m_DetectorSlotHighlight		->Show(false);
+	
+	//===========================by AZMOD=================================================================================================
+	m_KnifeSlotHighlight		= UIHelper::CreateStatic(uiXml, "knife_slot_highlight", this);          // нож
+	m_KnifeSlotHighlight		->Show(false);
+	
+	m_BinocularSlotHighlight		= UIHelper::CreateStatic(uiXml, "binocular_slot_highlight", this);  // бинокль
+	m_BinocularSlotHighlight		->Show(false);
+	
+	m_BoltSlotHighlight		= UIHelper::CreateStatic(uiXml, "bolt_slot_highlight", this);               // болтяра
+	m_BoltSlotHighlight		->Show(false);
+	
+	m_PdaSlotHighlight		= UIHelper::CreateStatic(uiXml, "pda_slot_highlight", this);                // пда
+	m_PdaSlotHighlight		->Show(false);
+	
+	m_TorchSlotHighlight		= UIHelper::CreateStatic(uiXml, "torch_slot_highlight", this);          // фонарь
+	m_TorchSlotHighlight		->Show(false);
+	
+	m_BriefcaselSlotHighlight		= UIHelper::CreateStatic(uiXml, "briefcasel_slot_highlight", this); // сталкер пошел в школу((( 
+	m_BriefcaselSlotHighlight		->Show(false);
+	//===========================by AZMOD=================================================================================================	
+	
 	m_QuickSlotsHighlight[0]	= UIHelper::CreateStatic(uiXml, "quick_slot_highlight", this);
 	m_QuickSlotsHighlight[0]	->Show(false);
 	m_ArtefactSlotsHighlight[0]	= UIHelper::CreateStatic(uiXml, "artefact_slot_highlight", this);
@@ -132,6 +153,16 @@ void CUIActorMenu::Construct()
 	m_pInventoryOutfitList		= UIHelper::CreateDragDropListEx(uiXml, "dragdrop_outfit", this);
 	m_pInventoryHelmetList		= UIHelper::CreateDragDropListEx(uiXml, "dragdrop_helmet", this);
 	m_pInventoryDetectorList	= UIHelper::CreateDragDropListEx(uiXml, "dragdrop_detector", this);
+	
+	//===========================by AZMOD=====================================
+	m_pInventoryKnifeList	= UIHelper::CreateDragDropListEx(uiXml, "dragdrop_knife", this);          // нож
+	m_pInventoryBinocularList	= UIHelper::CreateDragDropListEx(uiXml, "dragdrop_binocular", this);  // бинокль
+	m_pInventoryBoltList	= UIHelper::CreateDragDropListEx(uiXml, "dragdrop_bolt", this);           // болтяра
+	m_pInventoryPdaList	= UIHelper::CreateDragDropListEx(uiXml, "dragdrop_pda", this);                // пда
+	m_pInventoryTorchList	= UIHelper::CreateDragDropListEx(uiXml, "dragdrop_torch", this);          // фонарь
+	m_pInventoryBriefcaselList	= UIHelper::CreateDragDropListEx(uiXml, "dragdrop_briefcasel", this); // сталкер пошел в школу((( 
+	//===========================by AZMOD=====================================
+	
 	m_pInventoryPistolList		= UIHelper::CreateDragDropListEx(uiXml, "dragdrop_pistol", this);
 	m_pInventoryAutomaticList	= UIHelper::CreateDragDropListEx(uiXml, "dragdrop_automatic", this);
 	m_pTradeActorBagList		= UIHelper::CreateDragDropListEx(uiXml, "dragdrop_actor_trade_bag", this);
@@ -236,6 +267,16 @@ void CUIActorMenu::Construct()
 	BindDragDropListEvents				(m_pInventoryOutfitList);	
 	BindDragDropListEvents				(m_pInventoryHelmetList);	
 	BindDragDropListEvents				(m_pInventoryDetectorList);	
+	
+	//===========================by AZMOD=====================================
+	BindDragDropListEvents				(m_pInventoryKnifeList);	  // нож
+	BindDragDropListEvents				(m_pInventoryBinocularList);  // бинокль	
+	BindDragDropListEvents				(m_pInventoryBoltList);	      // болтяра
+	BindDragDropListEvents				(m_pInventoryPdaList);	      // пда
+	BindDragDropListEvents				(m_pInventoryTorchList);	  // фонарь
+	BindDragDropListEvents				(m_pInventoryBriefcaselList); // сталкер пошел в школу((( 	
+	//===========================by AZMOD=====================================
+		
 	BindDragDropListEvents				(m_pInventoryBagList);
 	BindDragDropListEvents				(m_pTradeActorBagList);
 	BindDragDropListEvents				(m_pTradeActorList);
