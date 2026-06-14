@@ -1,0 +1,195 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{c5fc66d6-a885-43c6-900e-4101cfb6963a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\theora">
+      <UniqueIdentifier>{c58c5281-2284-46dc-8b2c-4bc14607ad05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib">
+      <UniqueIdentifier>{03a51e23-909e-466c-991e-ee96890ed5ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\enc">
+      <UniqueIdentifier>{adea7285-a08e-4138-a8f4-5067b0cdaa6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\enc\x86_vc">
+      <UniqueIdentifier>{82859611-b3fc-416b-b6da-bb98e9b8d32f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\dec">
+      <UniqueIdentifier>{d862e009-f95c-44f5-8ebb-4e7b25dc1dcd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\dec\x86_vc">
+      <UniqueIdentifier>{5f77183c-a6dd-4b97-9c45-0a7dbefe4746}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\include\theora\codec.h">
+      <Filter>include\theora</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\theora\theora.h">
+      <Filter>include\theora</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\theora\theoradec.h">
+      <Filter>include\theora</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\theora\theoraenc.h">
+      <Filter>include\theora</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\lib\cpu.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\lib\internal.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\lib\encint.h">
+      <Filter>lib\enc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\lib\enquant.h">
+      <Filter>lib\enc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\lib\huffenc.h">
+      <Filter>lib\enc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\lib\mathops.h">
+      <Filter>lib\enc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\lib\modedec.h">
+      <Filter>lib\enc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\lib\apiwrapper.h">
+      <Filter>lib\dec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\lib\bitpack.h">
+      <Filter>lib\dec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\lib\dct.h">
+      <Filter>lib\dec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\lib\decint.h">
+      <Filter>lib\dec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\lib\dequant.h">
+      <Filter>lib\dec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\lib\huffdec.h">
+      <Filter>lib\dec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\lib\huffman.h">
+      <Filter>lib\dec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\lib\idct.h">
+      <Filter>lib\dec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\lib\ocintrin.h">
+      <Filter>lib\dec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\lib\quant.h">
+      <Filter>lib\dec</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\lib\cpu.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\lib\analyze.c">
+      <Filter>lib\enc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\lib\encapiwrapper.c">
+      <Filter>lib\enc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\lib\encfrag.c">
+      <Filter>lib\enc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\lib\encinfo.c">
+      <Filter>lib\enc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\lib\encode.c">
+      <Filter>lib\enc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\lib\encoder_disabled.c">
+      <Filter>lib\enc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\lib\enquant.c">
+      <Filter>lib\enc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\lib\fdct.c">
+      <Filter>lib\enc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\lib\huffenc.c">
+      <Filter>lib\enc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\lib\mathops.c">
+      <Filter>lib\enc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\lib\mcenc.c">
+      <Filter>lib\enc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\lib\rate.c">
+      <Filter>lib\enc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\lib\tokenize.c">
+      <Filter>lib\enc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\lib\x86_vc\mmxencfrag.c">
+      <Filter>lib\enc\x86_vc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\lib\x86_vc\mmxfdct.c">
+      <Filter>lib\enc\x86_vc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\lib\x86_vc\x86enc.c">
+      <Filter>lib\enc\x86_vc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\lib\apiwrapper.c">
+      <Filter>lib\dec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\lib\bitpack.c">
+      <Filter>lib\dec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\lib\decapiwrapper.c">
+      <Filter>lib\dec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\lib\decinfo.c">
+      <Filter>lib\dec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\lib\decode.c">
+      <Filter>lib\dec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\lib\dequant.c">
+      <Filter>lib\dec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\lib\fragment.c">
+      <Filter>lib\dec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\lib\huffdec.c">
+      <Filter>lib\dec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\lib\idct.c">
+      <Filter>lib\dec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\lib\info.c">
+      <Filter>lib\dec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\lib\internal.c">
+      <Filter>lib\dec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\lib\quant.c">
+      <Filter>lib\dec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\lib\state.c">
+      <Filter>lib\dec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\lib\x86_vc\mmxfrag.c">
+      <Filter>lib\dec\x86_vc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\lib\x86_vc\mmxidct.c">
+      <Filter>lib\dec\x86_vc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\lib\x86_vc\mmxstate.c">
+      <Filter>lib\dec\x86_vc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\lib\x86_vc\x86state.c">
+      <Filter>lib\dec\x86_vc</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

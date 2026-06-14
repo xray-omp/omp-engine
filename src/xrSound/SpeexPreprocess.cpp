@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "SpeexPreprocess.h"
+#include <speex/speex_preprocess.h>
 
 CSpeexPreprocess::CSpeexPreprocess(int sampleRate, int samplesPerBuffer)
 {

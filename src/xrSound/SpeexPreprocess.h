@@ -1,5 +1,7 @@
 #pragma once
-#include "libspeexdsp/speex/speex_preprocess.h"
+
+struct SpeexPreprocessState_; // Forward declaration
+typedef struct SpeexPreprocessState_ SpeexPreprocessState;
 
 class CSpeexPreprocess
 {

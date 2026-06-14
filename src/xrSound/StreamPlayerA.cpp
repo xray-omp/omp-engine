@@ -2,6 +2,7 @@
 #include "StreamPlayerA.h"
 #include "SoundVoiceChat.h"
 #include "SoundRender_Core.h"
+#include <opus.h>
 
 CStreamPlayerA::CStreamPlayerA(ALuint sampleRate, ALenum format, ALCcontext* context)
 	: m_sampleRate(sampleRate), m_format(format), m_pContext(context), m_source(0)

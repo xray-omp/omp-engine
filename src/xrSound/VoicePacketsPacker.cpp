@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "opus/opus.h"
+#include <opus.h>	
 #include "VoicePacketsPacker.h"
 #include "SoundVoiceChat.h"
 #include "VoicePacket.h"

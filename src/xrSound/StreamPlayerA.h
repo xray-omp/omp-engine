@@ -1,9 +1,10 @@
 #pragma once
 #include "openal/al.h"
 #include "openal/alc.h"
-#include "opus/opus.h"
 #include "RingBuffer.h"
 #include "IStreamPlayer.h"
+
+struct OpusDecoder;
 
 class CStreamPlayerA : public IStreamPlayer
 {
@@ -24,7 +25,7 @@ private:
 private:
 
 	static constexpr ALsizei RING_BUFFER_SIZE = 262144;
-	CRingBuffer<opus_int16, RING_BUFFER_SIZE> m_ringBuffer;
+	CRingBuffer<int16_t, RING_BUFFER_SIZE> m_ringBuffer;
 
 	static constexpr ALsizei NUM_BUFFERS = 16;
 	ALuint m_buffers[NUM_BUFFERS];
