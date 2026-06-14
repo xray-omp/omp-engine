@@ -729,13 +729,17 @@ void game_sv_TeamDeathmatch::OnDetachItem(CSE_ActorMP *actor, CSE_Abstract *item
 		if (EventPack.B.count > 2)	
 			u_EventSend(EventPack);
 
-		std::for_each(to_destroy.begin(), to_destroy.end(),
-			std::bind1st(std::mem_fun<void,	game_sv_mp, CSE_Abstract*>(
-			&game_sv_mp::DestroyGameItem), this));
+		std::for_each(
+			to_destroy.begin(),
+			to_destroy.end(),
+			std::bind(&game_sv_mp::DestroyGameItem, this, std::placeholders::_1)
+		);
 
-		std::for_each(to_reject.begin(), to_reject.end(),
-			std::bind1st(std::mem_fun<void,	game_sv_mp, CSE_Abstract*>(
-			&game_sv_mp::RejectGameItem), this));
+		std::for_each(
+			to_reject.begin(),
+			to_reject.end(),
+			std::bind(&game_sv_mp::RejectGameItem, this, std::placeholders::_1)
+		);
 
 	};
 }
