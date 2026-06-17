@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ImportGroup Label="PropertySheets" />
-  <PropertyGroup Label="UserMacros" />
-  <PropertyGroup>
-    <IncludePath>$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\..\binares\$(Platform)-$(Configuration)\;$(LibraryPath)</LibraryPath>
-    <OutDir>$(SolutionDir)\..\binares\$(Platform)-$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)\..\intermediate\$(Platform)-$(Configuration)\$(ProjectName)\</IntDir>
+  <PropertyGroup Label="UserMacros">
+    <CpuArch>x86</CpuArch>
+    <CpuArch Condition="'$(Platform)'=='Win32'">x86</CpuArch>
+    <CpuArch Condition="'$(Platform)'=='x64'">x64</CpuArch>
   </PropertyGroup>
+
+  <PropertyGroup Label="Globals">
+    <OutDir>$(SolutionDir)..\build\binaries\$(Platform)-$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)..\build\intermediate\$(Platform)-$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+
   <ItemDefinitionGroup>
     <ClCompile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)\..\SDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(SolutionDir)\..\SDK\libraries\x86;$(DXSDK_DIR)\Lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\..\SDK\libraries\$(CpuArch);$(DXSDK_DIR)\Lib\$(CpuArch);$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup />
