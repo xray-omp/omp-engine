@@ -38,7 +38,8 @@ void CPSLibrary::OnCreate()
  
 void CPSLibrary::OnDestroy()
 {
-	for (PS::PEDIt e_it = m_PEDs.begin(); e_it!=m_PEDs.end(); e_it++)
+    PS::PEDIt e_it = m_PEDs.begin();
+	for (; e_it!=m_PEDs.end(); e_it++)
     	(*e_it)->DestroyShader();
 
 	for (e_it = m_PEDs.begin(); e_it!=m_PEDs.end(); e_it++)

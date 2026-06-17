@@ -25,6 +25,8 @@ class CUIPropertiesBox;
 class CTrade;
 class CUIProgressBar;
 
+class CWeaponMagazined;
+
 namespace inventory { namespace upgrade {
 	class Upgrade;
 } } // namespace upgrade, inventory

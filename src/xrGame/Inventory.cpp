@@ -329,10 +329,10 @@ bool CInventory::Slot(u16 slot_id, PIItem pIItem, bool bNotActivate, bool strict
 	{
 #ifdef _DEBUG
 		Msg("there is item %s[%d,%x] in slot %d[%d,%x]", 
-				ItemFromSlot(pIItem->GetSlot())->object().cName().c_str(), 
-				ItemFromSlot(pIItem->GetSlot())->object().ID(), 
-				ItemFromSlot(pIItem->GetSlot()), 
-				pIItem->GetSlot(), 
+				ItemFromSlot(pIItem->CurrSlot())->object().cName().c_str(),
+				ItemFromSlot(pIItem->CurrSlot())->object().ID(),
+				ItemFromSlot(pIItem->CurrSlot()),
+				pIItem->CurrSlot(),
 				pIItem->object().ID(),
 				pIItem);
 #endif
@@ -1253,7 +1253,8 @@ bool CInventory::CanTakeItem(CInventoryItem *inventory_item) const
 
 	if(!inventory_item->CanTake()) return false;
 
-	for(TIItemContainer::const_iterator it = m_all.begin(); it != m_all.end(); it++)
+	TIItemContainer::const_iterator it = m_all.begin();
+	for(; it != m_all.end(); it++)
 		if((*it)->object().ID() == inventory_item->object().ID()) break;
 	VERIFY3(it == m_all.end(), "item already exists in inventory",*inventory_item->object().cName());
 
