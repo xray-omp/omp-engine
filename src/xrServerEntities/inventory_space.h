@@ -17,7 +17,8 @@ enum{
 	TORCH_SLOT,		// torch
 	ARTEFACT_SLOT,	// artefact
 	HELMET_SLOT,
-	LAST_SLOT		= HELMET_SLOT
+	BRIEFCASEL_SLOT, // шкила рюкзак by AZMOD
+	LAST_SLOT		= BRIEFCASEL_SLOT
 };
 
 #define RUCK_HEIGHT			280

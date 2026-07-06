@@ -324,6 +324,15 @@ EDDListType CUIActorMenu::GetListType(CUIDragDropListEx* l)
 	if(l==m_pInventoryHelmetList)		return iActorSlot;
 	if(l==m_pInventoryDetectorList)		return iActorSlot;
 	
+	//===========================by AZMOD=====================================
+	if(l==m_pInventoryKnifeList)		return iActorSlot; // нож
+	if(l==m_pInventoryBinocularList)	return iActorSlot; // бинокль
+	if(l==m_pInventoryBoltList)		    return iActorSlot; // болт€ра
+	if(l==m_pInventoryPdaList)		    return iActorSlot; // пда 
+	if(l==m_pInventoryTorchList)		return iActorSlot; // фонарь
+	if(l==m_pInventoryBriefcaselList)	return iActorSlot; // сталкер пошел в школу(((
+	//===========================by AZMOD=====================================
+	
 	if(l==m_pTradeActorBagList)			return iActorBag;
 	if(l==m_pTradeActorList)			return iActorTrade;
 	if(l==m_pTradePartnerBagList)		return iPartnerTradeBag;
@@ -497,6 +506,17 @@ void CUIActorMenu::clear_highlight_lists()
 	m_HelmetSlotHighlight->Show(false);
 	m_OutfitSlotHighlight->Show(false);
 	m_DetectorSlotHighlight->Show(false);
+	
+	//===========================by AZMOD=====================================
+	m_KnifeSlotHighlight->Show(false);      // нож
+	m_BinocularSlotHighlight->Show(false);  // бинокль
+	m_BoltSlotHighlight->Show(false);       // болт€ра
+	m_PdaSlotHighlight->Show(false);        // пда
+	m_TorchSlotHighlight->Show(false);      // фонарь
+	m_BriefcaselSlotHighlight->Show(false); // сталкер пошел в школу((( 
+	//===========================by AZMOD=====================================
+		
+	
 	for(u8 i=0; i<4; i++)
 		m_QuickSlotsHighlight[i]->Show(false);
 	for(u8 i=0; i<e_af_count; i++)
@@ -832,6 +852,16 @@ void CUIActorMenu::ClearAllLists()
 	m_pInventoryDetectorList->ClearAll			(true);
 	m_pInventoryPistolList->ClearAll			(true);
 	m_pInventoryAutomaticList->ClearAll			(true);
+	
+	//===========================by AZMOD=====================================
+	m_pInventoryKnifeList->ClearAll			    (true); // нож
+	m_pInventoryBinocularList->ClearAll			(true); // бинокль
+	m_pInventoryBoltList->ClearAll			    (true); // болт€ра
+	m_pInventoryPdaList->ClearAll			    (true); // пда
+	m_pInventoryTorchList->ClearAll			    (true); // фонарь
+	m_pInventoryBriefcaselList->ClearAll		(true); // сталкер пошел в школу((( 
+	//===========================by AZMOD=====================================
+	
 	m_pQuickSlot->ClearAll						(true);
 
 	m_pTradeActorBagList->ClearAll				(true);
